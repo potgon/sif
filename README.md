@@ -1,2 +1,0 @@
-# sif
-Personal finance tracker

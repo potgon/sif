@@ -1,12 +1,17 @@
-import dotenv from 'dotenv';
-import { createServer } from './config/server';
-import prisma from './config/prisma';
+import express, { Request, Response, NextFunction } from "express";
 
-dotenv.config();
+const app = express();
 
-const app = createServer(prisma);
-const port = process.env.PORT || 3000;
+app.get("/", (req: Request, res: Response, next: NextFunction): void => {
+    try {
+        res.send("Hello World");
+    } catch (error) {
+        next(error);
+    }
+})
 
-app.listen(port, () => {
-  console.log(`Server started on port ${port}`);
-});
+const PORT = 3000;
+
+app.listen(PORT, () => {
+    console.log(`App listening on port ${PORT}`)
+})
