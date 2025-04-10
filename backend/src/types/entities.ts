@@ -52,7 +52,7 @@ export interface Transaction {
     id: string
     userId: string
     categoryId: string
-    subcategoryId?: string
+    subcategoryId: string
     amount: number
     currency: string // Default: EUR
     date: Date

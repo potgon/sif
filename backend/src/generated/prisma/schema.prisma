@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./data/db.sqlite"
+}
+
+model User {
+  id               String           @id @default(cuid())
+  email            String           @unique
+  name             String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  incomes          Income[]
+  categories       Category[]
+  subcategories    Subcategory[]
+  transactions     Transaction[]
+  monthlySummaries MonthlySummary[]
+  debts            Debt[]
+}
+
+model Income {
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Float
+  currency    String   @default("EUR")
+  date        DateTime
+  source      String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum CategoryType {
+  EXPENSE
+  INVERSION
+}
+
+model Category {
+  id                  String        @id @default(cuid())
+  userId              String
+  name                String
+  type                CategoryType
+  objectivePercentage Float
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subcategories       Subcategory[]
+  transactions        Transaction[]
+
+  @@unique([userId, name])
+}
+
+model Subcategory {
+  id           String        @id @default(cuid())
+  categoryId   String
+  userId       String
+  name         String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  category     Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@unique([categoryId, name])
+}
+
+model Transaction {
+  id            String      @id @default(cuid())
+  userId        String
+  categoryId    String
+  subcategoryId String
+  amount        Float
+  currency      String      @default("EUR")
+  date          DateTime
+  description   String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category      Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  subcategory   Subcategory @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
+}
+
+model MonthlySummary {
+  id                  String   @id @default(cuid())
+  userId              String
+  month               Int
+  year                Int
+  totalIncome         Float
+  totalExpense        Float
+  totalInversion      Float
+  expensePercentage   Float
+  inversionPercentage Float
+  surplus             Float
+  accumulated         Float
+  lastRevision        DateTime
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, month, year])
+}
+
+model Debt {
+  id           String    @id @default(cuid())
+  userId       String
+  amount       Float
+  currency     String    @default("EUR")
+  isOwedByUser Boolean
+  personName   String
+  description  String?
+  dueDate      DateTime?
+  isPaid       Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
