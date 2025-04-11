@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # Database
+  postgres:
+    image: postgres:14-alpine
+    container_name: sif-postgres
+    environment:
+      POSTGRES_DB: sif_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sif-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sif-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=sif_db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - PORT=8080
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - sif-network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sif-frontend
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8080/api
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - sif-network
+
+volumes:
+  postgres-data:
+
+networks:
+  sif-network:
+    driver: bridge
