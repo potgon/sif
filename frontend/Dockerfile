@@ -13,21 +13,17 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine AS production
-WORKDIR /app
+FROM nginx:alpine AS production
+WORKDIR /usr/share/nginx/html
 
 # Copy built assets from the build stage
-# COPY --from=build /app/next.config.js ./
-COPY --from=build /app/public ./public
-# COPY --from=build /app/.next ./.next
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/dist .
 
-# Set environment variables
-ENV PORT 3000
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose the port
-EXPOSE 3000
+EXPOSE 80
 
-# Start the application
-CMD ["npm", "start"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
