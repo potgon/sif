@@ -54,13 +54,13 @@ mvn clean package
 To run the application locally, you'll need a PostgreSQL database. You can start one using Docker:
 
 \`\`\`bash
-docker run -d --name postgres -e POSTGRES_DB=finance -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:14-alpine
+docker run -d --name postgres -e POSTGRES_DB=sif_db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:14-alpine
 \`\`\`
 
 Then run the application:
 
 \`\`\`bash
-java -jar target/finance-app-0.0.1-SNAPSHOT.jar
+java -jar target/sif-app-0.0.1-SNAPSHOT.jar
 \`\`\`
 
 ## Database
