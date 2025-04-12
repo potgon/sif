@@ -1,4 +1,4 @@
-# Sif app Backend
+# Sif App Backend
 
 This is the backend for the personal finance application Sif, built with Java Spring Boot and PostgreSQL.
 
