@@ -1,6 +1,6 @@
-# Finance App Backend
+# Sif app Backend
 
-This is the backend for the personal finance application. It's built with Java Spring Boot and PostgreSQL.
+This is the backend for the personal finance application Sif, built with Java Spring Boot and PostgreSQL.
 
 ## Features
 
