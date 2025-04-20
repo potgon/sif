@@ -1,4 +1,4 @@
-import EcommerceMetrics from "../../components/finances/EcommerceMetrics";
+import FinanceMetrics from "../../components/finances/FinanceMetrics.tsx";
 import MonthlySalesChart from "../../components/finances/MonthlySalesChart";
 import StatisticsChart from "../../components/finances/StatisticsChart";
 import MonthlyTarget from "../../components/finances/MonthlyTarget";
@@ -15,7 +15,7 @@ export default function Home() {
       />
       <div className="grid grid-cols-12 gap-4 md:gap-6">
         <div className="col-span-12 space-y-6 xl:col-span-7">
-          <EcommerceMetrics />
+          <FinanceMetrics />
 
           <MonthlySalesChart />
         </div>
