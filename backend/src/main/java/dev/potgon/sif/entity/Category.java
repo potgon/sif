@@ -20,7 +20,4 @@ public class Category {
 
     @Column(name = "transaction_type_id")
     private Long transactionTypeId;
-
-    @Column(length = 7)
-    private String color;
 }

@@ -1,6 +1,6 @@
 -- Monthly metrics view (for income/expense cards)
 CREATE OR REPLACE VIEW monthly_metrics AS
-SELECT m.id                                     AS month_id,
+SELECT m.id                                                                          AS month_id,
        m.year,
        m.month,
        COALESCE((SELECT SUM(t.amount)
@@ -8,14 +8,14 @@ SELECT m.id                                     AS month_id,
                           JOIN categories c ON t.category_id = c.id
                           JOIN transaction_types tt ON c.transaction_type_id = tt.id
                  WHERE t.month_id = m.id
-                   AND tt.name = 'Income'), 0)  AS total_income,
+                   AND tt.name = 'Income'), 0)                                       AS total_income,
 
        COALESCE((SELECT SUM(t.amount)
                  FROM transactions t
                           JOIN categories c ON t.category_id = c.id
                           JOIN transaction_types tt ON c.transaction_type_id = tt.id
                  WHERE t.month_id = m.id
-                   AND tt.name = 'Expense'), 0) AS total_expenses,
+                   AND tt.name = 'Expense'), 0)                                      AS total_expenses,
 
        m.expense_target,
 
@@ -24,15 +24,15 @@ SELECT m.id                                     AS month_id,
                               JOIN categories c ON t.category_id = c.id
                               JOIN transaction_types tt ON c.transaction_type_id = tt.id
                      WHERE t.month_id = m.id
-                       AND tt.name = 'Income'), 0) OVER (ORDER BY m.year, m.month) AS prev_month_income,
-           LAG(COALESCE((SELECT SUM(t.amount)
-                         FROM transactions t
-                                  JOIN categories c ON t.category_id = c.id
-                                  JOIN transaction_types tt ON c.transaction_type_id = tt.id
-                         WHERE t.month_id = m.id
-                           AND tt.name = 'Expense'), 0) OVER (ORDER BY m.year, m.month) AS prev_month_expenses
-               FROM
-               months m;
+                       AND tt.name = 'Income'), 0)) OVER (ORDER BY m.year, m.month)  AS prev_month_income,
+
+       LAG(COALESCE((SELECT SUM(t.amount)
+                     FROM transactions t
+                              JOIN categories c ON t.category_id = c.id
+                              JOIN transaction_types tt ON c.transaction_type_id = tt.id
+                     WHERE t.month_id = m.id
+                       AND tt.name = 'Expense'), 0)) OVER (ORDER BY m.year, m.month) AS prev_month_expenses
+FROM months m;
 
 -- Yearly expense overview (for bar chart)
 CREATE OR REPLACE VIEW yearly_expenses AS
@@ -56,8 +56,7 @@ SELECT t.id,
        t.description,
        c.name  AS category,
        s.name  AS subcategory,
-       tt.name AS type,
-       c.color
+       tt.name AS type
 FROM transactions t
          JOIN categories c ON t.category_id = c.id
          LEFT JOIN subcategories s ON t.subcategory_id = s.id
