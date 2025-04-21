@@ -1,18 +1,15 @@
-package dev.potgon.sif.dto.refactor;
+package dev.potgon.sif.dto;
 
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TransactionDTO {
-    private Long id;
-    private Long monthId;
+public class TransactionUpdateDTO {
     private LocalDate date;
     private BigDecimal amount;
     private String description;
@@ -20,5 +17,4 @@ public class TransactionDTO {
     private Long subcategoryId;
     private Boolean isRecurring;
     private String notes;
-    private ZonedDateTime createdAt;
 }

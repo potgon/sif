@@ -1,33 +1,24 @@
 package dev.potgon.sif.dto;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class TransactionDTO {
     private Long id;
-    
-    @NotNull(message = "Category ID is required")
-    private Long categoryId;
-    
-    private Long subcategoryId;
-    
-    @NotNull(message = "Amount is required")
-    @Positive(message = "Amount must be positive")
-    private BigDecimal amount;
-    
-    private String currency = "EUR";
-    
-    @NotNull(message = "Date is required")
+    private Long monthId;
     private LocalDate date;
-    
+    private BigDecimal amount;
     private String description;
+    private Long categoryId;
+    private Long subcategoryId;
+    private Boolean isRecurring;
+    private String notes;
+    private ZonedDateTime createdAt;
 }

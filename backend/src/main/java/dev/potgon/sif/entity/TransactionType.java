@@ -1,4 +1,4 @@
-package dev.potgon.sif.entity.refactor;
+package dev.potgon.sif.entity;
 
 import dev.potgon.sif.dto.TransactionTypeEnum;
 import jakarta.persistence.*;

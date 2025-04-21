@@ -1,16 +1,11 @@
 package dev.potgon.sif.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "transactions")
@@ -18,38 +13,34 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Transaction {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subcategory_id")
-    private Subcategory subcategory;
-
-    @Column(nullable = false)
-    private BigDecimal amount;
-
-    @Column(nullable = false)
-    private String currency = "EUR";
+    @Column(name = "month_id", nullable = false)
+    private Long monthId;
 
     @Column(nullable = false)
     private LocalDate date;
 
+    @Column(nullable = false, precision = 12, scale = 2)
+    private BigDecimal amount;
+
     private String description;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+    @Column(name = "category_id", nullable = false)
+    private Long categoryId;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Column(name = "subcategory_id")
+    private Long subcategoryId;
+
+    @Column(name = "is_recurring")
+    private Boolean isRecurring;
+
+    private String notes;
+
+    @Column(name = "created_at")
+    private ZonedDateTime createdAt;
 }

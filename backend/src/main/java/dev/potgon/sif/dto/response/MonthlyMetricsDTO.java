@@ -1,4 +1,4 @@
-package dev.potgon.sif.dto.response.refactor;
+package dev.potgon.sif.dto.response;
 
 import lombok.*;
 

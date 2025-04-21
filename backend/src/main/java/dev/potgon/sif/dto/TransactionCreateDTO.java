@@ -1,4 +1,4 @@
-package dev.potgon.sif.dto.refactor;
+package dev.potgon.sif.dto;
 
 import lombok.*;
 import java.math.BigDecimal;
@@ -9,7 +9,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TransactionUpdateDTO {
+public class TransactionCreateDTO {
+    private Long monthId;
     private LocalDate date;
     private BigDecimal amount;
     private String description;

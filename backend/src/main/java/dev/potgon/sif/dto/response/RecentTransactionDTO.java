@@ -1,6 +1,7 @@
-package dev.potgon.sif.dto.refactor;
+package dev.potgon.sif.dto.response;
 
 import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -9,13 +10,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TransactionCreateDTO {
-    private Long monthId;
+public class RecentTransactionDTO {
+    private Long id;
     private LocalDate date;
     private BigDecimal amount;
     private String description;
-    private Long categoryId;
-    private Long subcategoryId;
-    private Boolean isRecurring;
-    private String notes;
+    private String category;
+    private String subcategory;
+    private String type;
+    private String color;
 }

@@ -1,6 +1,7 @@
-package dev.potgon.sif.dto.refactor;
+package dev.potgon.sif.dto.response;
 
 import lombok.*;
+
 import java.math.BigDecimal;
 
 @Getter
@@ -8,10 +9,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MonthDTO {
-    private Long id;
+public class YearlyExpensesDTO {
     private Integer year;
     private Integer month;
-    private BigDecimal startingBalance;
-    private BigDecimal expenseTarget;
+    private BigDecimal totalExpenses;
 }
