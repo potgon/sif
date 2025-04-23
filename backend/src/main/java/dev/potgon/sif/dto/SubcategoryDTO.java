@@ -10,5 +10,4 @@ import lombok.*;
 public class SubcategoryDTO {
     private Long id;
     private String name;
-    private Long categoryId;
 }

@@ -1,5 +1,6 @@
 package dev.potgon.sif.entity;
 
+import dev.potgon.sif.dto.CategoryTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,8 +17,7 @@ public class Category {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 50)
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private CategoryTypeEnum name;
 
-    @Column(name = "transaction_type_id")
-    private Long transactionTypeId;
 }

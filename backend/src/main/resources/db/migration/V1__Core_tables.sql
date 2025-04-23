@@ -1,5 +1,5 @@
 -- Core structure
-CREATE TABLE months
+CREATE TABLE periods
 (
     id   SERIAL PRIMARY KEY,
     year INTEGER NOT NULL CHECK (year > 2000
@@ -10,31 +10,22 @@ CREATE TABLE months
     UNIQUE(year, month)
 );
 
-CREATE TABLE transaction_types
-(
-    id   SERIAL PRIMARY KEY,
-    name VARCHAR(20) NOT NULL UNIQUE -- 'Expense', 'Income', 'Investment', 'Debt'
-);
-
 CREATE TABLE categories
 (
     id                  SERIAL PRIMARY KEY,
-    name                VARCHAR(50) NOT NULL UNIQUE,
-    transaction_type_id INTEGER REFERENCES transaction_types (id)
+    name                VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE subcategories
 (
     id          SERIAL PRIMARY KEY,
-    name        VARCHAR(50)                        NOT NULL,
-    category_id INTEGER REFERENCES categories (id) NOT NULL,
-    UNIQUE (name, category_id)
+    name        VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE transactions
 (
     id             SERIAL PRIMARY KEY,
-    month_id       INTEGER REFERENCES months (id)     NOT NULL,
+    period_id      INTEGER REFERENCES periods (id)    NOT NULL,
     date           DATE                               NOT NULL,
     amount         DECIMAL(12, 2)                     NOT NULL,
     description    TEXT,

@@ -6,13 +6,13 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "months")
+@Table(name = "periods")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Month {
+public class Period {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

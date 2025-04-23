@@ -9,7 +9,5 @@ import lombok.*;
 @Builder
 public class CategoryDTO {
     private Long id;
-    private String name;
-    private Long transactionTypeId;
-    private String color;
+    private CategoryTypeEnum categoryType;
 }

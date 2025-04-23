@@ -18,6 +18,4 @@ public class Subcategory {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(name = "category_id", nullable = false)
-    private Long categoryId;
 }

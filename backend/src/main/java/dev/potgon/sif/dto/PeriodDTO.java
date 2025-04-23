@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MonthDTO {
+public class PeriodDTO {
     private Long id;
     private Integer year;
     private Integer month;

@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class TransactionCreateDTO {
-    private Long monthId;
+    private Long periodId;
     private LocalDate date;
     private BigDecimal amount;
     private String description;

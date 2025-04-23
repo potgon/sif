@@ -19,8 +19,9 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "month_id", nullable = false)
-    private Long monthId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "period_id", nullable = false)
+    private Period period;
 
     @Column(nullable = false)
     private LocalDate date;
@@ -30,11 +31,13 @@ public class Transaction {
 
     private String description;
 
-    @Column(name = "category_id", nullable = false)
-    private Long categoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
-    @Column(name = "subcategory_id")
-    private Long subcategoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subcategory_id")
+    private Subcategory subcategory;
 
     @Column(name = "is_recurring")
     private Boolean isRecurring;
