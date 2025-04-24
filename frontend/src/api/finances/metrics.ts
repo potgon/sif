@@ -11,12 +11,26 @@ export interface MonthlyMetrics {
     prevMonthExpensesDiff: number
 }
 
+export interface AnnualMetrics {
+    year: number
+    totalExpenses: number[]
+}
+
 export const fetchMonthlyMetrics = async (
     year: number,
     month: number
 ): Promise<MonthlyMetrics> => {
     const response = await apiClient.get("/metrics/monthly", {
-        params: { year, month },
+        params: {year, month},
+    })
+    return response.data
+}
+
+export const fetchAnnualMetrics = async (
+    year: number
+): Promise<AnnualMetrics> => {
+    const response = await apiClient.get("/metrics/annual", {
+        params: {year},
     })
     return response.data
 }

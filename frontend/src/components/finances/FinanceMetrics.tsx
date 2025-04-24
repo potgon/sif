@@ -13,7 +13,7 @@ interface Props {
   month: number
 }
 
-export default function FinanceMetrics({ year, month }: Props) {
+export default function FinanceMetrics({ year, month }: Readonly<Props>) {
   const [data, setData] = useState<MonthlyMetrics | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -45,9 +45,9 @@ export default function FinanceMetrics({ year, month }: Props) {
               {loading ? "..." : data?.totalIncome?.toFixed(2)}€
             </h4>
           </div>
-          <Badge color={data?.prevMonthIncomeDiff >= 0 ? "success" : "error"}>
-            {data?.prevMonthIncomeDiff >= 0 ? <ArrowUpIcon /> : <ArrowDownIcon />}
-            {data ? Math.abs(data.prevMonthIncomeDiff).toFixed(2) : "..."}
+          <Badge color={data?.prevMonthIncomeDiff !== undefined && data?.prevMonthIncomeDiff >= 0 ? "success" : "error"}>
+            {data?.prevMonthIncomeDiff !== undefined && data?.prevMonthIncomeDiff >= 0 ? <ArrowUpIcon /> : <ArrowDownIcon />}
+            {data?.prevMonthIncomeDiff !== undefined ? Math.abs(data.prevMonthIncomeDiff).toFixed(2) : "..."}
           </Badge>
         </div>
       </div>
@@ -68,9 +68,9 @@ export default function FinanceMetrics({ year, month }: Props) {
             </h4>
           </div>
 
-          <Badge color={data?.prevMonthExpensesDiff >= 0 ? "success" : "error"}>
-            {data?.prevMonthExpensesDiff >= 0 ? <ArrowUpIcon /> : <ArrowDownIcon />}
-            {data ? Math.abs(data.prevMonthIncomeDiff).toFixed(2) : "..."}
+          <Badge color={data?.prevMonthExpensesDiff !== undefined && data?.prevMonthExpensesDiff <= 0 ? "success" : "error"}>
+            {data?.prevMonthExpensesDiff !== undefined && data?.prevMonthExpensesDiff >= 0 ? <ArrowUpIcon /> : <ArrowDownIcon />}
+            {data?.prevMonthExpensesDiff !== undefined ? Math.abs(data.prevMonthExpensesDiff).toFixed(2) : "..."}
           </Badge>
         </div>
       </div>
