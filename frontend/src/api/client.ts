@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const API_URL = import.meta.env.VITE_API_URL || "/api"
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080/api"
 
 const apiClient = axios.create({
     baseURL: API_URL,
@@ -13,7 +13,7 @@ apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
         // Handle errors globally
-        console.error("API Error:", error.response?.data || error.message)
+        console.error("API Error:", error.response?.data ?? error.message)
         return Promise.reject(error)
     },
 )

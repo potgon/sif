@@ -5,8 +5,29 @@ import {
   GroupIcon,
 } from "../../icons";
 import Badge from "../ui/badge/Badge";
+import {fetchMonthlyMetrics, MonthlyMetrics} from "../../api/finances/metrics.ts";
+import {useEffect, useState} from "react";
 
-export default function FinanceMetrics() {
+interface Props {
+  year: number
+  month: number
+}
+
+export default function FinanceMetrics({ year, month }: Props) {
+  const [data, setData] = useState<MonthlyMetrics | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    setLoading(true)
+    fetchMonthlyMetrics(year, month)
+        .then(setData)
+        .catch((err) => {
+          console.error("Error fetching metrics", err)
+          setData(null)
+        })
+        .finally(() => setLoading(false))
+  }, [year, month])
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
       {/* <!-- Metric Item Start --> */}
@@ -21,12 +42,12 @@ export default function FinanceMetrics() {
               Income
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              €
+              {loading ? "..." : data?.totalIncome?.toFixed(2)}€
             </h4>
           </div>
-          <Badge color="success">
-            <ArrowUpIcon />
-            %
+          <Badge color={data?.prevMonthIncomeDiff >= 0 ? "success" : "error"}>
+            {data?.prevMonthIncomeDiff >= 0 ? <ArrowUpIcon /> : <ArrowDownIcon />}
+            {data ? Math.abs(data.prevMonthIncomeDiff).toFixed(2) : "..."}
           </Badge>
         </div>
       </div>
@@ -43,13 +64,13 @@ export default function FinanceMetrics() {
               Expense
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              €
+              {loading ? "..." : data?.totalExpenses}€
             </h4>
           </div>
 
-          <Badge color="error">
-            <ArrowDownIcon />
-            %
+          <Badge color={data?.prevMonthExpensesDiff >= 0 ? "success" : "error"}>
+            {data?.prevMonthExpensesDiff >= 0 ? <ArrowUpIcon /> : <ArrowDownIcon />}
+            {data ? Math.abs(data.prevMonthIncomeDiff).toFixed(2) : "..."}
           </Badge>
         </div>
       </div>
