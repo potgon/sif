@@ -2,6 +2,7 @@ package dev.potgon.sif.service.impl;
 
 import dev.potgon.sif.dto.CategoryTypeEnum;
 import dev.potgon.sif.dto.TransactionDTO;
+import dev.potgon.sif.dto.response.AnnualExpensesDTO;
 import dev.potgon.sif.dto.response.MonthlyMetricsDTO;
 import dev.potgon.sif.entity.Category;
 import dev.potgon.sif.entity.Period;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -52,15 +52,26 @@ public class MetricsServiceImpl implements MetricsService {
                 .totalIncome(incomeSum)
                 .totalExpenses(expenseSum)
                 .expenseTarget(period.getExpenseTarget())
-/*                .prevMonthIncomeDiff(
+                .prevMonthIncomeDiff(
                         computePercentageDifference(
                                 incomeSum, previousMonthIncomeSum)
                 )
                 .prevMonthExpensesDiff(
                         computePercentageDifference(expenseSum, previousMonthExpenseSum)
-                )*/
-                .prevMonthIncomeDiff(BigDecimal.TWO)
-                .prevMonthExpensesDiff(BigDecimal.TWO.negate())
+                )
+                .build();
+    }
+
+    @Override
+    public AnnualExpensesDTO getAnnualExpenses(int year) {
+        BigDecimal[] transactionSumPerMonth = new BigDecimal[12];
+        for (int i = 0; i<=11; i++) {
+            transactionSumPerMonth[i] = sumAllTransactions(getTransactionsByPeriod(year, i + 1, CategoryTypeEnum.EXPENSE))
+                    .setScale(0, RoundingMode.HALF_UP);
+        }
+        return AnnualExpensesDTO.builder()
+                .year(year)
+                .totalExpenses(transactionSumPerMonth)
                 .build();
     }
 
@@ -73,7 +84,8 @@ public class MetricsServiceImpl implements MetricsService {
     }
 
     private List<TransactionDTO> getPreviousMonthTransactions(int year, int month, CategoryTypeEnum category) {
-        return getTransactionsByPeriod((year - 1), (month - 1), category);
+        if (month == 12) return getTransactionsByPeriod(year, 1, category);
+        return getTransactionsByPeriod(year, (month - 1), category);
     }
 
     private BigDecimal sumAllTransactions(List<TransactionDTO> transactions) {
@@ -83,9 +95,7 @@ public class MetricsServiceImpl implements MetricsService {
     }
 
     private BigDecimal computePercentageDifference(BigDecimal current, BigDecimal previous) {
-        if (previous == null || previous.compareTo(BigDecimal.ZERO) == 0) {
-            return null;
-        }
+        if (previous == null) return null;
         if (current == null) current = BigDecimal.ZERO;
         return current.subtract(previous)
                 .divide(previous, 4, RoundingMode.HALF_UP)

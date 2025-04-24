@@ -13,7 +13,7 @@ values ('EXPENSE');
 insert into categories (name)
 values ('INVERSION');
 insert into categories (name)
-values ('TARGET');
+values ('DEBT');
 
 insert into subcategories (name)
 values ('Ocio');
