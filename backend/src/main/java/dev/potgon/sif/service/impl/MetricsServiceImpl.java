@@ -52,13 +52,15 @@ public class MetricsServiceImpl implements MetricsService {
                 .totalIncome(incomeSum)
                 .totalExpenses(expenseSum)
                 .expenseTarget(period.getExpenseTarget())
-                .prevMonthIncomeDiff(
+/*                .prevMonthIncomeDiff(
                         computePercentageDifference(
                                 incomeSum, previousMonthIncomeSum)
                 )
                 .prevMonthExpensesDiff(
                         computePercentageDifference(expenseSum, previousMonthExpenseSum)
-                )
+                )*/
+                .prevMonthIncomeDiff(BigDecimal.TWO)
+                .prevMonthExpensesDiff(BigDecimal.TWO.negate())
                 .build();
     }
 
