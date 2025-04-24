@@ -72,7 +72,7 @@ export default function Home() {
                 <div className="col-span-12 space-y-6 xl:col-span-7">
                     <FinanceMetrics year={Number(selectedYear)} month={Number(selectedMonth)}/>
 
-                    <MonthlySalesChart year={Number(selectedYear)}/>
+                    <MonthlySalesChart year={Number(selectedYear)} month={Number(selectedMonth)}/>
                 </div>
 
                 <div className="col-span-12 xl:col-span-5">

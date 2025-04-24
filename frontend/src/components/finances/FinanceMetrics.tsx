@@ -5,8 +5,9 @@ import {
   GroupIcon,
 } from "../../icons";
 import Badge from "../ui/badge/Badge";
-import {fetchMonthlyMetrics, MonthlyMetrics} from "../../api/finances/metrics.ts";
+import {fetchMonthlyMetrics} from "../../api/finances/metrics.ts";
 import {useEffect, useState} from "react";
+import {MonthlyMetrics} from "../../api/finances/types.ts";
 
 interface Props {
   year: number
