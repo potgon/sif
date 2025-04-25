@@ -30,7 +30,7 @@ export default function MonthlyExpensesChart({year}: Readonly<Props>) {
             .finally(() => setLoading(false))
     }, [year])
 
-    const handleBarClick = (event: any, chartContext: any, { dataPointIndex }: any) => {
+    const handleBarClick = (_event: never, _chartContext: never, { dataPointIndex }: never) => {
         setSelectedMonth(dataPointIndex + 1)
     }
     const chartOptions = {
