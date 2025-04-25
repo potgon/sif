@@ -1,5 +1,5 @@
 import FinanceMetrics from "../../components/finances/FinanceMetrics.tsx";
-import MonthlyExpensesChart from "../../components/finances/MonthlyExpensesChart.tsx";
+import AnnualExpensesChart from "../../components/finances/AnnualExpensesChart.tsx";
 import StatisticsChart from "../../components/finances/StatisticsChart";
 import MonthlyTarget from "../../components/finances/MonthlyTarget";
 import RecentOrders from "../../components/finances/RecentOrders";
@@ -72,7 +72,7 @@ export default function Home() {
                 <div className="col-span-12 space-y-6 xl:col-span-7">
                     <FinanceMetrics year={Number(selectedYear)} month={Number(selectedMonth)}/>
 
-                    <MonthlyExpensesChart year={Number(selectedYear)} month={Number(selectedMonth)}/>
+                    <AnnualExpensesChart year={Number(selectedYear)}/>
                 </div>
 
                 <div className="col-span-12 xl:col-span-5">

@@ -58,3 +58,11 @@ enum CategoryType {
     DEBT = "DEBT",
 }
 
+export interface MonthlyExpenseTarget {
+    currentExpensePercentage: number
+    targetExpense: number
+    currentExpense: number
+    surplus: number
+    accumulated: number
+}
+

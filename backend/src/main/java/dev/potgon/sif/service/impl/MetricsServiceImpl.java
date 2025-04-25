@@ -4,6 +4,7 @@ import dev.potgon.sif.dto.CategoryTypeEnum;
 import dev.potgon.sif.dto.TransactionDTO;
 import dev.potgon.sif.dto.response.AnnualExpensesDTO;
 import dev.potgon.sif.dto.response.MonthlyMetricsDTO;
+import dev.potgon.sif.dto.response.MonthlyTargetDTO;
 import dev.potgon.sif.dto.response.MonthlyTransactionsDTO;
 import dev.potgon.sif.entity.Category;
 import dev.potgon.sif.entity.Period;
@@ -83,6 +84,14 @@ public class MetricsServiceImpl implements MetricsService {
                 .year(year)
                 .month(month)
                 .transactions(transactions)
+                .build();
+    }
+
+    @Override
+    public MonthlyTargetDTO getMonthlyTarget(int year, int month) {
+        Period period = periodRepo.findByYearAndMonth(year, month);
+        return MonthlyTargetDTO.builder()
+
                 .build();
     }
 
