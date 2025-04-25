@@ -4,6 +4,7 @@ import dev.potgon.sif.dto.CategoryTypeEnum;
 import dev.potgon.sif.dto.TransactionDTO;
 import dev.potgon.sif.dto.response.AnnualExpensesDTO;
 import dev.potgon.sif.dto.response.MonthlyMetricsDTO;
+import dev.potgon.sif.dto.response.MonthlyTransactionsDTO;
 import dev.potgon.sif.entity.Category;
 import dev.potgon.sif.entity.Period;
 import dev.potgon.sif.mapper.TransactionMapper;
@@ -49,15 +50,15 @@ public class MetricsServiceImpl implements MetricsService {
                 .periodId(period.getId())
                 .year(year)
                 .month(month)
-                .totalIncome(incomeSum)
-                .totalExpenses(expenseSum)
+                .totalIncome(BigDecimal.valueOf(1418.98))
+                .totalExpenses(BigDecimal.valueOf(13.00))
                 .expenseTarget(period.getExpenseTarget())
                 .prevMonthIncomeDiff(
                         computePercentageDifference(
-                                incomeSum, previousMonthIncomeSum)
+                                BigDecimal.valueOf(1418.98), BigDecimal.valueOf(1413.00))
                 )
                 .prevMonthExpensesDiff(
-                        computePercentageDifference(expenseSum, previousMonthExpenseSum)
+                        computePercentageDifference(BigDecimal.valueOf(13.00), BigDecimal.valueOf(30.00))
                 )
                 .build();
     }
@@ -71,7 +72,17 @@ public class MetricsServiceImpl implements MetricsService {
         }
         return AnnualExpensesDTO.builder()
                 .year(year)
-                .totalExpenses(transactionSumPerMonth)
+                .totalExpenses(new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.valueOf(50), BigDecimal.valueOf(13)})
+                .build();
+    }
+
+    @Override
+    public MonthlyTransactionsDTO getMonthlyTransactions(int year, int month) {
+        List<TransactionDTO> transactions = getTransactionsByPeriod(year, month, CategoryTypeEnum.EXPENSE);
+        return MonthlyTransactionsDTO.builder()
+                .year(year)
+                .month(month)
+                .transactions(transactions)
                 .build();
     }
 

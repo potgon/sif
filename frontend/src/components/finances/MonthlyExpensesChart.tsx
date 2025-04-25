@@ -9,7 +9,7 @@ interface Props {
     year: number
 }
 
-export default function MonthlySalesChart({year}: Readonly<Props>) {
+export default function MonthlyExpensesChart({year}: Readonly<Props>) {
     const [annualData, setAnnualData] = useState<AnnualMetrics | null>(null)
     const [loading, setLoading] = useState(true)
     const [selectedMonth, setSelectedMonth] = useState<number | null>(null)
@@ -30,7 +30,7 @@ export default function MonthlySalesChart({year}: Readonly<Props>) {
             .finally(() => setLoading(false))
     }, [year])
 
-    const handleBarClick = (dataPointIndex: any) => {
+    const handleBarClick = (event: any, chartContext: any, { dataPointIndex }: any) => {
         setSelectedMonth(dataPointIndex + 1)
     }
     const chartOptions = {

@@ -24,7 +24,7 @@ export const fetchMonthlyTransactions = async (
     year: number,
     month: number
 ): Promise<MonthlyTransactions> => {
-    const response = await apiClient.get("/transactions/monthly", {
+    const response = await apiClient.get("/metrics/monthly/transactions", {
         params: {year, month},
     })
     return response.data

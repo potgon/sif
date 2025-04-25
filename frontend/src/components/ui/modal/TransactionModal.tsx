@@ -60,8 +60,8 @@ export default function TransactionModal({ year, month, onClose }: Readonly<Prop
                                 <p
                                     className={`text-lg font-bold ${
                                         tx.category.categoryType === "INCOME"
-                                            ? "text-green-600"
-                                            : "text-red-600"
+                                            ? "text-green-300"
+                                            : "text-red-400"
                                     }`}
                                 >
                                     € {tx.amount.toFixed(2)}
