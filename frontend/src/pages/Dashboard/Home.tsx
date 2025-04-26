@@ -8,18 +8,18 @@ import PageMeta from "../../components/common/PageMeta";
 import {useState} from "react";
 
 const months = [
-    {label: "January", value: 1},
-    {label: "February", value: 2},
-    {label: "March", value: 3},
-    {label: "April", value: 4},
-    {label: "May", value: 5},
-    {label: "June", value: 6},
-    {label: "July", value: 7},
-    {label: "August", value: 8},
-    {label: "September", value: 9},
-    {label: "October", value: 10},
-    {label: "November", value: 11},
-    {label: "December", value: 12},
+    {label: "Enero", value: 1},
+    {label: "Febrero", value: 2},
+    {label: "Marzo", value: 3},
+    {label: "Abril", value: 4},
+    {label: "Mayo", value: 5},
+    {label: "Junio", value: 6},
+    {label: "Julio", value: 7},
+    {label: "Agosto", value: 8},
+    {label: "Septiembre", value: 9},
+    {label: "Octubre", value: 10},
+    {label: "Noviembre", value: 11},
+    {label: "Diciembre", value: 12},
 ]
 
 const years = Array.from({length: 5}, (_, i) => new Date().getFullYear() - i)
@@ -37,7 +37,7 @@ export default function Home() {
             />
 
             <div className="flex flex-col items-start justify-between gap-4 mb-6 sm:flex-row sm:items-center">
-                <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Dashboard</h2>
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Panel de Control</h2>
 
                 <div className="flex gap-3">
                     {/* Year Selector */}

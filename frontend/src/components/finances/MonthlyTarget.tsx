@@ -90,10 +90,10 @@ export default function MonthlyTarget({year, month}: Props) {
                 <div className="flex justify-between">
                     <div>
                         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-                            Monthly Target Expenses
+                            Objetivo de Gastos Mensuales
                         </h3>
                         <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
-                            Expense target details you’ve set for each month
+                            Detalles del objetivo de gasto que has establecido para este mes
                         </p>
                     </div>
                     <div className="relative inline-block">
@@ -109,7 +109,7 @@ export default function MonthlyTarget({year, month}: Props) {
                                 onItemClick={closeDropdown}
                                 className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                             >
-                                View More
+                                Ver más
                             </DropdownItem>
                         </Dropdown>
                     </div>
@@ -125,7 +125,7 @@ export default function MonthlyTarget({year, month}: Props) {
                     </div>
                 </div>
                 <p className="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
-                    You've set up a target expense of {data?.targetExpense ?? '...'}€ for this month
+                    Has establecido un objetivo de gastos de {data?.targetExpense ?? '...'}€ para este mes
                 </p>
             </div>
 
