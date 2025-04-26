@@ -26,6 +26,9 @@ public class Period {
     @Column(name = "starting_balance", nullable = false, precision = 12, scale = 2)
     private BigDecimal startingBalance;
 
-    @Column(name = "expense_target", precision = 12, scale = 2)
-    private BigDecimal expenseTarget;
+    @Column(name = "period_salary", precision = 12, scale = 2)
+    private BigDecimal periodSalary;
+
+    @Column(name = "extra_pay", precision = 12, scale = 2)
+    private BigDecimal extraPay;
 }

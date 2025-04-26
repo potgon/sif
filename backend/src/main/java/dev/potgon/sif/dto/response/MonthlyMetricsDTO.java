@@ -10,9 +10,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class MonthlyMetricsDTO {
-    private Long periodId;
-    private Integer year;
-    private Integer month;
     private BigDecimal totalIncome;
     private BigDecimal totalExpenses;
     private BigDecimal expenseTarget;

@@ -1,10 +1,6 @@
 export interface MonthlyMetrics {
-    periodId: number
-    year: number
-    month: number
     totalIncome: number
     totalExpenses: number
-    expenseTarget: number
     prevMonthIncomeDiff: number
     prevMonthExpensesDiff: number
 }

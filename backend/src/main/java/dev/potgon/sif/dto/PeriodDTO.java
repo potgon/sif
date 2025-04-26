@@ -13,5 +13,6 @@ public class PeriodDTO {
     private Integer year;
     private Integer month;
     private BigDecimal startingBalance;
-    private BigDecimal expenseTarget;
+    private BigDecimal periodSalary;
+    private BigDecimal extraPay;
 }
