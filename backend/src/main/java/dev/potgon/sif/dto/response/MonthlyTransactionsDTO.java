@@ -11,7 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class MonthlyTransactionsDTO {
-    int year;
-    int month;
     List<TransactionDTO> transactions;
 }

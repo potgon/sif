@@ -11,6 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class AnnualExpensesDTO {
-    private int year;
     private BigDecimal[] totalExpenses;
 }

@@ -41,3 +41,12 @@ insert into transactions
 (amount, created_at, date, description, is_recurring, notes, category_id, period_id, subcategory_id)
 values (50.00, NOW(), '2025-04-23', 'Mercadona (otros)', FALSE,
         NULL, 2, 2, 3);
+
+insert into params (created_at, name, value)
+VALUES (NOW(), 'SALARY', '1418.98')
+
+insert into params (created_at, name, value)
+VALUES (NOW(), 'EXPENSE_TARGET', '30')
+
+insert into balance_snapshot (current_amount, last_updated, type)
+values (0, NOW(), 'SURPLUS')

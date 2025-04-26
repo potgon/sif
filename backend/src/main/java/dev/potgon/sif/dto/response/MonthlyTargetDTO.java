@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public class MonthlyTargetDTO {
     private BigDecimal currentExpensePercentage;
     private BigDecimal targetExpense;
-    private BigDecimal currentExpense;
+    private BigDecimal targetPercentage;
     private BigDecimal surplus;
     private BigDecimal accumulated;
 }

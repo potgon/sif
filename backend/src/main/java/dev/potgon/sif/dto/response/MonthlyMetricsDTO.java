@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 public class MonthlyMetricsDTO {
     private BigDecimal totalIncome;
     private BigDecimal totalExpenses;
-    private BigDecimal expenseTarget;
     private BigDecimal prevMonthIncomeDiff;
     private BigDecimal prevMonthExpensesDiff;
 }

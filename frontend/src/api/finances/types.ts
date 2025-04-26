@@ -6,13 +6,10 @@ export interface MonthlyMetrics {
 }
 
 export interface AnnualMetrics {
-    year: number
     totalExpenses: number[]
 }
 
 export interface MonthlyTransactions {
-    year: number
-    month: number
     transactions: Transaction[]
 }
 
@@ -34,7 +31,8 @@ export interface Period {
     year: number
     month: number
     startingBalance: number
-    expenseTarget: number
+    periodSalary: number
+    extraPay: number
 }
 
 export interface Category {
@@ -57,7 +55,7 @@ enum CategoryType {
 export interface MonthlyExpenseTarget {
     currentExpensePercentage: number
     targetExpense: number
-    currentExpense: number
+    targetPercentage: number
     surplus: number
     accumulated: number
 }

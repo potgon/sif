@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "balance_history")
+@Table(name = "app_state")
 @Getter
 @Setter
 @NoArgsConstructor

@@ -6,7 +6,6 @@ import dev.potgon.sif.dto.response.AnnualExpensesDTO;
 import dev.potgon.sif.dto.response.MonthlyMetricsDTO;
 import dev.potgon.sif.dto.response.MonthlyTargetDTO;
 import dev.potgon.sif.dto.response.MonthlyTransactionsDTO;
-import dev.potgon.sif.entity.Period;
 import dev.potgon.sif.service.MetricsService;
 import dev.potgon.sif.utils.Constants;
 import dev.potgon.sif.utils.FinanceUtils;
@@ -38,7 +37,6 @@ public class MetricsServiceImpl implements MetricsService {
         return MonthlyMetricsDTO.builder()
                 .totalIncome(BigDecimal.valueOf(1418.98))
                 .totalExpenses(BigDecimal.valueOf(13.00))
-                .expenseTarget(financeUtils.getBigDecimalParam(Constants.PARAM_EXPENSE_TARGET))
                 .prevMonthIncomeDiff(
                         financeUtils.computePercentageDifference(
                                 BigDecimal.valueOf(1418.98), BigDecimal.valueOf(1413.00))
@@ -57,7 +55,6 @@ public class MetricsServiceImpl implements MetricsService {
                     .setScale(0, RoundingMode.HALF_UP);
         }
         return AnnualExpensesDTO.builder()
-                .year(year)
                 .totalExpenses(new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.valueOf(50), BigDecimal.valueOf(13)})
                 .build();
     }
@@ -66,8 +63,6 @@ public class MetricsServiceImpl implements MetricsService {
     public MonthlyTransactionsDTO getMonthlyTransactions(int year, int month) {
         List<TransactionDTO> transactions = financeUtils.getTransactionsByPeriod(year, month, CategoryTypeEnum.EXPENSE);
         return MonthlyTransactionsDTO.builder()
-                .year(year)
-                .month(month)
                 .transactions(transactions)
                 .build();
     }
@@ -87,9 +82,14 @@ public class MetricsServiceImpl implements MetricsService {
 
     @Override
     public MonthlyTargetDTO getMonthlyTarget(int year, int month) {
-        Period period = financeUtils.getPeriodIfExists(year, month);
         return MonthlyTargetDTO.builder()
-
+                .currentExpensePercentage(
+                        financeUtils.computeCurrentMonthExpenseTargetAsPercentage(year, month)
+                )
+                .targetExpense(financeUtils.computeExpenseTargetAmount(year, month))
+                .targetPercentage(financeUtils.getBigDecimalParam(Constants.PARAM_EXPENSE_TARGET))
+                .surplus(financeUtils.computeCurrentMonthSurplusAmount(year, month))
+                .accumulated(financeUtils.getCurrentSurplus())
                 .build();
     }
 

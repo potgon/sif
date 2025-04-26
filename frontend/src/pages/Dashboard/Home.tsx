@@ -76,7 +76,7 @@ export default function Home() {
                 </div>
 
                 <div className="col-span-12 xl:col-span-5">
-                    <MonthlyTarget/>
+                    <MonthlyTarget year={Number(selectedYear)} month={Number(selectedMonth)}/>
                 </div>
 
                 <div className="col-span-12">

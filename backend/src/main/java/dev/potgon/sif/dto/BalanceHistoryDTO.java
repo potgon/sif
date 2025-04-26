@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BalanceHistory {
+public class BalanceHistoryDTO {
 
     private Long id;
     private BalanceType type;

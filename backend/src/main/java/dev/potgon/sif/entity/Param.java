@@ -26,10 +26,4 @@ public class Param {
 
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
-
-    /*Current params
-    -Salary (€)
-    -Expense Target (%)
-    -Inversion Target (%)
-    * */
 }

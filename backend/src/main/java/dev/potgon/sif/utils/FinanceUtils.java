@@ -1,16 +1,15 @@
 package dev.potgon.sif.utils;
 
+import dev.potgon.sif.dto.BalanceType;
 import dev.potgon.sif.dto.CategoryTypeEnum;
 import dev.potgon.sif.dto.TransactionDTO;
+import dev.potgon.sif.entity.BalanceSnapshot;
 import dev.potgon.sif.entity.Category;
 import dev.potgon.sif.entity.Period;
 import dev.potgon.sif.exception.BusinessException;
 import dev.potgon.sif.exception.ResourceNotFoundException;
 import dev.potgon.sif.mapper.TransactionMapper;
-import dev.potgon.sif.repository.CategoryRepository;
-import dev.potgon.sif.repository.ParamRepository;
-import dev.potgon.sif.repository.PeriodRepository;
-import dev.potgon.sif.repository.TransactionRepository;
+import dev.potgon.sif.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +27,7 @@ public class FinanceUtils {
     private final TransactionRepository transactionRepo;
     private final PeriodRepository periodRepo;
     private final CategoryRepository categoryRepo;
+    private final BalanceSnapshotRepository balanceSnapshotRepo;
     private final ParamRepository paramRepo;
 
     private final TransactionMapper transactionMapper;
@@ -68,19 +68,22 @@ public class FinanceUtils {
                 .multiply(BigDecimal.valueOf(100));
     }
 
-    public BigDecimal getBigDecimalParam(String value) {
+    public BigDecimal getBigDecimalParam(String paramName) {
         BigDecimal result;
         try {
-            result = BigDecimal.valueOf(Double.parseDouble(value));
+            String paramValue = paramRepo.findByName(paramName).getValue();
+            result = BigDecimal.valueOf(Double.parseDouble(paramValue));
         } catch (NumberFormatException e) {
-            log.error("Error while parsing parameter: {} | Not a BigDecimal", value);
-            throw new BusinessException("Error parsing parameter: " + value);
+            log.error("Error while parsing parameter: {} | Not a BigDecimal", paramName);
+            throw new BusinessException("Error parsing parameter: " + paramName);
+        } catch (Exception ex) {
+            throw new BusinessException("Error recovering parameter: " + paramName);
         }
         return result;
     }
 
     public BigDecimal getSummedIncomeAmount(int year, int month) {
-        BigDecimal salary = getBigDecimalParam(Constants.PARAM_SALARY_NAME);
+        BigDecimal salary = getBigDecimalParam(Constants.PARAM_SALARY);
         Optional<BigDecimal> extraPay = getPeriodExtraPayIfExists(year, month);
         return extraPay.map(bigDecimal -> bigDecimal.add(salary)).orElse(salary);
     }
@@ -88,5 +91,44 @@ public class FinanceUtils {
     public int getPreviousMonth(int month) {
         if (month == 12) return 1;
         return month - 1;
+    }
+
+    public BigDecimal computeExpenseTargetAmount(int year, int month) {
+        BigDecimal income = getSummedIncomeAmount(year, month);
+        BigDecimal expenseTargetPercentage = getBigDecimalParam(Constants.PARAM_EXPENSE_TARGET);
+
+        return expenseTargetPercentage
+                .divide(Constants.BD_ONE_HUNDRED, 4, RoundingMode.HALF_UP)
+                .multiply(income)
+                .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal computeCurrentMonthExpenseTargetAsPercentage(int year, int month) {
+        BigDecimal expenseTargetAmount = computeExpenseTargetAmount(year, month);
+
+        if (expenseTargetAmount.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal actualExpense = sumAllTransactions(
+                getTransactionsByPeriod(year, month, CategoryTypeEnum.EXPENSE)
+        );
+
+        return actualExpense
+                .divide(expenseTargetAmount, 4, RoundingMode.HALF_UP)
+                .multiply(Constants.BD_ONE_HUNDRED)
+                .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal computeCurrentMonthSurplusAmount(int year, int month) {
+        BigDecimal targetAmount = computeExpenseTargetAmount(year, month);
+        BigDecimal currentMonthExpenses = sumAllTransactions(getTransactionsByPeriod(year, month, CategoryTypeEnum.EXPENSE));
+        return targetAmount.subtract(currentMonthExpenses);
+    }
+
+    public BigDecimal getCurrentSurplus() {
+        BalanceSnapshot surplus = balanceSnapshotRepo.findBalanceSnapshotByType(BalanceType.SURPLUS);
+        if (surplus == null) return BigDecimal.ZERO;
+        return surplus.getCurrentAmount();
     }
 }

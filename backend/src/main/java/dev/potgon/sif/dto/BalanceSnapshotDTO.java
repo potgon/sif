@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BalanceSnapshot {
+public class BalanceSnapshotDTO {
 
     private Long id;
     private BalanceType type;
