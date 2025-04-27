@@ -3,6 +3,7 @@ package dev.potgon.sif.utils;
 import dev.potgon.sif.dto.BalanceType;
 import dev.potgon.sif.dto.CategoryTypeEnum;
 import dev.potgon.sif.dto.TransactionDTO;
+import dev.potgon.sif.dto.TransactionRowDTO;
 import dev.potgon.sif.entity.BalanceSnapshot;
 import dev.potgon.sif.entity.Category;
 import dev.potgon.sif.entity.Period;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -130,5 +132,19 @@ public class FinanceUtils {
         BalanceSnapshot surplus = balanceSnapshotRepo.findBalanceSnapshotByType(BalanceType.SURPLUS);
         if (surplus == null) return BigDecimal.ZERO;
         return surplus.getCurrentAmount();
+    }
+
+    public List<TransactionRowDTO> buildTransactionRowDTO(List<TransactionDTO> transactions) {
+        List<TransactionRowDTO> result = new ArrayList<>();
+        for (TransactionDTO transaction : transactions) {
+            result.add(TransactionRowDTO.builder()
+                    .id(transaction.getId())
+                    .amount(transaction.getAmount())
+                    .date(transaction.getDate())
+                    .isRecurring(transaction.getIsRecurring())
+                    .subcategory(transaction.getSubcategory())
+                    .build());
+        }
+        return result;
     }
 }

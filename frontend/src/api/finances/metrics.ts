@@ -1,5 +1,11 @@
 import apiClient from "../client.ts"
-import {AnnualMetrics, MonthlyExpenseTarget, MonthlyMetrics, MonthlyTransactions} from "./types.ts";
+import {
+    AnnualMetrics,
+    MonthlyExpenseTarget,
+    MonthlyMetrics,
+    MonthlyTransactionRows,
+    MonthlyTransactions
+} from "./types.ts";
 
 export const fetchMonthlyMetrics = async (
     year: number,
@@ -35,6 +41,16 @@ export const fetchMonthlyExpenseTarget = async (
     month: number
 ): Promise<MonthlyExpenseTarget> => {
     const response = await apiClient.get("/metrics/monthly/target", {
+        params: {year, month},
+    })
+    return response.data
+}
+
+export const fetchMonthlyTransactionRows = async (
+    year: number,
+    month: number
+): Promise<MonthlyTransactionRows> => {
+    const response = await apiClient.get("/metrics/monthly/transaction/rows", {
         params: {year, month},
     })
     return response.data

@@ -1,9 +1,6 @@
 package dev.potgon.sif.controller;
 
-import dev.potgon.sif.dto.response.AnnualExpensesDTO;
-import dev.potgon.sif.dto.response.MonthlyMetricsDTO;
-import dev.potgon.sif.dto.response.MonthlyTargetDTO;
-import dev.potgon.sif.dto.response.MonthlyTransactionsDTO;
+import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.service.MetricsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +44,14 @@ public class MetricsController {
             @RequestParam int month
     ) {
         return ResponseEntity.ok(metricsService.getMonthlyTarget(year, month));
+    }
+
+    @GetMapping("/monthly/transaction/rows")
+    public ResponseEntity<MonthlyTransactionRowDTO> getMonthlyTransactionRows(
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        return ResponseEntity.ok(metricsService.getMonthlyTransactionRow(year, month));
     }
 }
 

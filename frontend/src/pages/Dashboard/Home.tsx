@@ -2,7 +2,7 @@ import FinanceMetrics from "../../components/finances/FinanceMetrics.tsx";
 import AnnualExpensesChart from "../../components/finances/AnnualExpensesChart.tsx";
 import StatisticsChart from "../../components/finances/StatisticsChart";
 import MonthlyTarget from "../../components/finances/MonthlyTarget";
-import RecentOrders from "../../components/finances/RecentOrders";
+import RecentTransactions from "../../components/finances/RecentTransactions.tsx";
 import DemographicCard from "../../components/finances/DemographicCard";
 import PageMeta from "../../components/common/PageMeta";
 import {useState} from "react";
@@ -88,7 +88,7 @@ export default function Home() {
                 </div>
 
                 <div className="col-span-12 xl:col-span-7">
-                    <RecentOrders/>
+                    <RecentTransactions year={Number(selectedYear)} month={Number(selectedMonth)}/>
                 </div>
             </div>
         </>

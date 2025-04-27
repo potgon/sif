@@ -2,10 +2,7 @@ package dev.potgon.sif.service.impl;
 
 import dev.potgon.sif.dto.CategoryTypeEnum;
 import dev.potgon.sif.dto.TransactionDTO;
-import dev.potgon.sif.dto.response.AnnualExpensesDTO;
-import dev.potgon.sif.dto.response.MonthlyMetricsDTO;
-import dev.potgon.sif.dto.response.MonthlyTargetDTO;
-import dev.potgon.sif.dto.response.MonthlyTransactionsDTO;
+import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.service.MetricsService;
 import dev.potgon.sif.utils.Constants;
 import dev.potgon.sif.utils.FinanceUtils;
@@ -67,19 +64,6 @@ public class MetricsServiceImpl implements MetricsService {
                 .build();
     }
 
-    /*
-    1-Current expense %
-    2-Target expense €
-    3-Current total expense €
-    4-Current month surplus €
-    5-Total accumulated €
-     */
-    //1-2 Recover params salary and expense target and sum all transactions.
-    //Get target amount as € and compute % used of target
-    //3 Recover params expenseTarget(%) and salary(€) and calculate
-    //4 Sum all transactions and subtract from expenseTarget
-    //5 Recover BalanceSnapshot with currentAmount where type is Surplus
-
     @Override
     public MonthlyTargetDTO getMonthlyTarget(int year, int month) {
         return MonthlyTargetDTO.builder()
@@ -93,5 +77,12 @@ public class MetricsServiceImpl implements MetricsService {
                 .build();
     }
 
+    @Override
+    public MonthlyTransactionRowDTO getMonthlyTransactionRow(int year, int month) {
+        List<TransactionDTO> transactions = financeUtils.getTransactionsByPeriod(year, month, CategoryTypeEnum.EXPENSE);
+        return MonthlyTransactionRowDTO.builder()
+                .transactions(financeUtils.buildTransactionRowDTO(transactions))
+                .build();
+    }
 }
 
