@@ -12,7 +12,7 @@ interface Props {
     month: number,
 }
 
-export default function MonthlyTarget({year, month}: Props) {
+export default function MonthlyTarget({year, month}: Readonly<Props>) {
     const options: ApexOptions = {
         colors: ["#465FFF"],
         chart: {
@@ -132,7 +132,7 @@ export default function MonthlyTarget({year, month}: Props) {
             <div className="flex items-center justify-center gap-5 px-6 py-3.5 sm:gap-8 sm:py-5">
                 <div>
                     <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
-                        Target
+                        Objetivo
                     </p>
                     <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
                         {data?.targetPercentage ?? '...'}%
@@ -143,7 +143,7 @@ export default function MonthlyTarget({year, month}: Props) {
 
                 <div>
                     <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
-                        Surplus
+                        Superávit
                     </p>
                     <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
                         {data?.surplus ?? '...'}€
@@ -154,7 +154,7 @@ export default function MonthlyTarget({year, month}: Props) {
 
                 <div>
                     <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
-                        Accumulated
+                        Acumulado
                     </p>
                     <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800 dark:text-white/90 sm:text-lg">
                         {data?.accumulated ?? '...'}€

@@ -41,7 +41,7 @@ export default function FinanceMetrics({year, month}: Readonly<Props>) {
                 <div className="flex items-end justify-between mt-5">
                     <div>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              Income
+              Ingresos
             </span>
                         <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
                             {loading ? "..." : data?.totalIncome?.toFixed(2)}€
@@ -66,7 +66,7 @@ export default function FinanceMetrics({year, month}: Readonly<Props>) {
                 <div className="flex items-end justify-between mt-5">
                     <div>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              Expense
+              Gastos
             </span>
                         <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
                             {loading ? "..." : data?.totalExpenses}€

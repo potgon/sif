@@ -24,13 +24,13 @@ export default function TransactionModal({ year, month, onClose }: Readonly<Prop
     return (
         <Modal isOpen={true} onClose={onClose} className="max-w-3xl w-full p-6">
             <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">
-                Transactions for {year}-{String(month).padStart(2, "0")}
+                Transacciones de {year}-{String(month).padStart(2, "0")}
             </h2>
 
             {loading ? (
-                <p className="text-gray-500 dark:text-gray-400">Loading...</p>
+                <p className="text-gray-500 dark:text-gray-400">Cargando...</p>
             ) : !data || data.transactions.length === 0 ? (
-                <p className="text-gray-500 dark:text-gray-400">No transactions found.</p>
+                <p className="text-gray-500 dark:text-gray-400">No se han encontrado transacciones.</p>
             ) : (
                 <ul className="space-y-3 max-h-[500px] overflow-y-auto">
                     {data.transactions.map((tx) => (
@@ -52,7 +52,7 @@ export default function TransactionModal({ year, month, onClose }: Readonly<Prop
                                     </p>
                                     {tx.isRecurring && (
                                         <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                                            Recurring
+                                            Recurrente
                                         </p>
                                     )}
                                 </div>

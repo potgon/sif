@@ -28,14 +28,14 @@ export const options: ApexOptions = {
     },
     xaxis: {
         categories: [
-            "Jan",
+            "Ene",
             "Feb",
             "Mar",
-            "Apr",
+            "Abr",
             "May",
             "Jun",
             "Jul",
-            "Aug",
+            "Ago",
             "Sep",
             "Oct",
             "Nov",
