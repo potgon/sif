@@ -24,11 +24,11 @@ public class MetricsServiceImpl implements MetricsService {
     public MonthlyMetricsDTO getMonthlyMetrics(int year, int month) {
         BigDecimal incomeSum = financeUtils.getSummedIncomeAmount(year, month);
         BigDecimal expenseSum = financeUtils.sumAllTransactions(
-                financeUtils.getTransactionsByPeriod(year, month, CategoryTypeEnum.EXPENSE)
+                financeUtils.getTransactionsByPeriodAndCategory(year, month, CategoryTypeEnum.EXPENSE)
         );
         BigDecimal previousMonthIncomeSum = financeUtils.getSummedIncomeAmount(year, financeUtils.getPreviousMonth(month));
         BigDecimal previousMonthExpenseSum = financeUtils.sumAllTransactions(
-                financeUtils.getTransactionsByPeriod(year, financeUtils.getPreviousMonth(month), CategoryTypeEnum.EXPENSE)
+                financeUtils.getTransactionsByPeriodAndCategory(year, financeUtils.getPreviousMonth(month), CategoryTypeEnum.EXPENSE)
         );
 
         return MonthlyMetricsDTO.builder()
@@ -48,7 +48,7 @@ public class MetricsServiceImpl implements MetricsService {
     public AnnualExpensesDTO getAnnualExpenses(int year) {
         BigDecimal[] transactionSumPerMonth = new BigDecimal[12];
         for (int i = 0; i <= 11; i++) {
-            transactionSumPerMonth[i] = financeUtils.sumAllTransactions(financeUtils.getTransactionsByPeriod(year, i + 1, CategoryTypeEnum.EXPENSE))
+            transactionSumPerMonth[i] = financeUtils.sumAllTransactions(financeUtils.getTransactionsByPeriodAndCategory(year, i + 1, CategoryTypeEnum.EXPENSE))
                     .setScale(0, RoundingMode.HALF_UP);
         }
         return AnnualExpensesDTO.builder()
@@ -58,7 +58,7 @@ public class MetricsServiceImpl implements MetricsService {
 
     @Override
     public MonthlyTransactionsDTO getMonthlyTransactions(int year, int month) {
-        List<TransactionDTO> transactions = financeUtils.getTransactionsByPeriod(year, month, CategoryTypeEnum.EXPENSE);
+        List<TransactionDTO> transactions = financeUtils.getTransactionsByPeriodAndCategory(year, month, CategoryTypeEnum.EXPENSE);
         return MonthlyTransactionsDTO.builder()
                 .transactions(transactions)
                 .build();
@@ -78,10 +78,16 @@ public class MetricsServiceImpl implements MetricsService {
     }
 
     @Override
-    public MonthlyTransactionRowDTO getMonthlyTransactionRow(int year, int month) {
-        List<TransactionDTO> transactions = financeUtils.getTransactionsByPeriod(year, month, CategoryTypeEnum.EXPENSE);
-        return MonthlyTransactionRowDTO.builder()
-                .transactions(financeUtils.buildTransactionRowDTO(transactions))
+    public MonthlySubcategoryExpenseDTO getMonthlyTransactionSubcategorySum(int year, int month) {
+        List<TransactionDTO> transactions = financeUtils.getTransactionsByPeriodAndCategory(year, month, CategoryTypeEnum.EXPENSE);
+        return financeUtils.computeSubcategoryExpenses(transactions);
+    }
+
+    @Override
+    public MonthlyTransactionsDTO getMonthlyTransactionBySubcategory(int year, int month, String subcategory) {
+        List<TransactionDTO> transactions = financeUtils.getTransactionsByPeriodAndSubcategory(year, month, subcategory);
+        return MonthlyTransactionsDTO.builder()
+                .transactions(transactions)
                 .build();
     }
 }

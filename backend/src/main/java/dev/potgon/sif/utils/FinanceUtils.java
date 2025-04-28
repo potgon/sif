@@ -1,12 +1,11 @@
 package dev.potgon.sif.utils;
 
-import dev.potgon.sif.dto.BalanceType;
-import dev.potgon.sif.dto.CategoryTypeEnum;
-import dev.potgon.sif.dto.TransactionDTO;
-import dev.potgon.sif.dto.TransactionRowDTO;
+import dev.potgon.sif.dto.*;
+import dev.potgon.sif.dto.response.MonthlySubcategoryExpenseDTO;
 import dev.potgon.sif.entity.BalanceSnapshot;
 import dev.potgon.sif.entity.Category;
 import dev.potgon.sif.entity.Period;
+import dev.potgon.sif.entity.Subcategory;
 import dev.potgon.sif.exception.BusinessException;
 import dev.potgon.sif.exception.ResourceNotFoundException;
 import dev.potgon.sif.mapper.TransactionMapper;
@@ -17,9 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +28,7 @@ public class FinanceUtils {
     private final CategoryRepository categoryRepo;
     private final BalanceSnapshotRepository balanceSnapshotRepo;
     private final ParamRepository paramRepo;
+    private final SubcategoryRepository subcategoryRepo;
 
     private final TransactionMapper transactionMapper;
 
@@ -48,11 +46,26 @@ public class FinanceUtils {
         return Optional.of(period.getExtraPay());
     }
 
-    public List<TransactionDTO> getTransactionsByPeriod(int year, int month, CategoryTypeEnum categoryType) {
+    public List<TransactionDTO> getTransactionsByPeriodAndCategory(int year, int month, CategoryTypeEnum categoryType) {
         Category category = categoryRepo.findByName(categoryType);
         Period period = getPeriodIfExists(year, month);
 
         return transactionRepo.findAllByPeriodAndCategoryOrderByDateDesc(period, category)
+                .stream().map(transactionMapper::toDTO).toList();
+    }
+
+    public List<TransactionDTO> getTransactionsByPeriod(int year, int month) {
+        Period period = getPeriodIfExists(year, month);
+
+        return transactionRepo.findAllByPeriod(period)
+                .stream().map(transactionMapper::toDTO).toList();
+    }
+
+    public List<TransactionDTO> getTransactionsByPeriodAndSubcategory(int year, int month, String subcategory) {
+        Period period = getPeriodIfExists(year, month);
+        Subcategory subcategoryEntity = subcategoryRepo.findByName(subcategory);
+
+        return transactionRepo.findAllByPeriodAndSubcategory(period, subcategoryEntity)
                 .stream().map(transactionMapper::toDTO).toList();
     }
 
@@ -113,7 +126,7 @@ public class FinanceUtils {
         }
 
         BigDecimal actualExpense = sumAllTransactions(
-                getTransactionsByPeriod(year, month, CategoryTypeEnum.EXPENSE)
+                getTransactionsByPeriodAndCategory(year, month, CategoryTypeEnum.EXPENSE)
         );
 
         return actualExpense
@@ -124,7 +137,7 @@ public class FinanceUtils {
 
     public BigDecimal computeCurrentMonthSurplusAmount(int year, int month) {
         BigDecimal targetAmount = computeExpenseTargetAmount(year, month);
-        BigDecimal currentMonthExpenses = sumAllTransactions(getTransactionsByPeriod(year, month, CategoryTypeEnum.EXPENSE));
+        BigDecimal currentMonthExpenses = sumAllTransactions(getTransactionsByPeriodAndCategory(year, month, CategoryTypeEnum.EXPENSE));
         return targetAmount.subtract(currentMonthExpenses);
     }
 
@@ -134,17 +147,25 @@ public class FinanceUtils {
         return surplus.getCurrentAmount();
     }
 
-    public List<TransactionRowDTO> buildTransactionRowDTO(List<TransactionDTO> transactions) {
-        List<TransactionRowDTO> result = new ArrayList<>();
-        for (TransactionDTO transaction : transactions) {
-            result.add(TransactionRowDTO.builder()
-                    .id(transaction.getId())
-                    .amount(transaction.getAmount())
-                    .date(transaction.getDate())
-                    .isRecurring(transaction.getIsRecurring())
-                    .subcategory(transaction.getSubcategory())
-                    .build());
+    public MonthlySubcategoryExpenseDTO computeSubcategoryExpenses(List<TransactionDTO> transactions) {
+        Map<SubcategoryDTO, BigDecimal> subcategorySums = new HashMap<>();
+
+        for (TransactionDTO tx : transactions) {
+            SubcategoryDTO subDTO = SubcategoryDTO.builder()
+                    .id(tx.getId())
+                    .name(tx.getSubcategory().getName())
+                    .build();
+            subcategorySums.merge(subDTO, tx.getAmount(), BigDecimal::add);
         }
-        return result;
+
+        List<SubcategoryExpenseDTO> expenses = subcategorySums.entrySet().stream()
+                .map(entry -> SubcategoryExpenseDTO.builder()
+                        .subcategory(entry.getKey())
+                        .amount(entry.getValue())
+                        .build())
+                .sorted(Comparator.comparing(dto -> dto.getSubcategory().getName()))
+                .toList();
+        return MonthlySubcategoryExpenseDTO.builder().subcategoryExpenses(expenses).build();
     }
+
 }

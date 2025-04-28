@@ -1,6 +1,6 @@
 package dev.potgon.sif.dto.response;
 
-import dev.potgon.sif.dto.TransactionDTO;
+import dev.potgon.sif.dto.SubcategoryExpenseDTO;
 import lombok.*;
 
 import java.util.List;
@@ -10,6 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MonthlyTransactionRowDTO {
-    private List<TransactionDTO> transactions;
+public class MonthlySubcategoryExpenseDTO {
+    List<SubcategoryExpenseDTO> subcategoryExpenses;
 }

@@ -60,14 +60,17 @@ export interface MonthlyExpenseTarget {
     accumulated: number
 }
 
-export interface MonthlyTransactionRows {
-    transactions: TransactionRow[]
+export interface MonthlyTransactionSubcategory {
+    transactions: Transaction[]
 }
 
-export interface TransactionRow {
-    id: number;
-    amount: number;
-    date: string;
-    subcategory: Subcategory;
-    isRecurring: boolean;
+export interface MonthlySubcategoryExpense {
+    subcategoryExpenses: SubcategoryExpense[]
 }
+
+export interface SubcategoryExpense {
+    subcategory: Subcategory
+    amount: number
+    isRecurrent: boolean
+}
+
