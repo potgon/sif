@@ -61,7 +61,7 @@ export const fetchMonthlySubcategoryExpenses = async (
     year: number,
     month: number
 ): Promise<MonthlySubcategoryExpense> => {
-    const response = await apiClient.get("/monthly/transactions/subcategory/sum", {
+    const response = await apiClient.get("/metrics/monthly/transactions/subcategory/sum", {
         params: {year, month},
     })
     return response.data
