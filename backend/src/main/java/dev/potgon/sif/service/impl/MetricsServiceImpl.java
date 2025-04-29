@@ -32,15 +32,12 @@ public class MetricsServiceImpl implements MetricsService {
         );
 
         return MonthlyMetricsDTO.builder()
-                .totalIncome(BigDecimal.valueOf(1418.98))
-                .totalExpenses(BigDecimal.valueOf(13.00))
+                .totalIncome(incomeSum)
+                .totalExpenses(expenseSum)
                 .prevMonthIncomeDiff(
-                        financeUtils.computePercentageDifference(
-                                BigDecimal.valueOf(1418.98), BigDecimal.valueOf(1413.00))
-                )
+                        financeUtils.computePercentageDifference(incomeSum, previousMonthIncomeSum))
                 .prevMonthExpensesDiff(
-                        financeUtils.computePercentageDifference(BigDecimal.valueOf(13.00), BigDecimal.valueOf(30.00))
-                )
+                        financeUtils.computePercentageDifference(expenseSum, previousMonthExpenseSum))
                 .build();
     }
 
@@ -52,7 +49,7 @@ public class MetricsServiceImpl implements MetricsService {
                     .setScale(0, RoundingMode.HALF_UP);
         }
         return AnnualExpensesDTO.builder()
-                .totalExpenses(new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.valueOf(50), BigDecimal.valueOf(13)})
+                .totalExpenses(transactionSumPerMonth)
                 .build();
     }
 
