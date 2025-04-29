@@ -67,10 +67,11 @@ export default function RecentTransactions({year, month}: Props) {
                 <div className="flex flex-col gap-4 max-h-[600px] overflow-y-auto pr-2">
                     {subcategoryTransactions?.transactions.map((tx) => (
                         <div key={tx.id} className="border p-4 rounded-lg bg-white dark:bg-gray-800">
-                            <p className="font-semibold text-gray-800 dark:text-white">
+                            <p className="text-theme-xl font-semibold text-gray-800 dark:text-white">
                                 {new Date(tx.date).toLocaleDateString()} - €{tx.amount.toFixed(2)}
                             </p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">{tx.description || "No description"}</p>
+                            <p className="text-theme-sm--line-height text-gray-500 dark:text-gray-300">{tx.description}</p>
+                            <p className="text-gray-700 dark:text-gray-300">{tx.notes}</p>
                         </div>
                     ))}
                 </div>
