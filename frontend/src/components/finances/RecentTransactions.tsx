@@ -32,7 +32,7 @@ export default function RecentTransactions({year, month}: Props) {
             <div
                 className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
-                    Gastos por subcategoría
+                    Gastos por Subcategoría
                 </h3>
 
                 <div className="overflow-x-auto custom-scrollbar">
@@ -50,8 +50,8 @@ export default function RecentTransactions({year, month}: Props) {
                                 className="hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                                 onClick={() => handleRowClick(year, month, subcat.subcategory?.name)}
                             >
-                                <td className="px-6 py-4">{subcat.subcategory?.name}</td>
-                                <td className="px-6 py-4 text-right">€ {subcat.amount.toFixed(2)}</td>
+                                <td className="font-semibold px-6 py-4">{subcat.subcategory?.name}</td>
+                                <td className="font-semibold px-6 py-4 text-right">€ {subcat.amount.toFixed(2)}</td>
                             </tr>
                         ))}
                         </tbody>
@@ -60,7 +60,7 @@ export default function RecentTransactions({year, month}: Props) {
             </div>
 
             <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} className="max-w-4xl w-full p-6">
-                <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-white">
+                <h2 className="text-3xl font-semibold mb-4 text-gray-800 dark:text-white">
                     Transacciones en {selectedSubcategory}
                 </h2>
 
@@ -72,6 +72,11 @@ export default function RecentTransactions({year, month}: Props) {
                             </p>
                             <p className="text-theme-sm--line-height text-gray-500 dark:text-gray-300">{tx.description}</p>
                             <p className="text-gray-700 dark:text-gray-300">{tx.notes}</p>
+                            {tx.isRecurring && (
+                                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                                    Recurrente
+                                </p>
+                            )}
                         </div>
                     ))}
                 </div>
