@@ -30,7 +30,7 @@ export const fetchMonthlyTransactions = async (
     year: number,
     month: number
 ): Promise<MonthlyTransactions> => {
-    const response = await apiClient.get("/metrics/monthly/transactions", {
+    const response = await apiClient.get("/transactions/monthly", {
         params: {year, month},
     })
     return response.data
@@ -51,7 +51,7 @@ export const fetchMonthlyTransactionBySubcategory = async (
     month: number,
     subcategory: string
 ): Promise<MonthlyTransactionSubcategory> => {
-    const response = await apiClient.get("/metrics/monthly/transactions/subcategory", {
+    const response = await apiClient.get("/transactions/monthly/subcategory", {
         params: {year, month, subcategory},
     })
     return response.data
@@ -61,7 +61,7 @@ export const fetchMonthlySubcategorySumExpenses = async (
     year: number,
     month: number
 ): Promise<MonthlySubcategoryExpense> => {
-    const response = await apiClient.get("/metrics/monthly/transactions/subcategory/sum", {
+    const response = await apiClient.get("/transactions/monthly/subcategory/sum", {
         params: {year, month},
     })
     return response.data

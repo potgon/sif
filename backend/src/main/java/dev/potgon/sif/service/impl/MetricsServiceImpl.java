@@ -1,8 +1,9 @@
 package dev.potgon.sif.service.impl;
 
 import dev.potgon.sif.dto.CategoryTypeEnum;
-import dev.potgon.sif.dto.TransactionDTO;
-import dev.potgon.sif.dto.response.*;
+import dev.potgon.sif.dto.response.AnnualExpensesDTO;
+import dev.potgon.sif.dto.response.MonthlyMetricsDTO;
+import dev.potgon.sif.dto.response.MonthlyTargetDTO;
 import dev.potgon.sif.service.MetricsService;
 import dev.potgon.sif.utils.Constants;
 import dev.potgon.sif.utils.FinanceUtils;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -54,14 +54,6 @@ public class MetricsServiceImpl implements MetricsService {
     }
 
     @Override
-    public MonthlyTransactionsDTO getMonthlyTransactions(int year, int month) {
-        List<TransactionDTO> transactions = financeUtils.getTransactionsByPeriodAndCategory(year, month, CategoryTypeEnum.EXPENSE);
-        return MonthlyTransactionsDTO.builder()
-                .transactions(transactions)
-                .build();
-    }
-
-    @Override
     public MonthlyTargetDTO getMonthlyTarget(int year, int month) {
         return MonthlyTargetDTO.builder()
                 .currentExpensePercentage(
@@ -71,20 +63,6 @@ public class MetricsServiceImpl implements MetricsService {
                 .targetPercentage(financeUtils.getBigDecimalParam(Constants.PARAM_EXPENSE_TARGET))
                 .surplus(financeUtils.computeCurrentMonthSurplusAmount(year, month))
                 .accumulated(financeUtils.getCurrentSurplus())
-                .build();
-    }
-
-    @Override
-    public MonthlySubcategoryExpenseDTO getMonthlyTransactionSubcategorySum(int year, int month) {
-        List<TransactionDTO> transactions = financeUtils.getTransactionsByPeriodAndCategory(year, month, CategoryTypeEnum.EXPENSE);
-        return financeUtils.computeSubcategoryExpenses(transactions);
-    }
-
-    @Override
-    public MonthlyTransactionsDTO getMonthlyTransactionBySubcategory(int year, int month, String subcategory) {
-        List<TransactionDTO> transactions = financeUtils.getTransactionsByPeriodAndSubcategory(year, month, subcategory);
-        return MonthlyTransactionsDTO.builder()
-                .transactions(transactions)
                 .build();
     }
 }

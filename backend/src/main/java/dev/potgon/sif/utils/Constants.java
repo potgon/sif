@@ -9,5 +9,5 @@ public class Constants {
     public static final String PARAM_SURPLUS = "SURPLUS";
     public static final String PARAM_SALARY = "SALARY";
     public static final String PARAM_EXPENSE_TARGET = "EXPENSE_TARGET";
-    public static final BigDecimal BD_ONE_HUNDRED  = BigDecimal.valueOf(100);
+    public static final BigDecimal BIG_DECIMAL_ONE_HUNDRED = BigDecimal.valueOf(100);
 }

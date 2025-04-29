@@ -30,37 +30,12 @@ public class MetricsController {
         return ResponseEntity.ok(metricsService.getAnnualExpenses(year));
     }
 
-    @GetMapping("/monthly/transactions")
-    public ResponseEntity<MonthlyTransactionsDTO> getMonthlyTransactions(
-            @RequestParam int year,
-            @RequestParam int month
-    ) {
-        return ResponseEntity.ok(metricsService.getMonthlyTransactions(year, month));
-    }
-
     @GetMapping("/monthly/target")
     public ResponseEntity<MonthlyTargetDTO> getMonthlyTarget(
             @RequestParam int year,
             @RequestParam int month
     ) {
         return ResponseEntity.ok(metricsService.getMonthlyTarget(year, month));
-    }
-
-    @GetMapping("/monthly/transactions/subcategory/sum")
-    public ResponseEntity<MonthlySubcategoryExpenseDTO> getMonthlyTransactionSubcategorySum(
-            @RequestParam int year,
-            @RequestParam int month
-    ) {
-        return ResponseEntity.ok(metricsService.getMonthlyTransactionSubcategorySum(year, month));
-    }
-
-    @GetMapping("/monthly/transactions/subcategory")
-    public ResponseEntity<MonthlyTransactionsDTO> getMonthlyTransactionRows(
-            @RequestParam int year,
-            @RequestParam int month,
-            @RequestParam String subcategory
-    ) {
-        return ResponseEntity.ok(metricsService.getMonthlyTransactionBySubcategory(year, month, subcategory));
     }
 }
 

@@ -113,7 +113,7 @@ public class FinanceUtils {
         BigDecimal expenseTargetPercentage = getBigDecimalParam(Constants.PARAM_EXPENSE_TARGET);
 
         return expenseTargetPercentage
-                .divide(Constants.BD_ONE_HUNDRED, 4, RoundingMode.HALF_UP)
+                .divide(Constants.BIG_DECIMAL_ONE_HUNDRED, 4, RoundingMode.HALF_UP)
                 .multiply(income)
                 .setScale(2, RoundingMode.HALF_UP);
     }
@@ -131,7 +131,7 @@ public class FinanceUtils {
 
         return actualExpense
                 .divide(expenseTargetAmount, 4, RoundingMode.HALF_UP)
-                .multiply(Constants.BD_ONE_HUNDRED)
+                .multiply(Constants.BIG_DECIMAL_ONE_HUNDRED)
                 .setScale(2, RoundingMode.HALF_UP);
     }
 
