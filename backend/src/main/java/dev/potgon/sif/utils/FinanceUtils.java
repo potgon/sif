@@ -148,24 +148,34 @@ public class FinanceUtils {
     }
 
     public MonthlySubcategoryExpenseDTO computeSubcategoryExpenses(List<TransactionDTO> transactions) {
-        Map<SubcategoryDTO, BigDecimal> subcategorySums = new HashMap<>();
+        Map<SubcategoryDTO, SubcategoryExpenseDTO> expenseMap = new HashMap<>();
 
         for (TransactionDTO tx : transactions) {
-            SubcategoryDTO subDTO = SubcategoryDTO.builder()
-                    .id(tx.getId())
-                    .name(tx.getSubcategory().getName())
-                    .build();
-            subcategorySums.merge(subDTO, tx.getAmount(), BigDecimal::add);
+            SubcategoryDTO subDTO = tx.getSubcategory();
+            SubcategoryExpenseDTO existing = expenseMap.get(subDTO);
+
+            if (existing == null) {
+                expenseMap.put(subDTO, SubcategoryExpenseDTO.builder()
+                        .subcategory(subDTO)
+                        .amount(tx.getAmount())
+                        .isRecurrent(tx.getIsRecurring())
+                        .build());
+            } else {
+                BigDecimal newAmount = existing.getAmount().add(tx.getAmount());
+                expenseMap.put(subDTO, SubcategoryExpenseDTO.builder()
+                        .subcategory(subDTO)
+                        .amount(newAmount)
+                        .isRecurrent(existing.isRecurrent())
+                        .build());
+            }
         }
 
-        List<SubcategoryExpenseDTO> expenses = subcategorySums.entrySet().stream()
-                .map(entry -> SubcategoryExpenseDTO.builder()
-                        .subcategory(entry.getKey())
-                        .amount(entry.getValue())
-                        .build())
+        List<SubcategoryExpenseDTO> expenses = expenseMap.values().stream()
                 .sorted(Comparator.comparing(dto -> dto.getSubcategory().getName()))
                 .toList();
+
         return MonthlySubcategoryExpenseDTO.builder().subcategoryExpenses(expenses).build();
     }
+
 
 }

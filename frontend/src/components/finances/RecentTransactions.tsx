@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react"
-import {fetchMonthlySubcategoryExpenses, fetchMonthlyTransactionBySubcategory} from "../../api/finances/metrics"
+import {fetchMonthlySubcategorySumExpenses, fetchMonthlyTransactionBySubcategory} from "../../api/finances/metrics"
 import {Modal} from "../ui/modal"
 import {MonthlySubcategoryExpense, MonthlyTransactionSubcategory} from "../../api/finances/types"
 
@@ -15,7 +15,7 @@ export default function RecentTransactions({year, month}: Props) {
     const [modalOpen, setModalOpen] = useState(false)
 
     useEffect(() => {
-        fetchMonthlySubcategoryExpenses(year, month)
+        fetchMonthlySubcategorySumExpenses(year, month)
             .then(setSubcategories)
             .catch((err) => console.error("Error fetching subcategories", err))
     }, [year, month])
