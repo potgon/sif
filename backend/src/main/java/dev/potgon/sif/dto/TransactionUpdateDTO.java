@@ -14,8 +14,7 @@ public class TransactionUpdateDTO {
     private LocalDate date;
     private BigDecimal amount;
     private String description;
-    private Long categoryId;
-    private Long subcategoryId;
+    private String subcategoryName;
     private Boolean isRecurring;
     private String notes;
 }

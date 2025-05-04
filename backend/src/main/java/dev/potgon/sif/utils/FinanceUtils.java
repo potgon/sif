@@ -201,7 +201,7 @@ public class FinanceUtils {
 
     public void createTransaction(TransactionCreateDTO transactionReq) {
         PeriodDTO period = periodMapper.toDTO(getPeriodIfExists(transactionReq.getYear(), transactionReq.getMonth()));
-        CategoryDTO category = categoryMapper.toDTO(categoryRepo.findByName(transactionReq.getCategory()));
+        CategoryDTO category = categoryMapper.toDTO(categoryRepo.findByName(CategoryTypeEnum.EXPENSE));
         SubcategoryDTO subcat = subcategoryMapper.toDTO(getSubcategoryIfExists(transactionReq.getSubcategoryName()));
         TransactionDTO transactionDTO = TransactionDTO.builder()
                 .period(period)
@@ -227,11 +227,8 @@ public class FinanceUtils {
         if (updateDTO.getDescription() != null) {
             tx.setDescription(updateDTO.getDescription());
         }
-        if (updateDTO.getCategoryId() != null) {
-            tx.setCategory(getCategoryIfExists(updateDTO.getCategoryId()));
-        }
-        if (updateDTO.getSubcategoryId() != null) {
-            tx.setSubcategory(getSubcategoryIfExists(updateDTO.getSubcategoryId()));
+        if (updateDTO.getSubcategoryName() != null) {
+            tx.setSubcategory(getSubcategoryIfExists(updateDTO.getSubcategoryName()));
         }
         if (updateDTO.getIsRecurring() != null) {
             tx.setIsRecurring(updateDTO.getIsRecurring());

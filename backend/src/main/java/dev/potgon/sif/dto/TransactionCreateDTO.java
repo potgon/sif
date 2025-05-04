@@ -15,7 +15,6 @@ public class TransactionCreateDTO {
     private LocalDate date;
     private BigDecimal amount;
     private String description;
-    private CategoryTypeEnum category;
     private String subcategoryName;
     private Boolean isRecurring;
     private String notes;
