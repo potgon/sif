@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class TransactionUpdateDTO {
+    private Long id;
     private LocalDate date;
     private BigDecimal amount;
     private String description;

@@ -10,12 +10,13 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class TransactionCreateDTO {
-    private Long periodId;
+    private int year;
+    private int month;
     private LocalDate date;
     private BigDecimal amount;
     private String description;
-    private Long categoryId;
-    private Long subcategoryId;
+    private CategoryTypeEnum category;
+    private String subcategoryName;
     private Boolean isRecurring;
     private String notes;
 }

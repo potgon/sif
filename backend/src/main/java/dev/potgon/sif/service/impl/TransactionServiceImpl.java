@@ -1,9 +1,13 @@
 package dev.potgon.sif.service.impl;
 
 import dev.potgon.sif.dto.CategoryTypeEnum;
+import dev.potgon.sif.dto.TransactionCreateDTO;
 import dev.potgon.sif.dto.TransactionDTO;
+import dev.potgon.sif.dto.TransactionUpdateDTO;
 import dev.potgon.sif.dto.response.MonthlySubcategoryExpenseDTO;
 import dev.potgon.sif.dto.response.MonthlyTransactionsDTO;
+import dev.potgon.sif.entity.Transaction;
+import dev.potgon.sif.repository.TransactionRepository;
 import dev.potgon.sif.service.TransactionsService;
 import dev.potgon.sif.utils.FinanceUtils;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +23,8 @@ import java.util.List;
 public class TransactionServiceImpl implements TransactionsService {
 
     private final FinanceUtils financeUtils;
+
+    private final TransactionRepository transactionRepo;
 
     @Override
     public MonthlyTransactionsDTO getMonthlyTransactions(int year, int month) {
@@ -39,5 +46,21 @@ public class TransactionServiceImpl implements TransactionsService {
         return MonthlyTransactionsDTO.builder()
                 .transactions(transactions)
                 .build();
+    }
+
+    @Override
+    public void createTransaction(TransactionCreateDTO transactionCreateDTO) {
+        financeUtils.createTransaction(transactionCreateDTO);
+    }
+
+    @Override
+    public void deleteTransaction(Long id) {
+        Optional<Transaction> transaction = transactionRepo.findById(id);
+        transaction.ifPresent(transactionRepo::delete);
+    }
+
+    @Override
+    public void updateTransaction(TransactionUpdateDTO updateDTO) {
+        financeUtils.updateTransaction(updateDTO);
     }
 }

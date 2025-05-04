@@ -2,12 +2,12 @@ package dev.potgon.sif.utils;
 
 import dev.potgon.sif.dto.*;
 import dev.potgon.sif.dto.response.MonthlySubcategoryExpenseDTO;
-import dev.potgon.sif.entity.BalanceSnapshot;
-import dev.potgon.sif.entity.Category;
-import dev.potgon.sif.entity.Period;
-import dev.potgon.sif.entity.Subcategory;
+import dev.potgon.sif.entity.*;
 import dev.potgon.sif.exception.BusinessException;
 import dev.potgon.sif.exception.ResourceNotFoundException;
+import dev.potgon.sif.mapper.CategoryMapper;
+import dev.potgon.sif.mapper.PeriodMapper;
+import dev.potgon.sif.mapper.SubcategoryMapper;
 import dev.potgon.sif.mapper.TransactionMapper;
 import dev.potgon.sif.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
@@ -31,6 +32,9 @@ public class FinanceUtils {
     private final SubcategoryRepository subcategoryRepo;
 
     private final TransactionMapper transactionMapper;
+    private final PeriodMapper periodMapper;
+    private final CategoryMapper categoryMapper;
+    private final SubcategoryMapper subcategoryMapper;
 
     public Period getPeriodIfExists(int year, int month) {
         Period period = periodRepo.findByYearAndMonth(year, month);
@@ -40,10 +44,35 @@ public class FinanceUtils {
         return period;
     }
 
+    public Subcategory getSubcategoryIfExists(String name) {
+        Subcategory subcat = subcategoryRepo.findByName(name);
+        if (subcat == null) {
+            throw new ResourceNotFoundException("Subcategory not found with name: " + name);
+        }
+        return subcat;
+    }
+
     private Optional<BigDecimal> getPeriodExtraPayIfExists(int year, int month) {
         Period period = getPeriodIfExists(year, month);
         if (period.getExtraPay() == null) return Optional.empty();
         return Optional.of(period.getExtraPay());
+    }
+
+    private Category getCategoryIfExists(Long categoryId) {
+        return categoryRepo.findById(categoryId).orElse(null);
+    }
+
+    private Subcategory getSubcategoryIfExists(Long subcategoryId) {
+        return subcategoryRepo.findById(subcategoryId).orElse(null);
+    }
+
+    public TransactionDTO getTransactionByIdIfExists(Long id) {
+        Optional<Transaction> tx = transactionRepo.findById(id);
+        if (tx.isEmpty()) {
+            log.info("Transaction with id {} not found", id);
+            return null;
+        }
+        return transactionMapper.toDTO(tx.get());
     }
 
     public List<TransactionDTO> getTransactionsByPeriodAndCategory(int year, int month, CategoryTypeEnum categoryType) {
@@ -51,13 +80,6 @@ public class FinanceUtils {
         Period period = getPeriodIfExists(year, month);
 
         return transactionRepo.findAllByPeriodAndCategoryOrderByDateDesc(period, category)
-                .stream().map(transactionMapper::toDTO).toList();
-    }
-
-    public List<TransactionDTO> getTransactionsByPeriod(int year, int month) {
-        Period period = getPeriodIfExists(year, month);
-
-        return transactionRepo.findAllByPeriod(period)
                 .stream().map(transactionMapper::toDTO).toList();
     }
 
@@ -177,5 +199,47 @@ public class FinanceUtils {
         return MonthlySubcategoryExpenseDTO.builder().subcategoryExpenses(expenses).build();
     }
 
+    public void createTransaction(TransactionCreateDTO transactionReq) {
+        PeriodDTO period = periodMapper.toDTO(getPeriodIfExists(transactionReq.getYear(), transactionReq.getMonth()));
+        CategoryDTO category = categoryMapper.toDTO(categoryRepo.findByName(transactionReq.getCategory()));
+        SubcategoryDTO subcat = subcategoryMapper.toDTO(getSubcategoryIfExists(transactionReq.getSubcategoryName()));
+        TransactionDTO transactionDTO = TransactionDTO.builder()
+                .period(period)
+                .date(transactionReq.getDate())
+                .amount(transactionReq.getAmount())
+                .description(transactionReq.getDescription())
+                .category(category)
+                .subcategory(subcat)
+                .isRecurring(transactionReq.getIsRecurring())
+                .createdAt(ZonedDateTime.now())
+                .build();
+        transactionRepo.save(transactionMapper.toEntity(transactionDTO));
+    }
+
+    public void updateTransaction(TransactionUpdateDTO updateDTO) {
+        Transaction tx = transactionMapper.toEntity(getTransactionByIdIfExists(updateDTO.getId()));
+        if (updateDTO.getDate() != null) {
+            tx.setDate(updateDTO.getDate());
+        }
+        if (updateDTO.getAmount() != null) {
+            tx.setAmount(updateDTO.getAmount());
+        }
+        if (updateDTO.getDescription() != null) {
+            tx.setDescription(updateDTO.getDescription());
+        }
+        if (updateDTO.getCategoryId() != null) {
+            tx.setCategory(getCategoryIfExists(updateDTO.getCategoryId()));
+        }
+        if (updateDTO.getSubcategoryId() != null) {
+            tx.setSubcategory(getSubcategoryIfExists(updateDTO.getSubcategoryId()));
+        }
+        if (updateDTO.getIsRecurring() != null) {
+            tx.setIsRecurring(updateDTO.getIsRecurring());
+        }
+        if (updateDTO.getNotes() != null) {
+            tx.setNotes(updateDTO.getNotes());
+        }
+        transactionRepo.save(tx);
+    }
 
 }
