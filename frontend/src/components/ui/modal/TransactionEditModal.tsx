@@ -1,5 +1,5 @@
 import {Modal} from "./index"
-import {SubcategoryType, Transaction} from "../../../api/finances/types"
+import {Subcategory, Transaction} from "../../../api/finances/types"
 import Form from "../../form/Form"
 import InputField from "../../form/input/InputField"
 import TextArea from "../../form/input/TextArea"
@@ -7,6 +7,7 @@ import Checkbox from "../../form/input/Checkbox"
 import {useEffect, useState} from "react"
 import Select, {Option} from "../../form/Select.tsx"
 import DatePicker from "../../form/date-picker.tsx";
+import {fetchAllSubcategories} from "../../../api/finances/metrics.ts";
 
 interface Props {
     isOpen: boolean
@@ -17,6 +18,11 @@ interface Props {
 
 export default function TransactionEditModal({isOpen, onClose, transaction, onSubmit}: Props) {
     const [formData, setFormData] = useState<Transaction>(transaction)
+    const [subcategories, setSubcategories] = useState<Subcategory[]>([])
+
+    useEffect(() => {
+        fetchAllSubcategories().then(setSubcategories)
+    }, [])
 
     useEffect(() => {
         setFormData(transaction)
@@ -31,12 +37,10 @@ export default function TransactionEditModal({isOpen, onClose, transaction, onSu
         onClose()
     }
 
-    const subcategoryOptions: Option[] = Object.entries(SubcategoryType).map(
-        ([key, value]) => ({
-            value: key,
-            label: value,
-        })
-    );
+    const subcategoryOptions: Option[] = subcategories.map((subcat) => ({
+        value: subcat.name,
+        label: subcat.name,
+    }))
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="max-w-2xl w-full p-6">
@@ -67,7 +71,12 @@ export default function TransactionEditModal({isOpen, onClose, transaction, onSu
                     label="Subcategoría"
                     options={subcategoryOptions}
                     defaultValue={transaction.subcategory.name}
-                    onChange={(value) => handleChange("subcategory", value)}
+                    onChange={(subcategoryName) => {
+                        const selected = subcategories.find((s) => s.name === subcategoryName)
+                        if (selected) {
+                            handleChange("subcategory", selected)
+                        }
+                    }}
                 />
 
                 <TextArea

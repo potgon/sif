@@ -1,5 +1,6 @@
 package dev.potgon.sif.controller;
 
+import dev.potgon.sif.dto.SubcategoryDTO;
 import dev.potgon.sif.dto.TransactionCreateDTO;
 import dev.potgon.sif.dto.TransactionDTO;
 import dev.potgon.sif.dto.TransactionUpdateDTO;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/transactions")
@@ -67,5 +70,10 @@ public class TransactionController {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(transactionsService.updateTransaction(transactionUpdateDTO));
+    }
+
+    @GetMapping("/subcategories")
+    public ResponseEntity<List<SubcategoryDTO>> fetchAllSubcategories() {
+        return ResponseEntity.ok(transactionsService.fetchAllSubcategories());
     }
 }
