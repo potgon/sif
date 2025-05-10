@@ -227,8 +227,8 @@ public class FinanceUtils {
         if (updateDTO.getDescription() != null) {
             tx.setDescription(updateDTO.getDescription());
         }
-        if (updateDTO.getSubcategoryName() != null) {
-            tx.setSubcategory(getSubcategoryIfExists(updateDTO.getSubcategoryName()));
+        if (updateDTO.getSubcategory() != null) {
+            tx.setSubcategory(subcategoryMapper.toEntity(updateDTO.getSubcategory()));
         }
         if (updateDTO.getIsRecurring() != null) {
             tx.setIsRecurring(updateDTO.getIsRecurring());

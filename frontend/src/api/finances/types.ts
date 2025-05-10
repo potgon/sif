@@ -60,7 +60,7 @@ export enum SubcategoryType {
     Internet = "Internet",
     ICloud = "ICloud",
     Parking = "Parking",
-    Suscripciones = "Suscripciones"
+    Mensualidades = "Mensualidades"
 }
 
 enum CategoryType {
@@ -105,10 +105,10 @@ export interface TransactionCreate {
 
 export interface TransactionUpdate {
     id: number
-    date: string
+    date?: string
     amount?: number
     description?: string
-    subcategoryName?: SubcategoryType
+    subcategory?: Subcategory
     isRecurring?: boolean
     notes?: string
 }

@@ -1,6 +1,15 @@
 import {useEffect, useState} from "react"
-import {fetchMonthlySubcategorySumExpenses, fetchMonthlyTransactionBySubcategory} from "../../api/finances/metrics"
-import {MonthlySubcategoryExpense, MonthlyTransactionSubcategory, Transaction} from "../../api/finances/types"
+import {
+    fetchMonthlySubcategorySumExpenses,
+    fetchMonthlyTransactionBySubcategory,
+    updateTransaction
+} from "../../api/finances/metrics"
+import {
+    MonthlySubcategoryExpense,
+    MonthlyTransactionSubcategory,
+    Transaction,
+    TransactionUpdate
+} from "../../api/finances/types"
 import {useModal} from "../../hooks/useModal.ts";
 import TransactionSubcategoryModal from "../ui/modal/TransactionSubcategoryModal.tsx";
 import TransactionEditModal from "../ui/modal/TransactionEditModal.tsx";
@@ -70,6 +79,7 @@ export default function RecentTransactions({year, month}: Props) {
                 transactions={subcategoryTransactions?.transactions || []}
                 subcategoryName={selectedSubcategory}
                 onTransactionClick={(tx) => {
+                    console.log(tx)
                     setEditingTx(tx)
                     openEditModal()
                 }}
@@ -80,9 +90,19 @@ export default function RecentTransactions({year, month}: Props) {
                     isOpen={isEditOpen}
                     onClose={closeEditModal}
                     transaction={editingTx}
-                    onSubmit={(updatedTx) => {
-                        // TODO: Call your updateTransaction API here
+                    onSubmit={async (updatedTx) => {
+                        const transactionUpdate: TransactionUpdate = {
+                            id: updatedTx.id,
+                            ...(updatedTx.date !== undefined && { date: updatedTx.date }),
+                            ...(updatedTx.amount !== undefined && { amount: updatedTx.amount }),
+                            ...(updatedTx.description !== undefined && { description: updatedTx.description }),
+                            ...(updatedTx.subcategory !== undefined && { subcategory: updatedTx.subcategory }),
+                            ...(updatedTx.isRecurring !== undefined && { isRecurring: updatedTx.isRecurring }),
+                            ...(updatedTx.notes !== undefined && { notes: updatedTx.notes })
+                        }
+                        await updateTransaction(transactionUpdate)
                         console.log("Updated transaction:", updatedTx)
+
                         closeEditModal()
                     }}
                 />

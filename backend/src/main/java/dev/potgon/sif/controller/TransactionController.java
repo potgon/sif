@@ -58,7 +58,7 @@ public class TransactionController {
     }
 
     @PatchMapping
-    public ResponseEntity<TransactionUpdateDTO> updateTransaction(
+    public ResponseEntity<Void> updateTransaction(
             @RequestBody TransactionUpdateDTO transactionUpdateDTO
     ) {
         transactionsService.updateTransaction(transactionUpdateDTO);

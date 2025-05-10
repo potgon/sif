@@ -4,8 +4,9 @@ import Form from "../../form/Form"
 import InputField from "../../form/input/InputField"
 import TextArea from "../../form/input/TextArea"
 import Checkbox from "../../form/input/Checkbox"
-import {useState} from "react"
+import {useEffect, useState} from "react"
 import Select, {Option} from "../../form/Select.tsx"
+import DatePicker from "../../form/date-picker.tsx";
 
 interface Props {
     isOpen: boolean
@@ -16,6 +17,10 @@ interface Props {
 
 export default function TransactionEditModal({isOpen, onClose, transaction, onSubmit}: Props) {
     const [formData, setFormData] = useState<Transaction>(transaction)
+
+    useEffect(() => {
+        setFormData(transaction)
+    }, [transaction])
 
     const handleChange = (field: keyof Transaction, value: any) => {
         setFormData((prev) => ({...prev, [field]: value}))
@@ -48,12 +53,14 @@ export default function TransactionEditModal({isOpen, onClose, transaction, onSu
                     onChange={(e) => handleChange("amount", parseFloat(e.target.value))}
                 />
 
-                <InputField
+                <DatePicker
+                    id="transaction-date"
                     label="Fecha"
-                    name="date"
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) => handleChange("date", e.target.value)}
+                    defaultDate={formData.date}
+                    onChange={([selectedDate]) => {
+                        const formattedDate = selectedDate?.toISOString().slice(0, 10) || ""
+                        handleChange("date", formattedDate)
+                    }}
                 />
 
                 <Select
