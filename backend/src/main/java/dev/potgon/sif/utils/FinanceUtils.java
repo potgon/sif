@@ -216,7 +216,7 @@ public class FinanceUtils {
         transactionRepo.save(transactionMapper.toEntity(transactionDTO));
     }
 
-    public void updateTransaction(TransactionUpdateDTO updateDTO) {
+    public TransactionDTO updateTransaction(TransactionUpdateDTO updateDTO) {
         Transaction tx = transactionMapper.toEntity(getTransactionByIdIfExists(updateDTO.getId()));
         if (updateDTO.getDate() != null) {
             tx.setDate(updateDTO.getDate());
@@ -237,6 +237,7 @@ public class FinanceUtils {
             tx.setNotes(updateDTO.getNotes());
         }
         transactionRepo.save(tx);
+        return transactionMapper.toDTO(tx);
     }
 
 }

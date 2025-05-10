@@ -60,7 +60,7 @@ public class TransactionServiceImpl implements TransactionsService {
     }
 
     @Override
-    public void updateTransaction(TransactionUpdateDTO updateDTO) {
-        financeUtils.updateTransaction(updateDTO);
+    public TransactionDTO updateTransaction(TransactionUpdateDTO updateDTO) {
+        return financeUtils.updateTransaction(updateDTO);
     }
 }

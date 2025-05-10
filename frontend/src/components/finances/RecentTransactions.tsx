@@ -100,9 +100,14 @@ export default function RecentTransactions({year, month}: Props) {
                             ...(updatedTx.isRecurring !== undefined && { isRecurring: updatedTx.isRecurring }),
                             ...(updatedTx.notes !== undefined && { notes: updatedTx.notes })
                         }
-                        await updateTransaction(transactionUpdate)
+                        const response = await updateTransaction(editingTx?.id ,transactionUpdate)
                         console.log("Updated transaction:", updatedTx)
-
+                        setSubcategoryTransactions(prev => ({
+                            ...prev!,
+                            transactions: prev!.transactions.map((tx) =>
+                                tx.id === response.id ? response : tx
+                            )
+                        }))
                         closeEditModal()
                     }}
                 />

@@ -1,6 +1,7 @@
 package dev.potgon.sif.controller;
 
 import dev.potgon.sif.dto.TransactionCreateDTO;
+import dev.potgon.sif.dto.TransactionDTO;
 import dev.potgon.sif.dto.TransactionUpdateDTO;
 import dev.potgon.sif.dto.response.MonthlySubcategoryExpenseDTO;
 import dev.potgon.sif.dto.response.MonthlyTransactionsDTO;
@@ -57,11 +58,14 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
     }
 
-    @PatchMapping
-    public ResponseEntity<Void> updateTransaction(
+    @PatchMapping("/{id}")
+    public ResponseEntity<TransactionDTO> updateTransaction(
+            @PathVariable Long id,
             @RequestBody TransactionUpdateDTO transactionUpdateDTO
     ) {
-        transactionsService.updateTransaction(transactionUpdateDTO);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        if (!id.equals(transactionUpdateDTO.getId())) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(transactionsService.updateTransaction(transactionUpdateDTO));
     }
 }

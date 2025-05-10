@@ -58,7 +58,7 @@ export default function TransactionEditModal({isOpen, onClose, transaction, onSu
                     label="Fecha"
                     defaultDate={formData.date}
                     onChange={([selectedDate]) => {
-                        const formattedDate = selectedDate?.toISOString().slice(0, 10) || ""
+                        const formattedDate = selectedDate?.toLocaleDateString("sv-SE").slice(0, 10) || ""
                         handleChange("date", formattedDate)
                     }}
                 />

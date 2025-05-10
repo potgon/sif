@@ -1,6 +1,7 @@
 package dev.potgon.sif.service;
 
 import dev.potgon.sif.dto.TransactionCreateDTO;
+import dev.potgon.sif.dto.TransactionDTO;
 import dev.potgon.sif.dto.TransactionUpdateDTO;
 import dev.potgon.sif.dto.response.MonthlySubcategoryExpenseDTO;
 import dev.potgon.sif.dto.response.MonthlyTransactionsDTO;
@@ -11,5 +12,5 @@ public interface TransactionsService {
     MonthlySubcategoryExpenseDTO getMonthlyTransactionSubcategorySum(int year, int month);
     void createTransaction(TransactionCreateDTO transactionCreateDTO);
     void deleteTransaction(Long id);
-    void updateTransaction(TransactionUpdateDTO updateDTO);
+    TransactionDTO updateTransaction(TransactionUpdateDTO updateDTO);
 }
