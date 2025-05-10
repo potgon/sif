@@ -1,7 +1,8 @@
 import {useEffect, useState} from "react"
 import {fetchMonthlySubcategorySumExpenses, fetchMonthlyTransactionBySubcategory} from "../../api/finances/metrics"
-import {Modal} from "../ui/modal"
-import {MonthlySubcategoryExpense, MonthlyTransactionSubcategory} from "../../api/finances/types"
+import {MonthlySubcategoryExpense, MonthlyTransactionSubcategory, Transaction} from "../../api/finances/types"
+import {useModal} from "../../hooks/useModal.ts";
+import TransactionSubcategoryModal from "../ui/modal/TransactionSubcategoryModal.tsx";
 
 interface Props {
     year: number
@@ -9,28 +10,29 @@ interface Props {
 }
 
 export default function RecentTransactions({year, month}: Props) {
-    const [subcategories, setSubcategories] = useState<MonthlySubcategoryExpense>()
+    const [subcategoryExpenses, setSubcategoryExpenses] = useState<MonthlySubcategoryExpense>()
     const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
     const [subcategoryTransactions, setSubcategoryTransactions] = useState<MonthlyTransactionSubcategory>()
-    const [modalOpen, setModalOpen] = useState(false)
+    const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
+
+    const { isOpen, openModal, closeModal } = useModal()
 
     useEffect(() => {
         fetchMonthlySubcategorySumExpenses(year, month)
-            .then(setSubcategories)
+            .then(setSubcategoryExpenses)
             .catch((err) => console.error("Error fetching subcategories", err))
     }, [year, month])
 
-    const handleRowClick = async (year: number, month: number, subcategoryName: string) => {
+    const handleRowClick = async (subcategoryName: string) => {
         setSelectedSubcategory(subcategoryName)
         const transactions = await fetchMonthlyTransactionBySubcategory(year, month, subcategoryName)
         setSubcategoryTransactions(transactions)
-        setModalOpen(true)
+        openModal()
     }
 
     return (
         <>
-            <div
-                className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
                     Gastos por Subcategoría
                 </h3>
@@ -44,11 +46,11 @@ export default function RecentTransactions({year, month}: Props) {
                         </tr>
                         </thead>
                         <tbody>
-                        {subcategories?.subcategoryExpenses.map((subcat) => (
+                        {subcategoryExpenses?.subcategoryExpenses.map((subcat) => (
                             <tr
                                 key={subcat.subcategory?.name}
                                 className="hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                                onClick={() => handleRowClick(year, month, subcat.subcategory?.name)}
+                                onClick={() => handleRowClick(subcat.subcategory?.name)}
                             >
                                 <td className="font-semibold px-6 py-4">{subcat.subcategory?.name}</td>
                                 <td className="font-semibold px-6 py-4 text-right">€ {subcat.amount.toFixed(2)}</td>
@@ -59,28 +61,13 @@ export default function RecentTransactions({year, month}: Props) {
                 </div>
             </div>
 
-            <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} className="max-w-4xl w-full p-6">
-                <h2 className="text-3xl font-semibold mb-4 text-gray-800 dark:text-white">
-                    Transacciones en {selectedSubcategory}
-                </h2>
-
-                <div className="flex flex-col gap-4 max-h-[600px] overflow-y-auto pr-2">
-                    {subcategoryTransactions?.transactions.map((tx) => (
-                        <div key={tx.id} className="border p-4 rounded-lg bg-white dark:bg-gray-800">
-                            <p className="text-theme-xl font-semibold text-gray-800 dark:text-white">
-                                {new Date(tx.date).toLocaleDateString()} - €{tx.amount.toFixed(2)}
-                            </p>
-                            <p className="text-theme-sm--line-height text-gray-500 dark:text-gray-300">{tx.description}</p>
-                            <p className="text-gray-700 dark:text-gray-300">{tx.notes}</p>
-                            {tx.isRecurring && (
-                                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                                    Recurrente
-                                </p>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            </Modal>
+            <TransactionSubcategoryModal
+                isOpen={isOpen}
+                onClose={closeModal}
+                transactions={subcategoryTransactions?.transactions || []}
+                subcategoryName={selectedSubcategory}
+                onTransactionClick={(tx) => setSelectedTransaction(tx)}
+            />
         </>
     )
 }
