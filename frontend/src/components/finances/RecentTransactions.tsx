@@ -93,14 +93,14 @@ export default function RecentTransactions({year, month}: Props) {
                     onSubmit={async (updatedTx) => {
                         const transactionUpdate: TransactionUpdate = {
                             id: updatedTx.id,
-                            ...(updatedTx.date !== undefined && { date: updatedTx.date }),
-                            ...(updatedTx.amount !== undefined && { amount: updatedTx.amount }),
-                            ...(updatedTx.description !== undefined && { description: updatedTx.description }),
-                            ...(updatedTx.subcategory !== undefined && { subcategory: updatedTx.subcategory }),
-                            ...(updatedTx.isRecurring !== undefined && { isRecurring: updatedTx.isRecurring }),
-                            ...(updatedTx.notes !== undefined && { notes: updatedTx.notes })
+                            ...(updatedTx.date !== undefined && {date: updatedTx.date}),
+                            ...(updatedTx.amount !== undefined && {amount: updatedTx.amount}),
+                            ...(updatedTx.description !== undefined && {description: updatedTx.description}),
+                            ...(updatedTx.subcategory !== undefined && {subcategory: updatedTx.subcategory}),
+                            ...(updatedTx.isRecurring !== undefined && {isRecurring: updatedTx.isRecurring}),
+                            ...(updatedTx.notes !== undefined && {notes: updatedTx.notes})
                         }
-                        const response = await updateTransaction(editingTx?.id ,transactionUpdate)
+                        const response = await updateTransaction(editingTx?.id, transactionUpdate)
                         console.log("Updated transaction:", updatedTx)
                         setSubcategoryTransactions(prev => ({
                             ...prev!,
@@ -108,6 +108,8 @@ export default function RecentTransactions({year, month}: Props) {
                                 tx.id === response.id ? response : tx
                             )
                         }))
+                        const updatedExpenses = await fetchMonthlySubcategorySumExpenses(year, month)
+                        setSubcategoryExpenses(updatedExpenses)
                         closeEditModal()
                     }}
                 />
