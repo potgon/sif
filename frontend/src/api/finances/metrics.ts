@@ -4,7 +4,7 @@ import {
     MonthlyExpenseTarget,
     MonthlyMetrics, MonthlySubcategoryExpense,
     MonthlyTransactionSubcategory,
-    MonthlyTransactions
+    MonthlyTransactions, TransactionCreate, TransactionUpdate
 } from "./types.ts";
 
 export const fetchMonthlyMetrics = async (
@@ -65,4 +65,16 @@ export const fetchMonthlySubcategorySumExpenses = async (
         params: {year, month},
     })
     return response.data
+}
+
+export const createTransaction = async (transaction: TransactionCreate): Promise<void> => {
+    await apiClient.post("/transactions/new", transaction)
+}
+
+export const updateTransaction = async (transaction: TransactionUpdate): Promise<void> => {
+    await apiClient.patch("/transactions", transaction)
+}
+
+export const deleteTransaction = async (transactionId: number): Promise<void> => {
+    await apiClient.delete(`/transactions/${transactionId}`)
 }
