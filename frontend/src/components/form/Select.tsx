@@ -1,11 +1,12 @@
-import { useState } from "react";
+import React, {useState} from "react";
 
-interface Option {
+export interface Option {
     value: string;
     label: string;
 }
 
 interface SelectProps {
+    label?: string;
     options: Option[];
     placeholder?: string;
     onChange: (value: string) => void;
@@ -14,6 +15,7 @@ interface SelectProps {
 }
 
 const Select: React.FC<SelectProps> = ({
+                                           label,
                                            options,
                                            placeholder = "Select an option",
                                            onChange,
@@ -29,35 +31,41 @@ const Select: React.FC<SelectProps> = ({
     };
 
     return (
-        <select
-            className={`h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-11 text-sm shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 ${
-                selectedValue
-                    ? "text-gray-800 dark:text-white/90"
-                    : "text-gray-400 dark:text-gray-400"
-            } ${className}`}
-            value={selectedValue}
-            onChange={handleChange}
-        >
-            {/* Placeholder option */}
-            <option
-                value=""
-                disabled
-                className="text-gray-700 dark:bg-gray-900 dark:text-gray-400"
+        <div>
+            <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                {label}
+            </label>
+            <select
+                className={`h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-11 text-sm shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 ${
+                    selectedValue
+                        ? "text-gray-800 dark:text-white/90"
+                        : "text-gray-400 dark:text-gray-400"
+                } ${className}`}
+                value={selectedValue}
+                onChange={handleChange}
             >
-                {placeholder}
-            </option>
-            {/* Map over options */}
-            {options.map((option) => (
                 <option
-                    key={option.value}
-                    value={option.value}
+                    value=""
+                    disabled
                     className="text-gray-700 dark:bg-gray-900 dark:text-gray-400"
                 >
-                    {option.label}
+                    {placeholder}
                 </option>
-            ))}
-        </select>
-    );
+
+                {options.map((option) => (
+                    <option
+                        key={option.value}
+                        value={option.value}
+                        className="text-gray-700 dark:bg-gray-900 dark:text-gray-400"
+                    >
+                        {option.label}
+                    </option>
+                ))}
+            </select>
+        </div>
+
+    )
+        ;
 };
 
 export default Select;

@@ -3,6 +3,7 @@ import {fetchMonthlySubcategorySumExpenses, fetchMonthlyTransactionBySubcategory
 import {MonthlySubcategoryExpense, MonthlyTransactionSubcategory, Transaction} from "../../api/finances/types"
 import {useModal} from "../../hooks/useModal.ts";
 import TransactionSubcategoryModal from "../ui/modal/TransactionSubcategoryModal.tsx";
+import TransactionEditModal from "../ui/modal/TransactionEditModal.tsx";
 
 interface Props {
     year: number
@@ -13,9 +14,10 @@ export default function RecentTransactions({year, month}: Props) {
     const [subcategoryExpenses, setSubcategoryExpenses] = useState<MonthlySubcategoryExpense>()
     const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
     const [subcategoryTransactions, setSubcategoryTransactions] = useState<MonthlyTransactionSubcategory>()
-    const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
 
-    const { isOpen, openModal, closeModal } = useModal()
+    const {isOpen, openModal, closeModal} = useModal()
+    const {isOpen: isEditOpen, openModal: openEditModal, closeModal: closeEditModal} = useModal()
+    const [editingTx, setEditingTx] = useState<Transaction | null>(null)
 
     useEffect(() => {
         fetchMonthlySubcategorySumExpenses(year, month)
@@ -32,7 +34,8 @@ export default function RecentTransactions({year, month}: Props) {
 
     return (
         <>
-            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
+            <div
+                className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
                     Gastos por Subcategoría
                 </h3>
@@ -66,8 +69,24 @@ export default function RecentTransactions({year, month}: Props) {
                 onClose={closeModal}
                 transactions={subcategoryTransactions?.transactions || []}
                 subcategoryName={selectedSubcategory}
-                onTransactionClick={(tx) => setSelectedTransaction(tx)}
+                onTransactionClick={(tx) => {
+                    setEditingTx(tx)
+                    openEditModal()
+                }}
             />
+
+            {editingTx && (
+                <TransactionEditModal
+                    isOpen={isEditOpen}
+                    onClose={closeEditModal}
+                    transaction={editingTx}
+                    onSubmit={(updatedTx) => {
+                        // TODO: Call your updateTransaction API here
+                        console.log("Updated transaction:", updatedTx)
+                        closeEditModal()
+                    }}
+                />
+            )}
         </>
     )
 }

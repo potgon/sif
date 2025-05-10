@@ -1,7 +1,7 @@
 import type React from "react";
 import { useState } from "react";
 
-interface Option {
+export interface Option {
     value: string;
     text: string;
 }
@@ -95,7 +95,7 @@ const MultiSelect: React.FC<MultiSelectProps> = ({
                                 ) : (
                                     <input
                                         placeholder="Select option"
-                                        className="w-full h-full p-1 pr-2 text-sm bg-transparent border-0 outline-hidden appearance-none placeholder:text-gray-800 focus:border-0 focus:outline-hidden focus:ring-0 dark:placeholder:text-white/90"
+                                        className="bg-transparent text-gray-900 border-gray-300 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800"
                                         readOnly
                                         value="Select option"
                                     />

@@ -1,9 +1,10 @@
 import type React from "react";
-import type { FC } from "react";
+import type {FC} from "react";
 
 interface InputProps {
     type?: "text" | "number" | "email" | "password" | "date" | "time" | string;
     id?: string;
+    label?: string;
     name?: string;
     placeholder?: string;
     value?: string | number;
@@ -21,6 +22,7 @@ interface InputProps {
 const Input: FC<InputProps> = ({
                                    type = "text",
                                    id,
+                                   label,
                                    name,
                                    placeholder,
                                    value,
@@ -48,6 +50,9 @@ const Input: FC<InputProps> = ({
 
     return (
         <div className="relative">
+            <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                {label}
+            </label>
             <input
                 type={type}
                 id={id}

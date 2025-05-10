@@ -2,6 +2,7 @@ import React from "react";
 
 interface TextareaProps {
     placeholder?: string;
+    label?: string;
     rows?: number;
     value?: string;
     onChange?: (value: string) => void;
@@ -13,6 +14,7 @@ interface TextareaProps {
 
 const TextArea: React.FC<TextareaProps> = ({
                                                placeholder = "Enter your message",
+                                               label,
                                                rows = 3,
                                                value = "",
                                                onChange,
@@ -39,14 +41,17 @@ const TextArea: React.FC<TextareaProps> = ({
 
     return (
         <div className="relative">
-      <textarea
-          placeholder={placeholder}
-          rows={rows}
-          value={value}
-          onChange={handleChange}
-          disabled={disabled}
-          className={textareaClasses}
-      />
+            <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                {label}
+            </label>
+            <textarea
+                placeholder={placeholder}
+                rows={rows}
+                value={value}
+                onChange={handleChange}
+                disabled={disabled}
+                className={textareaClasses}
+            />
             {hint && (
                 <p
                     className={`mt-2 text-sm ${
