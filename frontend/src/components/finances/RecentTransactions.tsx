@@ -136,8 +136,10 @@ export default function RecentTransactions({year, month}: Props) {
                         title: response.id ? "Transacción añadida" : "No se ha podido añadir la transacción",
                         message: response.id ? "Transacción añadida" : "No se ha podido añadir la transacción"
                     })
-                    fetchMonthlyTransactionBySubcategory(year, month, selectedSubcategory!)
-                        .then(setSubcategoryTransactions)
+                    if (selectedSubcategory) {
+                        fetchMonthlyTransactionBySubcategory(year, month, selectedSubcategory)
+                            .then(setSubcategoryTransactions)
+                    }
 
                     fetchMonthlySubcategorySumExpenses(year, month)
                         .then(setSubcategoryExpenses)
