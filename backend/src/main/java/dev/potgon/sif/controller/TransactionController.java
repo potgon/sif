@@ -1,11 +1,8 @@
 package dev.potgon.sif.controller;
 
 import dev.potgon.sif.dto.SubcategoryDTO;
-import dev.potgon.sif.dto.TransactionCreateDTO;
+import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.dto.TransactionDTO;
-import dev.potgon.sif.dto.TransactionUpdateDTO;
-import dev.potgon.sif.dto.response.MonthlySubcategoryExpenseDTO;
-import dev.potgon.sif.dto.response.MonthlyTransactionsDTO;
 import dev.potgon.sif.service.TransactionsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -53,12 +50,15 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deleteTransaction(
-            @RequestParam Long id
+    @DeleteMapping("/{id}")
+    public ResponseEntity<TransactionDeleteDTO> deleteTransaction(
+            @PathVariable Long id
     ) {
-        transactionsService.deleteTransaction(id);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        TransactionDeleteDTO result = transactionsService.deleteTransaction(id);
+        if (result.isResult()) {
+            return ResponseEntity.ok(result);
+        }
+        return ResponseEntity.badRequest().body(result);
     }
 
     @PatchMapping("/{id}")

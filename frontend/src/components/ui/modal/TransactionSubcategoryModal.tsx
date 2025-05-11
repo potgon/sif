@@ -28,7 +28,7 @@ export default function TransactionSubcategoryModal({
                         className="border p-4 rounded-lg bg-white dark:bg-gray-800 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
                         <p className="text-theme-xl font-semibold text-gray-800 dark:text-white">
-                            {new Date(tx.date).toLocaleDateString()} - €{tx.amount.toFixed(2)}
+                            {new Date(tx.date).toLocaleDateString("es-ES")} - €{tx.amount.toFixed(2)}
                         </p>
                         <p className="text-theme-sm--line-height text-gray-500 dark:text-gray-300">{tx.description}</p>
                         <p className="text-gray-700 dark:text-gray-300">{tx.notes}</p>

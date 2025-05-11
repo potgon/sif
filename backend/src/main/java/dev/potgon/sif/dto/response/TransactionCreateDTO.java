@@ -1,4 +1,4 @@
-package dev.potgon.sif.dto;
+package dev.potgon.sif.dto.response;
 
 import lombok.*;
 import java.math.BigDecimal;

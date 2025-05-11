@@ -112,6 +112,15 @@ export default function RecentTransactions({year, month}: Props) {
                         setSubcategoryExpenses(updatedExpenses)
                         closeEditModal()
                     }}
+                    onDelete={(deletedTx) => {
+                        setSubcategoryTransactions((prev) => ({
+                            ...prev!,
+                            transactions: prev!.transactions.filter((tx) => tx.id !== deletedTx.id),
+                        }))
+
+                        fetchMonthlySubcategorySumExpenses(year, month)
+                            .then(setSubcategoryExpenses)
+                    }}
                 />
             )}
         </>

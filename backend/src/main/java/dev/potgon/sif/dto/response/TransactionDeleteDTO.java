@@ -2,13 +2,13 @@ package dev.potgon.sif.dto.response;
 
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MonthlySubcategoryExpenseDTO {
-    List<SubcategoryExpenseDTO> subcategoryExpenses;
+public class TransactionDeleteDTO {
+    private long id;
+    private boolean result;
+    private String message;
 }

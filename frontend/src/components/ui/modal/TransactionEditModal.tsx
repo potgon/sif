@@ -1,5 +1,5 @@
 import {Modal} from "./index"
-import {Subcategory, Transaction} from "../../../api/finances/types"
+import {Subcategory, Transaction, TransactionDelete} from "../../../api/finances/types"
 import Form from "../../form/Form"
 import InputField from "../../form/input/InputField"
 import TextArea from "../../form/input/TextArea"
@@ -7,16 +7,17 @@ import Checkbox from "../../form/input/Checkbox"
 import {useEffect, useState} from "react"
 import Select, {Option} from "../../form/Select.tsx"
 import DatePicker from "../../form/date-picker.tsx";
-import {fetchAllSubcategories} from "../../../api/finances/metrics.ts";
+import {deleteTransaction, fetchAllSubcategories} from "../../../api/finances/metrics.ts";
 
 interface Props {
     isOpen: boolean
     onClose: () => void
     transaction: Transaction
     onSubmit: (updated: Transaction) => void
+    onDelete: (deleted: TransactionDelete) => void
 }
 
-export default function TransactionEditModal({isOpen, onClose, transaction, onSubmit}: Props) {
+export default function TransactionEditModal({isOpen, onClose, transaction, onSubmit, onDelete}: Props) {
     const [formData, setFormData] = useState<Transaction>(transaction)
     const [subcategories, setSubcategories] = useState<Subcategory[]>([])
 
@@ -34,6 +35,12 @@ export default function TransactionEditModal({isOpen, onClose, transaction, onSu
 
     const handleSubmit = () => {
         onSubmit(formData)
+        onClose()
+    }
+
+    const handleDelete = async () => {
+        const response = await deleteTransaction(transaction.id)
+        onDelete(response)
         onClose()
     }
 
@@ -97,9 +104,24 @@ export default function TransactionEditModal({isOpen, onClose, transaction, onSu
                     onChange={(value) => handleChange("notes", value)}
                 />
 
-                <button type="submit" className="text-theme-xl text-gray-800 dark:text-white">
-                    Actualizar
-                </button>
+                <div className="flex justify-between items-center">
+                    <button
+                        type="submit"
+                        className="text-theme-xl text-gray-800 dark:text-white"
+                    >
+                        Actualizar
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            handleDelete()
+                        }}
+                        className="text-theme-xl text-red-600 dark:text-red-400"
+                    >
+                        Borrar
+                    </button>
+                </div>
             </Form>
         </Modal>
     )

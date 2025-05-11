@@ -1,7 +1,7 @@
 package dev.potgon.sif.utils;
 
 import dev.potgon.sif.dto.*;
-import dev.potgon.sif.dto.response.MonthlySubcategoryExpenseDTO;
+import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.entity.*;
 import dev.potgon.sif.exception.BusinessException;
 import dev.potgon.sif.exception.ResourceNotFoundException;
@@ -238,6 +238,20 @@ public class FinanceUtils {
         }
         transactionRepo.save(tx);
         return transactionMapper.toDTO(tx);
+    }
+
+    public TransactionDeleteDTO  deleteTransaction(Long id) {
+        Optional<Transaction> transaction = transactionRepo.findById(id);
+        TransactionDeleteDTO response = TransactionDeleteDTO.builder().build();
+        if (transaction.isPresent()) {
+            transactionRepo.deleteById(id);
+            response.setResult(true);
+            response.setId(id);
+            return response;
+        }
+        response.setResult(false);
+        response.setMessage("No se ha podido encontrar la transacción");
+        return response;
     }
 
 }
