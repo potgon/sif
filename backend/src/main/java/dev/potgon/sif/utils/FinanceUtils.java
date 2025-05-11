@@ -196,8 +196,8 @@ public class FinanceUtils {
                 .isRecurring(transactionReq.getIsRecurring())
                 .createdAt(ZonedDateTime.now())
                 .build();
-        transactionRepo.save(transactionMapper.toEntity(transactionDTO));
-        return transactionDTO;
+        Transaction savedEntity = transactionRepo.save(transactionMapper.toEntity(transactionDTO));
+        return transactionMapper.toDTO(savedEntity);
     }
 
     public TransactionDTO updateTransaction(TransactionUpdateDTO updateDTO) {

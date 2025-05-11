@@ -16,6 +16,7 @@ import TransactionSubcategoryModal from "../ui/modal/TransactionSubcategoryModal
 import TransactionEditModal from "../ui/modal/TransactionEditModal.tsx";
 import Button from "../ui/button/Button.tsx";
 import TransactionAddModal from "../ui/modal/TransactionAddModal.tsx";
+import Alert from "../ui/alert/Alert.tsx";
 
 interface Props {
     year: number
@@ -38,6 +39,11 @@ export default function RecentTransactions({year, month}: Props) {
         message: string;
     } | null>(null)
 
+    const [creationAlert, setCreationAlert] = useState<{
+        variant: "success" | "error";
+        title: string;
+        message: string;
+    } | null>(null)
 
     useEffect(() => {
         fetchMonthlySubcategorySumExpenses(year, month)
@@ -54,6 +60,15 @@ export default function RecentTransactions({year, month}: Props) {
 
     return (
         <>
+            {creationAlert && (
+                <div className="mb-4">
+                    <Alert
+                        variant={creationAlert.variant}
+                        title={creationAlert.title}
+                        message={creationAlert.message}
+                    />
+                </div>
+            )}
             <div
                 className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
                 <div className="flex justify-between items-center">
@@ -116,17 +131,17 @@ export default function RecentTransactions({year, month}: Props) {
                 month={month}
                 onSubmit={async (newTx) => {
                     const response = await createTransaction(newTx)
-                    setModalAlert({
+                    setCreationAlert({
                         variant: response.id ? "success" : "error",
                         title: response.id ? "Transacción añadida" : "No se ha podido añadir la transacción",
                         message: response.id ? "Transacción añadida" : "No se ha podido añadir la transacción"
                     })
-                    setTimeout(() => setModalAlert(null), 5000)
                     fetchMonthlyTransactionBySubcategory(year, month, selectedSubcategory!)
                         .then(setSubcategoryTransactions)
 
                     fetchMonthlySubcategorySumExpenses(year, month)
                         .then(setSubcategoryExpenses)
+                    setTimeout(() => setCreationAlert(null), 5000)
                 }}
             />
 

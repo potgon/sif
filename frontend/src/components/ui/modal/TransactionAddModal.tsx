@@ -8,6 +8,7 @@ import Checkbox from "../../form/input/Checkbox"
 import DatePicker from "../../form/date-picker"
 import { fetchAllSubcategories } from "../../../api/finances/metrics"
 import Select, {Option} from "../../form/Select.tsx";
+import Button from "../button/Button.tsx";
 
 interface Props {
     isOpen: boolean
@@ -22,7 +23,7 @@ export default function TransactionAddModal({ isOpen, onClose, onSubmit, year, m
     const [formData, setFormData] = useState<TransactionCreate>({
         year,
         month,
-        date: new Date().toLocaleDateString("es-ES").slice(0, 10),
+        date: new Date().toLocaleDateString("sv-SE").slice(0, 10),
         amount: 0,
         subcategory: subcategories[0],
         isRecurring: false,
@@ -101,9 +102,9 @@ export default function TransactionAddModal({ isOpen, onClose, onSubmit, year, m
                     onChange={(v) => handleChange("notes", v)}
                 />
 
-                <button type="submit" className="text-theme-xl text-gray-800 dark:text-white">
+                <Button type="submit" variant="primary" size="sm">
                     Añadir
-                </button>
+                </Button>
             </Form>
         </Modal>
     )

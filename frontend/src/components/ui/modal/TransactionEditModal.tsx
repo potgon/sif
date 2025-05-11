@@ -8,6 +8,7 @@ import {useEffect, useState} from "react"
 import Select, {Option} from "../../form/Select.tsx"
 import DatePicker from "../../form/date-picker.tsx";
 import {deleteTransaction, fetchAllSubcategories} from "../../../api/finances/metrics.ts";
+import Button from "../button/Button.tsx"
 
 interface Props {
     isOpen: boolean
@@ -105,22 +106,18 @@ export default function TransactionEditModal({isOpen, onClose, transaction, onSu
                 />
 
                 <div className="flex justify-between items-center">
-                    <button
-                        type="submit"
-                        className="text-theme-xl text-gray-800 dark:text-white"
-                    >
+                    <Button type="submit" variant="primary" size="sm">
                         Actualizar
-                    </button>
+                    </Button>
 
-                    <button
+                    <Button
                         type="button"
-                        onClick={() => {
-                            handleDelete()
-                        }}
-                        className="text-theme-xl text-red-600 dark:text-red-400"
+                        variant="primary"
+                        size="sm"
+                        onClick={handleDelete}
                     >
                         Borrar
-                    </button>
+                    </Button>
                 </div>
             </Form>
         </Modal>
