@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react"
 import {
+    createTransaction,
     fetchMonthlySubcategorySumExpenses,
     fetchMonthlyTransactionBySubcategory,
     updateTransaction
@@ -13,6 +14,8 @@ import {
 import {useModal} from "../../hooks/useModal.ts";
 import TransactionSubcategoryModal from "../ui/modal/TransactionSubcategoryModal.tsx";
 import TransactionEditModal from "../ui/modal/TransactionEditModal.tsx";
+import Button from "../ui/button/Button.tsx";
+import TransactionAddModal from "../ui/modal/TransactionAddModal.tsx";
 
 interface Props {
     year: number
@@ -26,6 +29,7 @@ export default function RecentTransactions({year, month}: Props) {
 
     const {isOpen, openModal, closeModal} = useModal()
     const {isOpen: isEditOpen, openModal: openEditModal, closeModal: closeEditModal} = useModal()
+    const {isOpen: isAddOpen, openModal: openAddModal, closeModal: closeAddModal} = useModal()
     const [editingTx, setEditingTx] = useState<Transaction | null>(null)
 
     const [modalAlert, setModalAlert] = useState<{
@@ -57,7 +61,15 @@ export default function RecentTransactions({year, month}: Props) {
                         Gastos por Subcategoría
                     </h3>
 
-                    <button>Añadir</button>
+                    <Button
+                        size="sm"
+                        variant="primary"
+                        onClick={() => {
+                            openAddModal()
+                        }}
+                    >
+                        Añadir
+                    </Button>
                 </div>
 
                 <div className="overflow-x-auto custom-scrollbar">
@@ -97,6 +109,27 @@ export default function RecentTransactions({year, month}: Props) {
                 alert={modalAlert}
             />
 
+            <TransactionAddModal
+                isOpen={isAddOpen}
+                onClose={closeAddModal}
+                year={year}
+                month={month}
+                onSubmit={async (newTx) => {
+                    const response = await createTransaction(newTx)
+                    setModalAlert({
+                        variant: response.id ? "success" : "error",
+                        title: response.id ? "Transacción añadida" : "No se ha podido añadir la transacción",
+                        message: response.id ? "Transacción añadida" : "No se ha podido añadir la transacción"
+                    })
+                    setTimeout(() => setModalAlert(null), 5000)
+                    fetchMonthlyTransactionBySubcategory(year, month, selectedSubcategory!)
+                        .then(setSubcategoryTransactions)
+
+                    fetchMonthlySubcategorySumExpenses(year, month)
+                        .then(setSubcategoryExpenses)
+                }}
+            />
+
             {editingTx && (
                 <TransactionEditModal
                     isOpen={isEditOpen}
@@ -113,7 +146,6 @@ export default function RecentTransactions({year, month}: Props) {
                             ...(updatedTx.notes !== undefined && {notes: updatedTx.notes})
                         }
                         const response = await updateTransaction(editingTx?.id, transactionUpdate)
-                        console.log("Updated transaction:", updatedTx)
                         setSubcategoryTransactions(prev => ({
                             ...prev!,
                             transactions: prev!.transactions.map((tx) =>
@@ -134,7 +166,7 @@ export default function RecentTransactions({year, month}: Props) {
                         }
                         setModalAlert({
                             variant: response.result ? "success" : "error",
-                            title: response.result ? "Transacción eliminada" : "No se pudo eliminar",
+                            title: response.result ? "Transacción eliminada" : "No se pudo eliminar la transacción",
                             message: response.message,
                         })
                         setTimeout(() => setModalAlert(null), 5000)

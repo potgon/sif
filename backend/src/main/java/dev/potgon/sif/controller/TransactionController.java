@@ -1,11 +1,10 @@
 package dev.potgon.sif.controller;
 
 import dev.potgon.sif.dto.SubcategoryDTO;
-import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.dto.TransactionDTO;
+import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.service.TransactionsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,11 +42,10 @@ public class TransactionController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity<Void> createTransaction(
+    public ResponseEntity<TransactionDTO> createTransaction(
             @RequestBody TransactionCreateDTO transactionCreateDTO
     ) {
-        transactionsService.createTransaction(transactionCreateDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.ok(transactionsService.createTransaction(transactionCreateDTO));
     }
 
     @DeleteMapping("/{id}")

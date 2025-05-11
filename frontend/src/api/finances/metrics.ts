@@ -67,8 +67,9 @@ export const fetchMonthlySubcategorySumExpenses = async (
     return response.data
 }
 
-export const createTransaction = async (transaction: TransactionCreate): Promise<void> => {
-    await apiClient.post("/transactions/new", transaction)
+export const createTransaction = async (transaction: TransactionCreate): Promise<Transaction> => {
+    const response = await apiClient.post("/transactions/new", transaction)
+    return response.data
 }
 
 export const updateTransaction = async (id: number, transaction: TransactionUpdate): Promise<Transaction> => {

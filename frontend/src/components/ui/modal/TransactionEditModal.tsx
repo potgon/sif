@@ -65,7 +65,7 @@ export default function TransactionEditModal({isOpen, onClose, transaction, onSu
                 />
 
                 <DatePicker
-                    id="transaction-date"
+                    id="edit-transaction-date"
                     label="Fecha"
                     defaultDate={formData.date}
                     onChange={([selectedDate]) => {

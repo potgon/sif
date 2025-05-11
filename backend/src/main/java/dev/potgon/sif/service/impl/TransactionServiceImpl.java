@@ -49,8 +49,8 @@ public class TransactionServiceImpl implements TransactionsService {
     }
 
     @Override
-    public void createTransaction(TransactionCreateDTO transactionCreateDTO) {
-        financeUtils.createTransaction(transactionCreateDTO);
+    public TransactionDTO createTransaction(TransactionCreateDTO transactionCreateDTO) {
+        return financeUtils.createTransaction(transactionCreateDTO);
     }
 
     @Override

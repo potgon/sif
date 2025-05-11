@@ -1,5 +1,6 @@
 package dev.potgon.sif.dto.response;
 
+import dev.potgon.sif.dto.SubcategoryDTO;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,7 +16,7 @@ public class TransactionCreateDTO {
     private LocalDate date;
     private BigDecimal amount;
     private String description;
-    private String subcategoryName;
+    private SubcategoryDTO subcategory;
     private Boolean isRecurring;
     private String notes;
 }

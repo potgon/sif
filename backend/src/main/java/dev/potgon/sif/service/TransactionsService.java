@@ -10,7 +10,7 @@ public interface TransactionsService {
     MonthlyTransactionsDTO getMonthlyTransactions(int year, int month);
     MonthlyTransactionsDTO getMonthlyTransactionBySubcategory(int year, int month, String subcategory);
     MonthlySubcategoryExpenseDTO getMonthlyTransactionSubcategorySum(int year, int month);
-    void createTransaction(TransactionCreateDTO transactionCreateDTO);
+    TransactionDTO createTransaction(TransactionCreateDTO transactionCreateDTO);
     TransactionDeleteDTO deleteTransaction(Long id);
     TransactionDTO updateTransaction(TransactionUpdateDTO updateDTO);
     List<SubcategoryDTO> fetchAllSubcategories();

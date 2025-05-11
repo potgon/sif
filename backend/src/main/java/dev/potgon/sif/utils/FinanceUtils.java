@@ -44,26 +44,10 @@ public class FinanceUtils {
         return period;
     }
 
-    public Subcategory getSubcategoryIfExists(String name) {
-        Subcategory subcat = subcategoryRepo.findByName(name);
-        if (subcat == null) {
-            throw new ResourceNotFoundException("Subcategory not found with name: " + name);
-        }
-        return subcat;
-    }
-
     private Optional<BigDecimal> getPeriodExtraPayIfExists(int year, int month) {
         Period period = getPeriodIfExists(year, month);
         if (period.getExtraPay() == null) return Optional.empty();
         return Optional.of(period.getExtraPay());
-    }
-
-    private Category getCategoryIfExists(Long categoryId) {
-        return categoryRepo.findById(categoryId).orElse(null);
-    }
-
-    private Subcategory getSubcategoryIfExists(Long subcategoryId) {
-        return subcategoryRepo.findById(subcategoryId).orElse(null);
     }
 
     public TransactionDTO getTransactionByIdIfExists(Long id) {
@@ -199,21 +183,21 @@ public class FinanceUtils {
         return MonthlySubcategoryExpenseDTO.builder().subcategoryExpenses(expenses).build();
     }
 
-    public void createTransaction(TransactionCreateDTO transactionReq) {
+    public TransactionDTO createTransaction(TransactionCreateDTO transactionReq) {
         PeriodDTO period = periodMapper.toDTO(getPeriodIfExists(transactionReq.getYear(), transactionReq.getMonth()));
         CategoryDTO category = categoryMapper.toDTO(categoryRepo.findByName(CategoryTypeEnum.EXPENSE));
-        SubcategoryDTO subcat = subcategoryMapper.toDTO(getSubcategoryIfExists(transactionReq.getSubcategoryName()));
         TransactionDTO transactionDTO = TransactionDTO.builder()
                 .period(period)
                 .date(transactionReq.getDate())
                 .amount(transactionReq.getAmount())
                 .description(transactionReq.getDescription())
                 .category(category)
-                .subcategory(subcat)
+                .subcategory(transactionReq.getSubcategory())
                 .isRecurring(transactionReq.getIsRecurring())
                 .createdAt(ZonedDateTime.now())
                 .build();
         transactionRepo.save(transactionMapper.toEntity(transactionDTO));
+        return transactionDTO;
     }
 
     public TransactionDTO updateTransaction(TransactionUpdateDTO updateDTO) {
