@@ -52,9 +52,13 @@ export default function RecentTransactions({year, month}: Props) {
         <>
             <div
                 className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
-                    Gastos por Subcategoría
-                </h3>
+                <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 mb-4">
+                        Gastos por Subcategoría
+                    </h3>
+
+                    <button>Añadir</button>
+                </div>
 
                 <div className="overflow-x-auto custom-scrollbar">
                     <table className="min-w-full text-sm text-gray-500 dark:text-gray-400">
