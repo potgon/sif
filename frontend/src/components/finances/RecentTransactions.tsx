@@ -28,6 +28,13 @@ export default function RecentTransactions({year, month}: Props) {
     const {isOpen: isEditOpen, openModal: openEditModal, closeModal: closeEditModal} = useModal()
     const [editingTx, setEditingTx] = useState<Transaction | null>(null)
 
+    const [modalAlert, setModalAlert] = useState<{
+        variant: "success" | "error";
+        title: string;
+        message: string;
+    } | null>(null)
+
+
     useEffect(() => {
         fetchMonthlySubcategorySumExpenses(year, month)
             .then(setSubcategoryExpenses)
@@ -83,6 +90,7 @@ export default function RecentTransactions({year, month}: Props) {
                     setEditingTx(tx)
                     openEditModal()
                 }}
+                alert={modalAlert}
             />
 
             {editingTx && (
@@ -112,14 +120,20 @@ export default function RecentTransactions({year, month}: Props) {
                         setSubcategoryExpenses(updatedExpenses)
                         closeEditModal()
                     }}
-                    onDelete={(deletedTx) => {
-                        setSubcategoryTransactions((prev) => ({
-                            ...prev!,
-                            transactions: prev!.transactions.filter((tx) => tx.id !== deletedTx.id),
-                        }))
-
-                        fetchMonthlySubcategorySumExpenses(year, month)
-                            .then(setSubcategoryExpenses)
+                    onDelete={(response) => {
+                        if (response.result) {
+                            setSubcategoryTransactions((prev) => ({
+                                ...prev!,
+                                transactions: prev!.transactions.filter((tx) => tx.id !== response.id),
+                            }))
+                            fetchMonthlySubcategorySumExpenses(year, month).then(setSubcategoryExpenses)
+                        }
+                        setModalAlert({
+                            variant: response.result ? "success" : "error",
+                            title: response.result ? "Transacción eliminada" : "No se pudo eliminar",
+                            message: response.message,
+                        })
+                        setTimeout(() => setModalAlert(null), 5000)
                     }}
                 />
             )}

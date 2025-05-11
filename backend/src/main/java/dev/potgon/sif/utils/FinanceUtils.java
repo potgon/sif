@@ -240,17 +240,19 @@ public class FinanceUtils {
         return transactionMapper.toDTO(tx);
     }
 
-    public TransactionDeleteDTO  deleteTransaction(Long id) {
+    public TransactionDeleteDTO deleteTransaction(Long id) {
         Optional<Transaction> transaction = transactionRepo.findById(id);
         TransactionDeleteDTO response = TransactionDeleteDTO.builder().build();
         if (transaction.isPresent()) {
             transactionRepo.deleteById(id);
-            response.setResult(true);
             response.setId(id);
+            response.setResult(true);
+            response.setMessage("Transacción borrada");
             return response;
         }
+        response.setId(id);
         response.setResult(false);
-        response.setMessage("No se ha podido encontrar la transacción");
+        response.setMessage("No se ha podido borrar la transacción");
         return response;
     }
 

@@ -55,10 +55,7 @@ public class TransactionController {
             @PathVariable Long id
     ) {
         TransactionDeleteDTO result = transactionsService.deleteTransaction(id);
-        if (result.isResult()) {
-            return ResponseEntity.ok(result);
-        }
-        return ResponseEntity.badRequest().body(result);
+        return ResponseEntity.ok(result);
     }
 
     @PatchMapping("/{id}")

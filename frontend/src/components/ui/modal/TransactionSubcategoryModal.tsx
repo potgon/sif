@@ -1,4 +1,5 @@
 import {MonthlyTransactionSubcategory, Transaction} from "../../../api/finances/types.ts";
+import Alert from "../alert/Alert.tsx";
 import {Modal} from "./index.tsx";
 
 export default function TransactionSubcategoryModal({
@@ -7,19 +8,33 @@ export default function TransactionSubcategoryModal({
                                                         transactions,
                                                         subcategoryName,
                                                         onTransactionClick,
+                                                        alert
                                                     }: {
     isOpen: boolean
     onClose: () => void
     transactions: MonthlyTransactionSubcategory['transactions']
     subcategoryName: string | null
     onTransactionClick: (tx: Transaction) => void
+    alert: {
+        variant: "success" | "error"
+        title: string
+        message: string
+    } | null
 }) {
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="max-w-4xl w-full p-6">
             <h2 className="text-3xl font-semibold mb-4 text-gray-800 dark:text-white">
                 Transacciones en {subcategoryName}
             </h2>
-
+            {alert && (
+                <div className="mb-4 w-full">
+                    <Alert
+                        variant={alert.variant}
+                        title={alert.title}
+                        message={alert.message}
+                    />
+                </div>
+            )}
             <div className="flex flex-col gap-4 max-h-[600px] overflow-y-auto pr-2">
                 {transactions.map((tx) => (
                     <div

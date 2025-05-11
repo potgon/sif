@@ -45,24 +45,6 @@ export interface Subcategory {
     name: string
 }
 
-export enum SubcategoryType {
-    ComerFuera = "Comer Fuera",
-    IngresoAlt = "Ingreso Alt.",
-    Compras = "Compras",
-    Ropa = "Ropa",
-    Viajes = "Viajes",
-    Cafeterias = "Cafeterias",
-    Padel = "Padel",
-    Misc = "Misc",
-    Suplementos = "Suplementos",
-    Imprevistos = "Imprevistos",
-    Gasolina = "Gasolina",
-    Internet = "Internet",
-    ICloud = "ICloud",
-    Parking = "Parking",
-    Mensualidades = "Mensualidades"
-}
-
 enum CategoryType {
     INCOME = "INCOME",
     EXPENSE = "EXPENSE",
@@ -98,7 +80,7 @@ export interface TransactionCreate {
     date: string
     amount: number
     description?: string
-    subcategoryName: SubcategoryType
+    subcategory: Subcategory
     isRecurring: boolean
     notes?: string
 }
@@ -114,8 +96,8 @@ export interface TransactionUpdate {
 }
 
 export interface TransactionDelete {
-    id?: number
+    id: number
     result: boolean
-    message?: string
+    message: string
 }
 
