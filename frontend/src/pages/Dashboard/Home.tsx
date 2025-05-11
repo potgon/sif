@@ -79,15 +79,11 @@ export default function Home() {
                     <MonthlyTarget year={Number(selectedYear)} month={Number(selectedMonth)}/>
                 </div>
 
-                <div className="col-span-12">
+                <div className="col-span-12 xl:col-span-6">
                     <StatisticsChart/>
                 </div>
 
-                <div className="col-span-12 xl:col-span-5">
-                    <DemographicCard/>
-                </div>
-
-                <div className="col-span-12 xl:col-span-7">
+                <div className="col-span-12 xl:col-span-6">
                     <RecentTransactions year={Number(selectedYear)} month={Number(selectedMonth)}/>
                 </div>
             </div>

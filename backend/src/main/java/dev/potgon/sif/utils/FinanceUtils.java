@@ -82,7 +82,7 @@ public class FinanceUtils {
     }
 
     public BigDecimal computePercentageDifference(BigDecimal current, BigDecimal previous) {
-        if (previous == null) return null;
+        if (previous == null || previous.equals(BigDecimal.ZERO)) return null;
         if (current == null) current = BigDecimal.ZERO;
         return current.subtract(previous)
                 .divide(previous, 4, RoundingMode.HALF_UP)
