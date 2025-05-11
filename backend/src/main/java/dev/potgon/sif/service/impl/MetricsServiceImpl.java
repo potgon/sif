@@ -2,6 +2,7 @@ package dev.potgon.sif.service.impl;
 
 import dev.potgon.sif.dto.CategoryTypeEnum;
 import dev.potgon.sif.dto.response.AnnualExpensesDTO;
+import dev.potgon.sif.dto.response.ExtraPayDTO;
 import dev.potgon.sif.dto.response.MonthlyMetricsDTO;
 import dev.potgon.sif.dto.response.MonthlyTargetDTO;
 import dev.potgon.sif.service.MetricsService;
@@ -64,6 +65,11 @@ public class MetricsServiceImpl implements MetricsService {
                 .surplus(financeUtils.computeCurrentMonthSurplusAmount(year, month))
                 .accumulated(financeUtils.getCurrentSurplus())
                 .build();
+    }
+
+    @Override
+    public ExtraPayDTO getExtraPay(int year, int month) {
+        return financeUtils.getExtraPay(year, month);
     }
 }
 

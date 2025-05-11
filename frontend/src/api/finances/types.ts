@@ -108,3 +108,8 @@ export interface Param {
     createdAt: string
 }
 
+export interface ExtraPay {
+    period: Period
+    extraPay: number
+}
+

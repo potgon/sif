@@ -37,5 +37,13 @@ public class MetricsController {
     ) {
         return ResponseEntity.ok(metricsService.getMonthlyTarget(year, month));
     }
+
+    @GetMapping("/extra")
+    public ResponseEntity<ExtraPayDTO> getExtraPay(
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        return ResponseEntity.ok(metricsService.getExtraPay(year, month));
+    }
 }
 

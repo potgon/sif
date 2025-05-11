@@ -240,4 +240,11 @@ public class FinanceUtils {
         return response;
     }
 
+    public ExtraPayDTO getExtraPay(int year, int month) {
+        PeriodDTO period = periodMapper.toDTO(periodRepo.findByYearAndMonth(year, month));
+        return ExtraPayDTO.builder()
+                .period(period)
+                .extraPay(period.getExtraPay())
+                .build();
+    }
 }
