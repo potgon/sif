@@ -3,7 +3,6 @@ import AnnualExpensesChart from "../../components/finances/AnnualExpensesChart.t
 import StatisticsChart from "../../components/finances/StatisticsChart";
 import MonthlyTarget from "../../components/finances/MonthlyTarget";
 import RecentTransactions from "../../components/finances/RecentTransactions.tsx";
-import DemographicCard from "../../components/finances/DemographicCard";
 import PageMeta from "../../components/common/PageMeta";
 import {useState} from "react";
 

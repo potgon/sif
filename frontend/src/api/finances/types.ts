@@ -101,3 +101,10 @@ export interface TransactionDelete {
     message: string
 }
 
+export interface Param {
+    id: number
+    name: string
+    value: string
+    createdAt: string
+}
+
