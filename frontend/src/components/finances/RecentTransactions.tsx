@@ -171,6 +171,7 @@ export default function RecentTransactions({year, month}: Props) {
                         }))
                         const updatedExpenses = await fetchMonthlySubcategorySumExpenses(year, month)
                         setSubcategoryExpenses(updatedExpenses)
+                        window.dispatchEvent(new CustomEvent('accumulatedUpdated'));
                         closeEditModal()
                     }}
                     onDelete={(response) => {
@@ -180,6 +181,7 @@ export default function RecentTransactions({year, month}: Props) {
                                 transactions: prev!.transactions.filter((tx) => tx.id !== response.id),
                             }))
                             fetchMonthlySubcategorySumExpenses(year, month).then(setSubcategoryExpenses)
+                            window.dispatchEvent(new CustomEvent('accumulatedUpdated'));
                         }
                         setModalAlert({
                             variant: response.result ? "success" : "error",

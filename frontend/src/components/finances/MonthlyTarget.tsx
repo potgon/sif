@@ -1,9 +1,6 @@
 import Chart from "react-apexcharts";
 import {ApexOptions} from "apexcharts";
-import {useEffect, useState} from "react";
-import {Dropdown} from "../ui/dropdown/Dropdown";
-import {DropdownItem} from "../ui/dropdown/DropdownItem";
-import {MoreDotIcon} from "../../icons";
+import {useCallback, useEffect, useState} from "react";
 import {fetchMonthlyExpenseTarget} from "../../api/finances/metrics.ts";
 import {MonthlyExpenseTarget} from "../../api/finances/types.ts";
 
@@ -60,29 +57,27 @@ export default function MonthlyTarget({year, month}: Readonly<Props>) {
         },
         labels: ["Progress"],
     };
-    const [isOpen, setIsOpen] = useState(false);
     const [data, setData] = useState<MonthlyExpenseTarget | null>(null);
     const [loading, setLoading] = useState(true)
     const series = [data?.currentExpensePercentage ?? 0] ;
 
-    useEffect(() => {
-        setLoading(true)
+    const refetchData = useCallback(() => {
+        setLoading(true);
         fetchMonthlyExpenseTarget(year, month)
             .then(setData)
             .catch((err) => {
-                console.error("Error fetching metrics", err)
-                setData(null)
+                console.error("Error fetching metrics", err);
+                setData(null);
             })
-            .finally(() => setLoading(false))
-    }, [year, month])
+            .finally(() => setLoading(false));
+    }, [year, month]);
 
-    function toggleDropdown() {
-        setIsOpen(!isOpen);
-    }
-
-    function closeDropdown() {
-        setIsOpen(false);
-    }
+    useEffect(() => {
+        refetchData();
+        const handleRefresh = () => refetchData();
+        window.addEventListener('accumulatedUpdated', handleRefresh);
+        return () => window.removeEventListener('accumulatedUpdated', handleRefresh);
+    }, [refetchData]);
 
     return (
         <div className="rounded-2xl border border-gray-200 bg-gray-100 dark:border-gray-800 dark:bg-white/[0.03]">
@@ -95,23 +90,6 @@ export default function MonthlyTarget({year, month}: Readonly<Props>) {
                         <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
                             Detalles del objetivo de gasto que has establecido para este mes
                         </p>
-                    </div>
-                    <div className="relative inline-block">
-                        <button className="dropdown-toggle" onClick={toggleDropdown}>
-                            <MoreDotIcon className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 size-6"/>
-                        </button>
-                        <Dropdown
-                            isOpen={isOpen}
-                            onClose={closeDropdown}
-                            className="w-40 p-2"
-                        >
-                            <DropdownItem
-                                onItemClick={closeDropdown}
-                                className="flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
-                            >
-                                Ver más
-                            </DropdownItem>
-                        </Dropdown>
                     </div>
                 </div>
                 <div className="relative ">
