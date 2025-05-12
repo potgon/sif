@@ -1,6 +1,5 @@
 import FinanceMetrics from "../../components/finances/FinanceMetrics.tsx";
 import AnnualExpensesChart from "../../components/finances/AnnualExpensesChart.tsx";
-import StatisticsChart from "../../components/finances/StatisticsChart";
 import MonthlyTarget from "../../components/finances/MonthlyTarget";
 import RecentTransactions from "../../components/finances/RecentTransactions.tsx";
 import PageMeta from "../../components/common/PageMeta";
@@ -78,9 +77,9 @@ export default function Home() {
                     <MonthlyTarget year={Number(selectedYear)} month={Number(selectedMonth)}/>
                 </div>
 
-                <div className="col-span-12 xl:col-span-6">
+                {/*<div className="col-span-12 xl:col-span-6">
                     <StatisticsChart/>
-                </div>
+                </div>*/}
 
                 <div className="col-span-12 xl:col-span-6">
                     <RecentTransactions year={Number(selectedYear)} month={Number(selectedMonth)}/>

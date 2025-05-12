@@ -25,7 +25,6 @@ public class FinanceUtils {
     private final TransactionRepository transactionRepo;
     private final PeriodRepository periodRepo;
     private final CategoryRepository categoryRepo;
-    private final BalanceSnapshotRepository balanceSnapshotRepo;
     private final ParamRepository paramRepo;
     private final SubcategoryRepository subcategoryRepo;
 
@@ -92,7 +91,7 @@ public class FinanceUtils {
         BigDecimal result;
         try {
             String paramValue = paramRepo.findByName(paramName).getValue();
-            result = BigDecimal.valueOf(Double.parseDouble(paramValue));
+            result = new BigDecimal(paramValue);
         } catch (NumberFormatException e) {
             log.error("Error while parsing parameter: {} | Not a BigDecimal", paramName);
             throw new BusinessException("Error parsing parameter: " + paramName);
@@ -146,10 +145,10 @@ public class FinanceUtils {
         return targetAmount.subtract(currentMonthExpenses);
     }
 
-    public BigDecimal getCurrentSurplus() {
-        BalanceSnapshot surplus = balanceSnapshotRepo.findBalanceSnapshotByType(BalanceType.SURPLUS);
-        if (surplus == null) return BigDecimal.ZERO;
-        return surplus.getCurrentAmount();
+    public BigDecimal getCurrentAccumulated() {
+        Param accumulated = paramRepo.findByName(Constants.PARAM_ACCUMULATED);
+        if (accumulated == null) return BigDecimal.ZERO;
+        return new BigDecimal(accumulated.getValue());
     }
 
     public MonthlySubcategoryExpenseDTO computeSubcategoryExpenses(List<TransactionDTO> transactions) {
@@ -196,6 +195,7 @@ public class FinanceUtils {
                 .createdAt(ZonedDateTime.now())
                 .build();
         Transaction savedEntity = transactionRepo.save(transactionMapper.toEntity(transactionDTO));
+        updateAccumulated(transactionDTO.getAmount(), Operation.SUBTRACT);
         return transactionMapper.toDTO(savedEntity);
     }
 
@@ -220,6 +220,10 @@ public class FinanceUtils {
             tx.setNotes(updateDTO.getNotes());
         }
         transactionRepo.save(tx);
+        if (!tx.getAmount().equals(updateDTO.getAmount())) {
+            BigDecimal difference = updateDTO.getAmount().subtract(tx.getAmount());
+            updateAccumulated(difference, Operation.ADD);
+        }
         return transactionMapper.toDTO(tx);
     }
 
@@ -231,6 +235,7 @@ public class FinanceUtils {
             response.setId(id);
             response.setResult(true);
             response.setMessage("Transacción borrada");
+            updateAccumulated(transaction.get().getAmount(), Operation.ADD);
             return response;
         }
         response.setId(id);
@@ -260,5 +265,16 @@ public class FinanceUtils {
             period.setExtraPay(incomeUpdateDTO.getExtraPay());
             periodRepo.save(periodMapper.toEntity(period));
         }
+    }
+
+    private void updateAccumulated(BigDecimal amount, Operation op) {
+        ParamDTO surplusParam = paramMapper.toDTO(paramRepo.findByName(Constants.PARAM_ACCUMULATED));
+        BigDecimal surplusVal = new BigDecimal(surplusParam.getValue());
+        BigDecimal newValue = (op == Operation.ADD)
+                ? surplusVal.add(amount)
+                : surplusVal.subtract(amount);
+
+        surplusParam.setValue(newValue.toString());
+        paramRepo.save(paramMapper.toEntity(surplusParam));
     }
 }

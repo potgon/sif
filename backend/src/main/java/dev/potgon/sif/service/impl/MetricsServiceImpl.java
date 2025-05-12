@@ -60,7 +60,7 @@ public class MetricsServiceImpl implements MetricsService {
                 .targetExpense(financeUtils.computeExpenseTargetAmount(year, month))
                 .targetPercentage(financeUtils.getBigDecimalParam(Constants.PARAM_EXPENSE_TARGET))
                 .surplus(financeUtils.computeCurrentMonthSurplusAmount(year, month))
-                .accumulated(financeUtils.getCurrentSurplus())
+                .accumulated(financeUtils.getCurrentAccumulated())
                 .build();
     }
 
