@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react"
 import {Modal} from "./index"
-import {fetchExtraPay, fetchParam} from "../../../api/finances/metrics"
-import {ExtraPay, Param} from "../../../api/finances/types"
+import {fetchExtraPay, fetchParam, updateIncome} from "../../../api/finances/metrics"
+import {ExtraPay, IncomeUpdate, Param} from "../../../api/finances/types"
 import InputField from "../../form/input/InputField"
 import Button from "../../ui/button/Button"
 
@@ -10,21 +10,30 @@ interface Props {
     onClose: () => void
     year: number
     month: number
+    refreshData: () => void
 }
 
-export default function IncomeModal({isOpen, onClose, year, month}: Props) {
+export default function IncomeModal({isOpen, onClose, year, month, refreshData}: Props) {
     const [salary, setSalary] = useState<Param | null>(null)
     const [extraPay, setExtraPay] = useState<ExtraPay | null>(null)
 
     useEffect(() => {
-        fetchParam("SALARY").then(setSalary)
-        fetchExtraPay(year, month).then(setExtraPay)
-    }, [year, month])
+        if (isOpen) {
+            fetchParam("SALARY").then(setSalary)
+            fetchExtraPay(year, month).then(setExtraPay)
+        }
+    }, [isOpen, year, month])
 
-    const handleUpdate = () => {
-        // 🔧 TODO: Implement update API call
-        console.log("Update salary:", salary?.value)
-        console.log("Update extra pay:", extraPay)
+    const handleUpdate = async () => {
+        const incomeData: IncomeUpdate = {
+            year,
+            month,
+            salary: salary?.value,
+            extraPay: extraPay?.extraPay
+        };
+        await updateIncome(incomeData);
+        refreshData()
+        onClose()
     }
 
     return (
@@ -49,11 +58,15 @@ export default function IncomeModal({isOpen, onClose, year, month}: Props) {
                     name="extra"
                     type="number"
                     value={extraPay?.extraPay ?? ""}
-                    onChange={(e) => setExtraPay(parseFloat(e.target.value))}
+                    onChange={(e) =>
+                        setExtraPay((prev) =>
+                            prev ? {...prev, extraPay: parseFloat(e.target.value)} : null
+                        )
+                    }
                 />
 
                 <div className="pt-2">
-                    <Button variant="primary" size="sm" onClick={handleUpdate}>
+                    <Button type="submit" variant="primary" size="sm" onClick={handleUpdate}>
                         Actualizar
                     </Button>
                 </div>

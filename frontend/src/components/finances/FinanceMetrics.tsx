@@ -6,7 +6,7 @@ import {
 } from "../../icons";
 import Badge from "../ui/badge/Badge";
 import {fetchMonthlyMetrics} from "../../api/finances/metrics.ts";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {MonthlyMetrics} from "../../api/finances/types.ts";
 import {useModal} from "../../hooks/useModal.ts";
 import IncomeModal from "../ui/modal/IncomeModal.tsx";
@@ -21,7 +21,7 @@ export default function FinanceMetrics({year, month}: Readonly<Props>) {
     const [loading, setLoading] = useState(true)
     const {isOpen, openModal, closeModal} = useModal()
 
-    useEffect(() => {
+    const fetchData = useCallback(() => {
         setLoading(true)
         fetchMonthlyMetrics(year, month)
             .then(setData)
@@ -31,6 +31,14 @@ export default function FinanceMetrics({year, month}: Readonly<Props>) {
             })
             .finally(() => setLoading(false))
     }, [year, month])
+
+    useEffect(() => {
+        fetchData()
+    }, [fetchData])
+
+    const refreshData = () => {
+        fetchData()
+    }
 
     return (
         <>
@@ -89,7 +97,7 @@ export default function FinanceMetrics({year, month}: Readonly<Props>) {
                 </div>
                 {/* <!-- Metric Item End --> */}
             </div>
-            <IncomeModal isOpen={isOpen} onClose={closeModal} year={year} month={month}/>
+            <IncomeModal isOpen={isOpen} onClose={closeModal} year={year} month={month} refreshData={refreshData}/>
         </>
     );
 }

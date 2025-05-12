@@ -5,10 +5,7 @@ import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.entity.*;
 import dev.potgon.sif.exception.BusinessException;
 import dev.potgon.sif.exception.ResourceNotFoundException;
-import dev.potgon.sif.mapper.CategoryMapper;
-import dev.potgon.sif.mapper.PeriodMapper;
-import dev.potgon.sif.mapper.SubcategoryMapper;
-import dev.potgon.sif.mapper.TransactionMapper;
+import dev.potgon.sif.mapper.*;
 import dev.potgon.sif.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -35,6 +33,7 @@ public class FinanceUtils {
     private final PeriodMapper periodMapper;
     private final CategoryMapper categoryMapper;
     private final SubcategoryMapper subcategoryMapper;
+    private final ParamMapper paramMapper;
 
     public Period getPeriodIfExists(int year, int month) {
         Period period = periodRepo.findByYearAndMonth(year, month);
@@ -246,5 +245,20 @@ public class FinanceUtils {
                 .period(period)
                 .extraPay(period.getExtraPay())
                 .build();
+    }
+
+    public void updateIncome(IncomeUpdateDTO incomeUpdateDTO) {
+        PeriodDTO period = periodMapper.toDTO(periodRepo.findByYearAndMonth(incomeUpdateDTO.getYear(), incomeUpdateDTO.getMonth()));
+        ParamDTO salaryParam = paramMapper.toDTO(paramRepo.findByName(Constants.PARAM_SALARY));
+        BigDecimal salaryDTO = new BigDecimal(incomeUpdateDTO.getSalary());
+        if (!salaryDTO.equals(BigDecimal.ZERO)) {
+            salaryParam.setValue(incomeUpdateDTO.getSalary());
+            salaryParam.setCreatedAt(LocalDateTime.now());
+            paramRepo.save(paramMapper.toEntity(salaryParam));
+        }
+        if (incomeUpdateDTO.getExtraPay() != null && !incomeUpdateDTO.getExtraPay().equals(BigDecimal.ZERO)) {
+            period.setExtraPay(incomeUpdateDTO.getExtraPay());
+            periodRepo.save(periodMapper.toEntity(period));
+        }
     }
 }

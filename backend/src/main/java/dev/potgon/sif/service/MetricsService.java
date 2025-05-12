@@ -7,4 +7,5 @@ public interface MetricsService {
     AnnualExpensesDTO getAnnualExpenses(int year);
     MonthlyTargetDTO getMonthlyTarget(int year, int month);
     ExtraPayDTO getExtraPay(int year, int month);
+    void updateIncome(IncomeUpdateDTO incomeUpdateDTO);
 }

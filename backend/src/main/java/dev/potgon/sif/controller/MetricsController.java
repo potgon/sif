@@ -4,10 +4,7 @@ import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.service.MetricsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/metrics")
@@ -44,6 +41,14 @@ public class MetricsController {
             @RequestParam int month
     ) {
         return ResponseEntity.ok(metricsService.getExtraPay(year, month));
+    }
+
+    @PatchMapping("/income/update")
+    public ResponseEntity<Void> updateIncome(
+            @RequestBody IncomeUpdateDTO incomeUpdateDTO
+    ) {
+        metricsService.updateIncome(incomeUpdateDTO);
+        return ResponseEntity.accepted().build();
     }
 }
 

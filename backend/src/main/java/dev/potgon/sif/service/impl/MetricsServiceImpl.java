@@ -1,10 +1,7 @@
 package dev.potgon.sif.service.impl;
 
 import dev.potgon.sif.dto.CategoryTypeEnum;
-import dev.potgon.sif.dto.response.AnnualExpensesDTO;
-import dev.potgon.sif.dto.response.ExtraPayDTO;
-import dev.potgon.sif.dto.response.MonthlyMetricsDTO;
-import dev.potgon.sif.dto.response.MonthlyTargetDTO;
+import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.service.MetricsService;
 import dev.potgon.sif.utils.Constants;
 import dev.potgon.sif.utils.FinanceUtils;
@@ -70,6 +67,11 @@ public class MetricsServiceImpl implements MetricsService {
     @Override
     public ExtraPayDTO getExtraPay(int year, int month) {
         return financeUtils.getExtraPay(year, month);
+    }
+
+    @Override
+    public void updateIncome(IncomeUpdateDTO incomeUpdateDTO) {
+        financeUtils.updateIncome(incomeUpdateDTO);
     }
 }
 

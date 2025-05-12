@@ -113,3 +113,9 @@ export interface ExtraPay {
     extraPay: number
 }
 
+export interface IncomeUpdate {
+    year: number
+    month: number
+    extraPay?: number
+    salary?: string
+}

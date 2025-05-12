@@ -12,7 +12,7 @@ import {
     Subcategory,
     TransactionDelete,
     Param,
-    ExtraPay
+    ExtraPay, IncomeUpdate
 } from "./types.ts";
 
 export const fetchMonthlyMetrics = async (
@@ -107,5 +107,10 @@ export const fetchExtraPay = async (
     const response = await apiClient.get("/metrics/extra", {
         params: {year, month},
     })
+    return response.data
+}
+
+export const updateIncome = async (income: IncomeUpdate): Promise<IncomeUpdate> => {
+    const response = await apiClient.patch("/metrics/income/update", income)
     return response.data
 }
