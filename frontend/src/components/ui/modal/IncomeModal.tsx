@@ -33,7 +33,7 @@ export default function IncomeModal({isOpen, onClose, year, month, refreshData}:
         };
         await updateIncome(incomeData);
         refreshData()
-        window.dispatchEvent(new CustomEvent('accumulatedUpdated'));
+        window.dispatchEvent(new CustomEvent('transactionUpdated'));
         onClose()
     }
 

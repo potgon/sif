@@ -139,8 +139,8 @@ export default function RecentTransactions({year, month}: Props) {
                     if (selectedSubcategory) {
                         fetchMonthlyTransactionBySubcategory(year, month, selectedSubcategory)
                             .then(setSubcategoryTransactions)
+                        window.dispatchEvent(new CustomEvent('transactionUpdated'))
                     }
-
                     fetchMonthlySubcategorySumExpenses(year, month)
                         .then(setSubcategoryExpenses)
                     setTimeout(() => setCreationAlert(null), 5000)
@@ -171,7 +171,7 @@ export default function RecentTransactions({year, month}: Props) {
                         }))
                         const updatedExpenses = await fetchMonthlySubcategorySumExpenses(year, month)
                         setSubcategoryExpenses(updatedExpenses)
-                        window.dispatchEvent(new CustomEvent('accumulatedUpdated'));
+                        window.dispatchEvent(new CustomEvent('transactionUpdated'));
                         closeEditModal()
                     }}
                     onDelete={(response) => {
@@ -181,7 +181,7 @@ export default function RecentTransactions({year, month}: Props) {
                                 transactions: prev!.transactions.filter((tx) => tx.id !== response.id),
                             }))
                             fetchMonthlySubcategorySumExpenses(year, month).then(setSubcategoryExpenses)
-                            window.dispatchEvent(new CustomEvent('accumulatedUpdated'));
+                            window.dispatchEvent(new CustomEvent('transactionUpdated'));
                         }
                         setModalAlert({
                             variant: response.result ? "success" : "error",

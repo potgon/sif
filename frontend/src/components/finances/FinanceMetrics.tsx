@@ -34,11 +34,12 @@ export default function FinanceMetrics({year, month}: Readonly<Props>) {
 
     useEffect(() => {
         fetchData()
+        const handleTransactionUpdate = () => fetchData()
+        window.addEventListener('transactionUpdated', handleTransactionUpdate)
+        return () => {
+            window.removeEventListener('transactionUpdated', handleTransactionUpdate)
+        }
     }, [fetchData])
-
-    const refreshData = () => {
-        fetchData()
-    }
 
     return (
         <>
@@ -65,7 +66,7 @@ export default function FinanceMetrics({year, month}: Readonly<Props>) {
                             {data?.prevMonthIncomeDiff !== undefined && data?.prevMonthIncomeDiff >= 0 ?
                                 <ArrowUpIcon/> :
                                 <ArrowDownIcon/>}
-                            {data?.prevMonthIncomeDiff !== undefined ? data.prevMonthIncomeDiff : "..."}
+                            {data?.prevMonthIncomeDiff !== undefined ? data.prevMonthIncomeDiff : "..."}%
                         </Badge>
                     </div>
                 </div>
@@ -91,13 +92,13 @@ export default function FinanceMetrics({year, month}: Readonly<Props>) {
                             color={data?.prevMonthExpensesDiff !== undefined && data?.prevMonthExpensesDiff <= 0 ? "success" : "error"}>
                             {data?.prevMonthExpensesDiff !== undefined && data?.prevMonthExpensesDiff >= 0 ?
                                 <ArrowUpIcon/> : <ArrowDownIcon/>}
-                            {data?.prevMonthExpensesDiff !== undefined ? data.prevMonthExpensesDiff : "..."}
+                            {data?.prevMonthExpensesDiff !== undefined ? data.prevMonthExpensesDiff : "..."}%
                         </Badge>
                     </div>
                 </div>
                 {/* <!-- Metric Item End --> */}
             </div>
-            <IncomeModal isOpen={isOpen} onClose={closeModal} year={year} month={month} refreshData={refreshData}/>
+            <IncomeModal isOpen={isOpen} onClose={closeModal} year={year} month={month} refreshData={fetchData}/>
         </>
     );
 }

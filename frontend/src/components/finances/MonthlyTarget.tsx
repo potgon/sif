@@ -75,8 +75,8 @@ export default function MonthlyTarget({year, month}: Readonly<Props>) {
     useEffect(() => {
         refetchData();
         const handleRefresh = () => refetchData();
-        window.addEventListener('accumulatedUpdated', handleRefresh);
-        return () => window.removeEventListener('accumulatedUpdated', handleRefresh);
+        window.addEventListener('transactionUpdated', handleRefresh);
+        return () => window.removeEventListener('transactionUpdated', handleRefresh);
     }, [refetchData]);
 
     return (
