@@ -1,13 +1,12 @@
 import {BrowserRouter as Router, Routes, Route} from "react-router";
 import NotFound from "./pages/OtherPage/NotFound";
-import LineChart from "./pages/Charts/LineChart";
-import BarChart from "./pages/Charts/BarChart";
 import Calendar from "./pages/Calendar";
-import BasicTables from "./pages/Tables/BasicTables";
 import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import {ScrollToTop} from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import SignIn from "./pages/Auth/SignIn";
+import SignUp from "./pages/Auth/SignUp.tsx";
 
 export default function App() {
     return (
@@ -23,13 +22,11 @@ export default function App() {
                         <Route path="/calendar" element={<Calendar/>}/>
                         <Route path="/blank" element={<Blank/>}/>
 
-                        {/* Tables */}
-                        <Route path="/basic-tables" element={<BasicTables/>}/>
-
-                        {/* Charts */}
-                        <Route path="/line-chart" element={<LineChart/>}/>
-                        <Route path="/bar-chart" element={<BarChart/>}/>
                     </Route>
+
+                    {/* Auth Layout */}
+                    <Route path="/signin" element={<SignIn />} />
+                    <Route path="/signup" element={<SignUp />} />
 
                     {/* Fallback Route */}
                     <Route path="*" element={<NotFound/>}/>
