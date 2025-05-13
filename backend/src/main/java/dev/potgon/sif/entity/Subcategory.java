@@ -18,4 +18,8 @@ public class Subcategory {
     @Column(nullable = false, length = 50)
     private String name;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
 }

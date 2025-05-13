@@ -46,4 +46,8 @@ public class Transaction {
 
     @Column(name = "created_at")
     private ZonedDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
