@@ -15,4 +15,5 @@ public class ParamDTO {
     private String name;
     private String value;
     private LocalDateTime createdAt;
+    private UserDTO user;
 }

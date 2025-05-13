@@ -21,4 +21,5 @@ public class TransactionDTO {
     private Boolean isRecurring;
     private String notes;
     private ZonedDateTime createdAt;
+    private UserDTO user;
 }

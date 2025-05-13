@@ -23,12 +23,10 @@ public class Period {
     @Column(nullable = false)
     private Integer month;
 
-    @Column(name = "starting_balance", nullable = false, precision = 12, scale = 2)
-    private BigDecimal startingBalance;
-
-    @Column(name = "period_salary", precision = 12, scale = 2)
-    private BigDecimal periodSalary;
-
     @Column(name = "extra_pay", precision = 12, scale = 2)
     private BigDecimal extraPay;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

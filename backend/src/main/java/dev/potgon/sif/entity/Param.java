@@ -26,4 +26,8 @@ public class Param {
 
     @Column(name = "createdAt")
     private LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
