@@ -3,6 +3,8 @@ import {Link} from "react-router";
 import {ChevronLeftIcon, EyeCloseIcon, EyeIcon} from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
+import Button from "../ui/button/Button.tsx";
+import {register} from "../../api/auth.ts";
 
 export default function SignUpForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -12,6 +14,21 @@ export default function SignUpForm() {
         email: "",
         password: "",
     })
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const requestData = {
+                email: formData.email,
+                password: formData.password,
+                firstName: formData.fname,
+                lastName: formData.lname,
+            };
+            await register(requestData);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
             <div className="w-full max-w-md mx-auto mb-5 sm:pt-10">
@@ -86,7 +103,7 @@ export default function SignUpForm() {
                 </span>
                             </div>
                         </div>
-                        <form>
+                        <form onSubmit={handleSubmit}>
                             <div className="space-y-5">
                                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                                     {/* <!-- First Name --> */}
@@ -154,10 +171,10 @@ export default function SignUpForm() {
                                 </div>
                                 {/* <!-- Button --> */}
                                 <div>
-                                    <button
-                                        className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
+                                    <Button type="submit" variant="primary" size="sm"
+                                            className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
                                         Registrarse
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </form>
