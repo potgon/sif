@@ -115,6 +115,7 @@ export default function SignUpForm() {
                                             type="text"
                                             id="fname"
                                             name="fname"
+                                            placeholder={"John"}
                                             value={formData.fname}
                                             onChange={(e) => setFormData({...formData, fname: e.target.value})}
                                         />
@@ -128,6 +129,7 @@ export default function SignUpForm() {
                                             type="text"
                                             id="lname"
                                             name="lname"
+                                            placeholder={"Doe"}
                                             value={formData.lname}
                                             onChange={(e) => setFormData({...formData, lname: e.target.value})}
                                         />
@@ -142,6 +144,7 @@ export default function SignUpForm() {
                                         type="email"
                                         id="email"
                                         name="email"
+                                        placeholder={"john.doe@kde.com"}
                                         value={formData.email}
                                         onChange={(e) => setFormData({...formData, email: e.target.value})}
                                     />
@@ -155,6 +158,7 @@ export default function SignUpForm() {
                                         <Input
                                             type={showPassword ? "text" : "password"}
                                             value={formData.password}
+                                            placeholder={"Password"}
                                             onChange={(e) => setFormData({...formData, password: e.target.value})}
                                         />
                                         <span

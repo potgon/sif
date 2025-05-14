@@ -1,14 +1,32 @@
-import { useState } from "react";
-import { Link } from "react-router";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
+import {useState} from "react";
+import {Link} from "react-router";
+import {ChevronLeftIcon, EyeCloseIcon, EyeIcon} from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
+import {login} from "../../api/auth.ts";
 
 export default function SignInForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        try {
+            const {token} = await login({email, password})
+            if (isChecked) {
+                localStorage.setItem("token", token)
+            } else {
+                sessionStorage.setItem("token", token)
+            }
+            window.location.href = "/"
+        } catch (err) {
+            alert("Error iniciando sesión: " + (err))
+        }
+    }
     return (
         <div className="flex flex-col flex-1">
             <div className="w-full max-w-md pt-10 mx-auto">
@@ -16,7 +34,7 @@ export default function SignInForm() {
                     to="/"
                     className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 >
-                    <ChevronLeftIcon className="size-5" />
+                    <ChevronLeftIcon className="size-5"/>
                     Volver al panel de control
                 </Link>
             </div>
@@ -29,7 +47,8 @@ export default function SignInForm() {
                     </div>
                     <div>
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
-                            <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
+                            <button
+                                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
                                 <svg
                                     width="20"
                                     height="20"
@@ -56,7 +75,8 @@ export default function SignInForm() {
                                 </svg>
                                 Iniciar sesión con Google
                             </button>
-                            <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
+                            <button
+                                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
                                 <svg
                                     width="21"
                                     className="fill-current"
@@ -65,7 +85,8 @@ export default function SignInForm() {
                                     fill="none"
                                     xmlns="http://www.w3.org/2000/svg"
                                 >
-                                    <path d="M15.6705 1.875H18.4272L12.4047 8.75833L19.4897 18.125H13.9422L9.59717 12.4442L4.62554 18.125H1.86721L8.30887 10.7625L1.51221 1.875H7.20054L11.128 7.0675L15.6705 1.875ZM14.703 16.475H16.2305L6.37054 3.43833H4.73137L14.703 16.475Z" />
+                                    <path
+                                        d="M15.6705 1.875H18.4272L12.4047 8.75833L19.4897 18.125H13.9422L9.59717 12.4442L4.62554 18.125H1.86721L8.30887 10.7625L1.51221 1.875H7.20054L11.128 7.0675L15.6705 1.875ZM14.703 16.475H16.2305L6.37054 3.43833H4.73137L14.703 16.475Z"/>
                                 </svg>
                                 Iniciar sesión con X
                             </button>
@@ -80,13 +101,18 @@ export default function SignInForm() {
                 </span>
                             </div>
                         </div>
-                        <form>
+                        <form onSubmit={handleSubmit}>
                             <div className="space-y-6">
                                 <div>
                                     <Label>
                                         Email <span className="text-error-500">*</span>{" "}
                                     </Label>
-                                    <Input placeholder="info@gmail.com" />
+                                    <Input
+                                        type="email"
+                                        placeholder="info@gmail.com"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                    />
                                 </div>
                                 <div>
                                     <Label>
@@ -96,23 +122,26 @@ export default function SignInForm() {
                                         <Input
                                             type={showPassword ? "text" : "password"}
                                             placeholder="Enter your password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
                                         />
                                         <span
                                             onClick={() => setShowPassword(!showPassword)}
                                             className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                                         >
                       {showPassword ? (
-                          <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                          <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5"/>
                       ) : (
-                          <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                          <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5"/>
                       )}
                     </span>
                                     </div>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <Checkbox checked={isChecked} onChange={setIsChecked} />
-                                        <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
+                                        <Checkbox checked={isChecked} onChange={setIsChecked}/>
+                                        <span
+                                            className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
                       Mantenerme conectado
                     </span>
                                     </div>
@@ -124,7 +153,7 @@ export default function SignInForm() {
                                     </Link>
                                 </div>
                                 <div>
-                                    <Button className="w-full" size="sm">
+                                    <Button type="submit" className="w-full" size="sm">
                                         Iniciar sesión
                                     </Button>
                                 </div>
