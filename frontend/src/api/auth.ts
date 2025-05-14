@@ -3,8 +3,8 @@ import apiClient from "./client"
 export interface RegisterRequest {
     email: string
     password: string
-    firstName: string
-    lastName?: string
+    name: string
+    surname?: string
 }
 
 export interface LoginRequest {

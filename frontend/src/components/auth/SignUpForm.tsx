@@ -20,10 +20,11 @@ export default function SignUpForm() {
             const requestData = {
                 email: formData.email,
                 password: formData.password,
-                firstName: formData.fname,
-                lastName: formData.lname,
+                name: formData.fname,
+                surname: formData.lname,
             };
             await register(requestData);
+            window.location.href = "/"
         } catch (error) {
             console.error(error);
         }

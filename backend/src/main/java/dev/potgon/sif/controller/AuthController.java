@@ -6,10 +6,7 @@ import dev.potgon.sif.dto.response.RegisterDTO;
 import dev.potgon.sif.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,7 +16,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterDTO dto) {
+    public ResponseEntity<Void> register(@RequestBody RegisterDTO dto) {
         return authService.register(dto)
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.badRequest().build();
@@ -29,6 +26,5 @@ public class AuthController {
     public ResponseEntity<JwtResponseDTO> login(@RequestBody LoginDTO dto) {
         return ResponseEntity.ok(authService.login(dto));
     }
-
 
 }
