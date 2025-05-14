@@ -18,7 +18,7 @@ interface Props {
     month: number
 }
 
-export default function TransactionAddModal({ isOpen, onClose, onSubmit, year, month }: Props) {
+export default function TransactionAddModal({ isOpen, onClose, onSubmit, year, month }: Readonly<Props>) {
     const [subcategories, setSubcategories] = useState<Subcategory[]>([])
     const [formData, setFormData] = useState<TransactionCreate>({
         year,
@@ -86,7 +86,7 @@ export default function TransactionAddModal({ isOpen, onClose, onSubmit, year, m
 
                 <TextArea
                     label="Descripción"
-                    value={formData.description || ""}
+                    value={formData.description ?? ""}
                     onChange={(v) => handleChange("description", v)}
                 />
 
@@ -98,7 +98,7 @@ export default function TransactionAddModal({ isOpen, onClose, onSubmit, year, m
 
                 <TextArea
                     label="Notas"
-                    value={formData.notes || ""}
+                    value={formData.notes ?? ""}
                     onChange={(v) => handleChange("notes", v)}
                 />
 

@@ -1,11 +1,17 @@
-import { useState } from "react";
-import { Link } from "react-router";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
+import {useState} from "react";
+import {Link} from "react-router";
+import {ChevronLeftIcon, EyeCloseIcon, EyeIcon} from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 
 export default function SignUpForm() {
     const [showPassword, setShowPassword] = useState(false);
+    const [formData, setFormData] = useState({
+        fname: "",
+        lname: "",
+        email: "",
+        password: "",
+    })
     return (
         <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
             <div className="w-full max-w-md mx-auto mb-5 sm:pt-10">
@@ -13,7 +19,7 @@ export default function SignUpForm() {
                     to="/"
                     className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 >
-                    <ChevronLeftIcon className="size-5" />
+                    <ChevronLeftIcon className="size-5"/>
                     Volver al panel de control
                 </Link>
             </div>
@@ -26,7 +32,8 @@ export default function SignUpForm() {
                     </div>
                     <div>
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
-                            <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
+                            <button
+                                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
                                 <svg
                                     width="20"
                                     height="20"
@@ -53,7 +60,8 @@ export default function SignUpForm() {
                                 </svg>
                                 Registrarse con Google
                             </button>
-                            <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
+                            <button
+                                className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
                                 <svg
                                     width="21"
                                     className="fill-current"
@@ -62,7 +70,8 @@ export default function SignUpForm() {
                                     fill="none"
                                     xmlns="http://www.w3.org/2000/svg"
                                 >
-                                    <path d="M15.6705 1.875H18.4272L12.4047 8.75833L19.4897 18.125H13.9422L9.59717 12.4442L4.62554 18.125H1.86721L8.30887 10.7625L1.51221 1.875H7.20054L11.128 7.0675L15.6705 1.875ZM14.703 16.475H16.2305L6.37054 3.43833H4.73137L14.703 16.475Z" />
+                                    <path
+                                        d="M15.6705 1.875H18.4272L12.4047 8.75833L19.4897 18.125H13.9422L9.59717 12.4442L4.62554 18.125H1.86721L8.30887 10.7625L1.51221 1.875H7.20054L11.128 7.0675L15.6705 1.875ZM14.703 16.475H16.2305L6.37054 3.43833H4.73137L14.703 16.475Z"/>
                                 </svg>
                                 Registrarse con X
                             </button>
@@ -89,7 +98,8 @@ export default function SignUpForm() {
                                             type="text"
                                             id="fname"
                                             name="fname"
-                                            placeholder="Enter your first name"
+                                            value={formData.fname}
+                                            onChange={(e) => setFormData({...formData, fname: e.target.value})}
                                         />
                                     </div>
                                     {/* <!-- Last Name --> */}
@@ -101,7 +111,8 @@ export default function SignUpForm() {
                                             type="text"
                                             id="lname"
                                             name="lname"
-                                            placeholder="Enter your last name"
+                                            value={formData.lname}
+                                            onChange={(e) => setFormData({...formData, lname: e.target.value})}
                                         />
                                     </div>
                                 </div>
@@ -114,7 +125,8 @@ export default function SignUpForm() {
                                         type="email"
                                         id="email"
                                         name="email"
-                                        placeholder="Enter your email"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({...formData, email: e.target.value})}
                                     />
                                 </div>
                                 {/* <!-- Password --> */}
@@ -124,24 +136,26 @@ export default function SignUpForm() {
                                     </Label>
                                     <div className="relative">
                                         <Input
-                                            placeholder="Enter your password"
                                             type={showPassword ? "text" : "password"}
+                                            value={formData.password}
+                                            onChange={(e) => setFormData({...formData, password: e.target.value})}
                                         />
                                         <span
                                             onClick={() => setShowPassword(!showPassword)}
                                             className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                                         >
                       {showPassword ? (
-                          <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                          <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5"/>
                       ) : (
-                          <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                          <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5"/>
                       )}
                     </span>
                                     </div>
                                 </div>
                                 {/* <!-- Button --> */}
                                 <div>
-                                    <button className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
+                                    <button
+                                        className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
                                         Registrarse
                                     </button>
                                 </div>
