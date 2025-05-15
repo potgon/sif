@@ -8,6 +8,11 @@ import {register} from "../../api/auth.ts";
 
 export default function SignUpForm() {
     const [showPassword, setShowPassword] = useState(false);
+    const [modalAlert, setModalAlert] = useState<{
+        variant: "success" | "error";
+        title: string;
+        message: string;
+    } | null>(null)
     const [formData, setFormData] = useState({
         fname: "",
         lname: "",
@@ -23,8 +28,17 @@ export default function SignUpForm() {
                 name: formData.fname,
                 surname: formData.lname,
             };
-            await register(requestData);
-            window.location.href = "/"
+            await register(requestData).then(response => {
+                if (response.status === 200) {
+                    setModalAlert({
+                        variant: "success",
+                        title: "Registro exitoso",
+                        message: "Registro exitoso",
+                    })
+                    setTimeout(() => setModalAlert(null), 5000)
+                }
+            });
+            window.location.href = "/signin"
         } catch (error) {
             console.error(error);
         }

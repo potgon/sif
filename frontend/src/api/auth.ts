@@ -12,12 +12,15 @@ export interface LoginRequest {
     password: string
 }
 
-export const register = async (data: RegisterRequest) => {
-    const response = await apiClient.post("/auth/register", data)
-    return response.data
+interface JwtResponse {
+    token: string
 }
 
-export const login = async (data: LoginRequest) => {
+export const register = async (data: RegisterRequest) => {
+    return await apiClient.post("/auth/register", data)
+}
+
+export const login = async (data: LoginRequest): Promise<JwtResponse> => {
     const response = await apiClient.post("/auth/login", data)
     return response.data
 }

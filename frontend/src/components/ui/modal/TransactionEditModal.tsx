@@ -18,7 +18,7 @@ interface Props {
     onDelete: (deleted: TransactionDelete) => void
 }
 
-export default function TransactionEditModal({isOpen, onClose, transaction, onSubmit, onDelete}: Props) {
+export default function TransactionEditModal({isOpen, onClose, transaction, onSubmit, onDelete}: Readonly<Props>) {
     const [formData, setFormData] = useState<Transaction>(transaction)
     const [subcategories, setSubcategories] = useState<Subcategory[]>([])
 

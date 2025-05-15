@@ -23,7 +23,7 @@ interface Props {
     month: number
 }
 
-export default function RecentTransactions({year, month}: Props) {
+export default function RecentTransactions({year, month}: Readonly<Props>) {
     const [subcategoryExpenses, setSubcategoryExpenses] = useState<MonthlySubcategoryExpense>()
     const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
     const [subcategoryTransactions, setSubcategoryTransactions] = useState<MonthlyTransactionSubcategory>()

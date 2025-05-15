@@ -3,6 +3,7 @@ import {useEffect, useRef, useState} from "react";
 import {Link} from "react-router";
 import {useSidebar} from "../context/SidebarContext";
 import {ThemeToggleButton} from "../components/common/ThemeToggleButton";
+import Button from "../components/ui/button/Button.tsx";
 
 const AppHeader: React.FC = () => {
     const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
@@ -37,6 +38,12 @@ const AppHeader: React.FC = () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
     }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
+        window.location.href = "/signin"
+    }
 
     return (
         <header
@@ -125,6 +132,11 @@ const AppHeader: React.FC = () => {
                         {/* <!-- Dark Mode Toggler --> */}
                         <ThemeToggleButton/>
                         {/* <!-- Dark Mode Toggler --> */}
+                    </div>
+                    <div>
+                        <Button onClick={handleLogout} variant="outline" size="sm">
+                            Cerrar sesión
+                        </Button>
                     </div>
                 </div>
             </div>

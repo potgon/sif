@@ -9,7 +9,7 @@ export default function TransactionSubcategoryModal({
                                                         subcategoryName,
                                                         onTransactionClick,
                                                         alert
-                                                    }: {
+                                                    }: Readonly<{
     isOpen: boolean
     onClose: () => void
     transactions: MonthlyTransactionSubcategory['transactions']
@@ -20,7 +20,7 @@ export default function TransactionSubcategoryModal({
         title: string
         message: string
     } | null
-}) {
+}>) {
     return (
         <Modal isOpen={isOpen} onClose={onClose} className="max-w-4xl w-full p-6">
             <h2 className="text-3xl font-semibold mb-4 text-gray-800 dark:text-white">

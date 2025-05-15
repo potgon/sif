@@ -1,4 +1,4 @@
-import {BrowserRouter as Router, Routes, Route} from "react-router";
+import {Routes, Route} from "react-router";
 import NotFound from "./pages/OtherPage/NotFound";
 import Calendar from "./pages/Calendar";
 import Blank from "./pages/Blank";
@@ -7,31 +7,29 @@ import {ScrollToTop} from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import SignIn from "./pages/Auth/SignIn";
 import SignUp from "./pages/Auth/SignUp.tsx";
+import ProtectedRoute from "./components/auth/ProtectedRoute.tsx";
 
 export default function App() {
     return (
         <>
-            <Router>
-                <ScrollToTop/>
-                <Routes>
-                    {/* Dashboard Layout */}
-                    <Route element={<AppLayout/>}>
-                        <Route index path="/" element={<Home/>}/>
+            <ScrollToTop />
+            <Routes>
+                {/* Rutas públicas */}
+                <Route path="/signin" element={<SignIn />} />
+                <Route path="/signup" element={<SignUp />} />
 
-                        {/* Others Page */}
-                        <Route path="/calendar" element={<Calendar/>}/>
-                        <Route path="/blank" element={<Blank/>}/>
-
+                {/* Rutas protegidas */}
+                <Route element={<ProtectedRoute />}>
+                    <Route element={<AppLayout />}>
+                        <Route index path="/" element={<Home />} />
+                        <Route path="/calendar" element={<Calendar />} />
+                        <Route path="/blank" element={<Blank />} />
                     </Route>
+                </Route>
 
-                    {/* Auth Layout */}
-                    <Route path="/signin" element={<SignIn />} />
-                    <Route path="/signup" element={<SignUp />} />
-
-                    {/* Fallback Route */}
-                    <Route path="*" element={<NotFound/>}/>
-                </Routes>
-            </Router>
+                {/* Fallback Route */}
+                <Route path="*" element={<NotFound />} />
+            </Routes>
         </>
     );
 }
