@@ -20,7 +20,7 @@ export default function SignUpForm() {
         email: "",
         password: "",
     })
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
             const requestData = {

@@ -19,7 +19,7 @@ export default function SignInForm() {
         message: string;
     } | null>(null)
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         try {
             const {token} = await login({email, password})
