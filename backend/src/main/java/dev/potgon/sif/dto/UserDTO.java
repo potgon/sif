@@ -9,8 +9,10 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserDTO {
 
+    @EqualsAndHashCode.Include
     private Long id;
     private String name;
     private String surname;

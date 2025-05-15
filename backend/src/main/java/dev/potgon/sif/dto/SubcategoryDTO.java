@@ -7,8 +7,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class SubcategoryDTO {
+    @EqualsAndHashCode.Include
     private Long id;
     private String name;
     private UserDTO user;

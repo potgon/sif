@@ -1,3 +1,12 @@
+export interface User {
+    id: string
+    name: string
+    surname: string
+    password: string
+    email: string
+    createdAt: string
+}
+
 export interface MonthlyMetrics {
     totalIncome: number
     totalExpenses: number
@@ -24,6 +33,7 @@ export interface Transaction {
     isRecurring: boolean
     notes?: string
     createdAt: string
+    user: User
 }
 
 export interface Period {
@@ -33,6 +43,7 @@ export interface Period {
     startingBalance: number
     periodSalary: number
     extraPay: number
+    user: User
 }
 
 export interface Category {
@@ -43,6 +54,7 @@ export interface Category {
 export interface Subcategory {
     id: number
     name: string
+    user: User
 }
 
 enum CategoryType {
@@ -106,6 +118,7 @@ export interface Param {
     name: string
     value: string
     createdAt: string
+    user: User
 }
 
 export interface ExtraPay {
