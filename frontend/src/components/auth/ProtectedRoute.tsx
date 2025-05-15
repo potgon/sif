@@ -1,16 +1,16 @@
-import {Outlet, Navigate} from "react-router-dom"
 import {useAuth} from "../../hooks/useAuth"
+import {JSX} from "react";
 
-export default function ProtectedRoute() {
-    const { isAuthenticated, isLoading } = useAuth();
+interface Props {
+    children: JSX.Element
+}
 
-    if (isLoading) {
-        return <div>Cargando...</div>;
-    }
+export default function ProtectedRoute({children}: Readonly<Props>) {
+    const {isAuthenticated} = useAuth()
 
     if (!isAuthenticated) {
-        return <Navigate to="/signin" replace />;
+        window.location.href = "/signin"
     }
 
-    return <Outlet />;
+    return children
 }

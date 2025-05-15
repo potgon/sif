@@ -1,10 +1,11 @@
 import {useState} from "react";
 import {Link} from "react-router";
-import {ChevronLeftIcon, EyeCloseIcon, EyeIcon} from "../../icons";
+import {EyeCloseIcon, EyeIcon} from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button.tsx";
 import {register} from "../../api/auth.ts";
+import Alert from "../ui/alert/Alert.tsx";
 
 export default function SignUpForm() {
     const [showPassword, setShowPassword] = useState(false);
@@ -35,8 +36,14 @@ export default function SignUpForm() {
                         title: "Registro exitoso",
                         message: "Registro exitoso",
                     })
-                    setTimeout(() => setModalAlert(null), 5000)
+                } else {
+                    setModalAlert({
+                        variant: "error",
+                        title: "No se ha podido completar el registro",
+                        message: "No se ha podido completar el registro",
+                    })
                 }
+                setTimeout(() => setModalAlert(null), 5000)
             });
             window.location.href = "/signin"
         } catch (error) {
@@ -46,14 +53,16 @@ export default function SignUpForm() {
 
     return (
         <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
+            {modalAlert && (
+                <div className="mb-4 w-full">
+                    <Alert
+                        variant={modalAlert.variant}
+                        title={modalAlert.title}
+                        message={modalAlert.message}
+                    />
+                </div>
+            )}
             <div className="w-full max-w-md mx-auto mb-5 sm:pt-10">
-                <Link
-                    to="/"
-                    className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                >
-                    <ChevronLeftIcon className="size-5"/>
-                    Volver al panel de control
-                </Link>
             </div>
             <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
                 <div>
