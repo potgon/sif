@@ -9,6 +9,9 @@ import dev.potgon.sif.mapper.*;
 import dev.potgon.sif.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -27,6 +30,7 @@ public class FinanceUtils {
     private final CategoryRepository categoryRepo;
     private final ParamRepository paramRepo;
     private final SubcategoryRepository subcategoryRepo;
+    private final UserRepository userRepo;
 
     private final TransactionMapper transactionMapper;
     private final PeriodMapper periodMapper;
@@ -35,7 +39,7 @@ public class FinanceUtils {
     private final ParamMapper paramMapper;
 
     public Period getPeriodIfExists(int year, int month) {
-        Period period = periodRepo.findByYearAndMonth(year, month);
+        Period period = periodRepo.findByYearAndMonthAndUser(year, month, getUserEntity());
         if (period == null) {
             throw new ResourceNotFoundException("Period", "Year | Month", String.format("%d | %d", year, month));
         }
@@ -61,15 +65,15 @@ public class FinanceUtils {
         Category category = categoryRepo.findByName(categoryType);
         Period period = getPeriodIfExists(year, month);
 
-        return transactionRepo.findAllByPeriodAndCategoryOrderByDateDesc(period, category)
+        return transactionRepo.findAllByPeriodAndCategoryAndUserOrderByDateDesc(period, category, getUserEntity())
                 .stream().map(transactionMapper::toDTO).toList();
     }
 
     public List<TransactionDTO> getTransactionsByPeriodAndSubcategory(int year, int month, String subcategory) {
         Period period = getPeriodIfExists(year, month);
-        Subcategory subcategoryEntity = subcategoryRepo.findByName(subcategory);
-
-        return transactionRepo.findAllByPeriodAndSubcategory(period, subcategoryEntity)
+        Subcategory subcategoryEntity = subcategoryRepo.findByNameAndUser(subcategory, getUserEntity());
+        User user = getUserEntity();
+        return transactionRepo.findAllByPeriodAndSubcategoryAndUser(period, subcategoryEntity, user)
                 .stream().map(transactionMapper::toDTO).toList();
     }
 
@@ -90,7 +94,7 @@ public class FinanceUtils {
     public BigDecimal getBigDecimalParam(String paramName) {
         BigDecimal result;
         try {
-            String paramValue = paramRepo.findByName(paramName).getValue();
+            String paramValue = paramRepo.findByNameAndUser(paramName, getUserEntity()).getValue();
             result = new BigDecimal(paramValue);
         } catch (NumberFormatException e) {
             log.error("Error while parsing parameter: {} | Not a BigDecimal", paramName);
@@ -146,7 +150,7 @@ public class FinanceUtils {
     }
 
     public BigDecimal getCurrentAccumulated() {
-        Param accumulated = paramRepo.findByName(Constants.PARAM_ACCUMULATED);
+        Param accumulated = paramRepo.findByNameAndUser(Constants.PARAM_ACCUMULATED, getUserEntity());
         if (accumulated == null) return BigDecimal.ZERO;
         return new BigDecimal(accumulated.getValue());
     }
@@ -245,7 +249,7 @@ public class FinanceUtils {
     }
 
     public ExtraPayDTO getExtraPay(int year, int month) {
-        PeriodDTO period = periodMapper.toDTO(periodRepo.findByYearAndMonth(year, month));
+        PeriodDTO period = periodMapper.toDTO(periodRepo.findByYearAndMonthAndUser(year, month, getUserEntity()));
         return ExtraPayDTO.builder()
                 .period(period)
                 .extraPay(period.getExtraPay())
@@ -253,8 +257,8 @@ public class FinanceUtils {
     }
 
     public void updateIncome(IncomeUpdateDTO incomeUpdateDTO) {
-        PeriodDTO period = periodMapper.toDTO(periodRepo.findByYearAndMonth(incomeUpdateDTO.getYear(), incomeUpdateDTO.getMonth()));
-        ParamDTO salaryParam = paramMapper.toDTO(paramRepo.findByName(Constants.PARAM_SALARY));
+        PeriodDTO period = periodMapper.toDTO(periodRepo.findByYearAndMonthAndUser(incomeUpdateDTO.getYear(), incomeUpdateDTO.getMonth(), getUserEntity()));
+        ParamDTO salaryParam = paramMapper.toDTO(paramRepo.findByNameAndUser(Constants.PARAM_SALARY, getUserEntity()));
         BigDecimal salaryDTO = new BigDecimal(incomeUpdateDTO.getSalary());
         if (!salaryDTO.equals(BigDecimal.ZERO)) {
             salaryParam.setValue(incomeUpdateDTO.getSalary());
@@ -268,7 +272,7 @@ public class FinanceUtils {
     }
 
     private void updateAccumulated(BigDecimal amount, Operation op) {
-        ParamDTO surplusParam = paramMapper.toDTO(paramRepo.findByName(Constants.PARAM_ACCUMULATED));
+        ParamDTO surplusParam = paramMapper.toDTO(paramRepo.findByNameAndUser(Constants.PARAM_ACCUMULATED, getUserEntity()));
         BigDecimal surplusVal = new BigDecimal(surplusParam.getValue());
         BigDecimal newValue = (op == Operation.ADD)
                 ? surplusVal.add(amount)
@@ -276,5 +280,11 @@ public class FinanceUtils {
 
         surplusParam.setValue(newValue.toString());
         paramRepo.save(paramMapper.toEntity(surplusParam));
+    }
+
+    public User getUserEntity() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
     }
 }

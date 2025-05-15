@@ -4,6 +4,7 @@ import dev.potgon.sif.dto.ParamDTO;
 import dev.potgon.sif.mapper.ParamMapper;
 import dev.potgon.sif.repository.ParamRepository;
 import dev.potgon.sif.service.ParamService;
+import dev.potgon.sif.utils.FinanceUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,10 @@ public class ParamServiceImpl implements ParamService {
 
     private final ParamRepository paramRepository;
     private final ParamMapper paramMapper;
+    private final FinanceUtils financeUtils;
 
     @Override
     public ParamDTO getParam(String name) {
-        return paramMapper.toDTO(paramRepository.findByName(name));
+        return paramMapper.toDTO(paramRepository.findByNameAndUser(name, financeUtils.getUserEntity()));
     }
 }
