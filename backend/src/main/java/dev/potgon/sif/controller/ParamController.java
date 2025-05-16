@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/params")
 @RequiredArgsConstructor
@@ -14,9 +16,17 @@ public class ParamController {
     private final ParamService paramService;
 
     @GetMapping("/income/{name}")
-    public ResponseEntity<ParamDTO> getMonthlyMetrics(
+    public ResponseEntity<ParamDTO> getParam(
             @PathVariable String name
     ) {
         return ResponseEntity.ok(paramService.getParam(name));
     }
+
+    @PostMapping("/target")
+    public ResponseEntity<ParamDTO> insertParam(
+            @RequestBody Map<String, String> value
+    ) {
+        return ResponseEntity.ok(paramService.updateParam(value.get("value")));
+    }
+
 }

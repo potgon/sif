@@ -114,3 +114,8 @@ export const updateIncome = async (income: IncomeUpdate): Promise<IncomeUpdate> 
     const response = await apiClient.patch("/metrics/income/update", income)
     return response.data
 }
+
+export const updateParam = async (payload: {value: string}): Promise<Param> => {
+    const response = await apiClient.post(`/params/target`, payload)
+    return response.data
+}

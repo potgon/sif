@@ -59,7 +59,7 @@ export default function MonthlyTarget({year, month}: Readonly<Props>) {
     };
     const [data, setData] = useState<MonthlyExpenseTarget | null>(null);
     const [loading, setLoading] = useState(true)
-    const series = [data?.currentExpensePercentage ?? 0] ;
+    const series = [data?.currentExpensePercentage ?? 0];
 
     const refetchData = useCallback(() => {
         setLoading(true);
@@ -71,6 +71,10 @@ export default function MonthlyTarget({year, month}: Readonly<Props>) {
             })
             .finally(() => setLoading(false));
     }, [year, month]);
+
+    const handleClick = () => {
+        console.log("click")
+    }
 
     useEffect(() => {
         refetchData();
@@ -107,7 +111,9 @@ export default function MonthlyTarget({year, month}: Readonly<Props>) {
                 </p>
             </div>
 
-            <div className="flex items-center justify-center gap-5 px-6 py-3.5 sm:gap-8 sm:py-5">
+            <div
+                onClick={handleClick}
+                className="flex items-center justify-center gap-5 px-6 py-3.5 sm:gap-8 sm:py-5">
                 <div>
                     <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
                         Objetivo

@@ -4,4 +4,5 @@ import dev.potgon.sif.dto.ParamDTO;
 
 public interface ParamService {
     ParamDTO getParam(String name);
+    ParamDTO updateParam(String value);
 }
