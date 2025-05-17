@@ -119,3 +119,18 @@ export const updateParam = async (payload: { key: string, value: string }): Prom
     const response = await apiClient.post(`/params/target`, payload)
     return response.data
 }
+
+export const createSubcategory = async (name: string): Promise<Subcategory> => {
+    const response = await apiClient.post("/subcategory", name)
+    return response.data
+}
+
+export const updateSubcategory = async (subcategory: Subcategory): Promise<Subcategory> => {
+    const response = await apiClient.patch("/subcategory", subcategory)
+    return response.data
+}
+
+export const deleteSubcategory = async (id: number): Promise<Delete> => {
+    const response = await apiClient.delete(`/subcategory/${id}`)
+    return response.data
+}

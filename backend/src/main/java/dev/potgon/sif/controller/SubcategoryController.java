@@ -1,12 +1,11 @@
 package dev.potgon.sif.controller;
 
 import dev.potgon.sif.dto.SubcategoryDTO;
+import dev.potgon.sif.dto.response.DeleteDTO;
 import dev.potgon.sif.service.SubcategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,5 +19,26 @@ public class SubcategoryController {
     @GetMapping()
     public ResponseEntity<List<SubcategoryDTO>> fetchAllSubcategories() {
         return ResponseEntity.ok(subcategoryService.fetchAllSubcategoriesByUser());
+    }
+
+    @PostMapping()
+    public ResponseEntity<SubcategoryDTO> createSubcategory(
+            @RequestParam String name
+    ) {
+        return ResponseEntity.ok(subcategoryService.createSubcategory(name));
+    }
+
+    @PatchMapping()
+    public ResponseEntity<SubcategoryDTO> updateSubcategory(
+            @RequestBody SubcategoryDTO dto
+    ) {
+        return ResponseEntity.ok(subcategoryService.updateSubcategory(dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<DeleteDTO> deleteSubcategory(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(subcategoryService.deleteSubcategory(id));
     }
 }
