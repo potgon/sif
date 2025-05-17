@@ -107,7 +107,7 @@ export interface TransactionUpdate {
     notes?: string
 }
 
-export interface TransactionDelete {
+export interface Delete {
     id: number
     result: boolean
     message: string

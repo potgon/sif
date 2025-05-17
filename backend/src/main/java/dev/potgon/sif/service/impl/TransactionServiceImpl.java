@@ -1,12 +1,8 @@
 package dev.potgon.sif.service.impl;
 
 import dev.potgon.sif.dto.CategoryTypeEnum;
-import dev.potgon.sif.dto.SubcategoryDTO;
 import dev.potgon.sif.dto.TransactionDTO;
 import dev.potgon.sif.dto.response.*;
-import dev.potgon.sif.entity.User;
-import dev.potgon.sif.mapper.SubcategoryMapper;
-import dev.potgon.sif.repository.SubcategoryRepository;
 import dev.potgon.sif.service.TransactionsService;
 import dev.potgon.sif.utils.FinanceUtils;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,10 +17,6 @@ import java.util.stream.Collectors;
 public class TransactionServiceImpl implements TransactionsService {
 
     private final FinanceUtils financeUtils;
-
-    private final SubcategoryRepository subcategoryRepo;
-
-    private final SubcategoryMapper subcategoryMapper;
 
     @Override
     public MonthlyTransactionsDTO getMonthlyTransactions(int year, int month) {
@@ -55,18 +46,12 @@ public class TransactionServiceImpl implements TransactionsService {
     }
 
     @Override
-    public TransactionDeleteDTO deleteTransaction(Long id) {
+    public DeleteDTO deleteTransaction(Long id) {
         return financeUtils.deleteTransaction(id);
     }
 
     @Override
     public TransactionDTO updateTransaction(TransactionUpdateDTO updateDTO) {
         return financeUtils.updateTransaction(updateDTO);
-    }
-
-    @Override
-    public List<SubcategoryDTO> fetchAllSubcategoriesByUser() {
-        User user = financeUtils.getUserEntity();
-        return subcategoryRepo.findAllByUser(user).stream().map(subcategoryMapper::toDTO).collect(Collectors.toList());
     }
 }

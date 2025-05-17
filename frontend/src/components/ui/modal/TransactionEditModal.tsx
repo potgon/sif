@@ -1,5 +1,5 @@
 import {Modal} from "./index"
-import {Subcategory, Transaction, TransactionDelete} from "../../../api/finances/types"
+import {Subcategory, Transaction, Delete} from "../../../api/finances/types"
 import Form from "../../form/Form"
 import InputField from "../../form/input/InputField"
 import TextArea from "../../form/input/TextArea"
@@ -15,7 +15,7 @@ interface Props {
     onClose: () => void
     transaction: Transaction
     onSubmit: (updated: Transaction) => void
-    onDelete: (deleted: TransactionDelete) => void
+    onDelete: (deleted: Delete) => void
 }
 
 export default function TransactionEditModal({isOpen, onClose, transaction, onSubmit, onDelete}: Readonly<Props>) {

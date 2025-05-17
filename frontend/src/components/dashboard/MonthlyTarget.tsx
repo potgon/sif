@@ -3,6 +3,8 @@ import {ApexOptions} from "apexcharts";
 import {useCallback, useEffect, useState} from "react";
 import {fetchMonthlyExpenseTarget} from "../../api/finances/metrics.ts";
 import {MonthlyExpenseTarget} from "../../api/finances/types.ts";
+import {useModal} from "../../hooks/useModal.ts";
+import ParameterUpdateModal from "../ui/modal/ParameterUpdateModal.tsx";
 
 interface Props {
     year: number,
@@ -60,6 +62,7 @@ export default function MonthlyTarget({year, month}: Readonly<Props>) {
     const [data, setData] = useState<MonthlyExpenseTarget | null>(null);
     const [loading, setLoading] = useState(true)
     const series = [data?.currentExpensePercentage ?? 0];
+    const {isOpen, openModal, closeModal} = useModal()
 
     const refetchData = useCallback(() => {
         setLoading(true);
@@ -73,7 +76,7 @@ export default function MonthlyTarget({year, month}: Readonly<Props>) {
     }, [year, month]);
 
     const handleClick = () => {
-        console.log("click")
+        openModal()
     }
 
     useEffect(() => {
@@ -113,7 +116,7 @@ export default function MonthlyTarget({year, month}: Readonly<Props>) {
 
             <div
                 onClick={handleClick}
-                className="flex items-center justify-center gap-5 px-6 py-3.5 sm:gap-8 sm:py-5">
+                className="flex items-center justify-center gap-5 px-6 py-3.5 sm:gap-8 sm:py-5 cursor-pointer">
                 <div>
                     <p className="mb-1 text-center text-gray-500 text-theme-xs dark:text-gray-400 sm:text-sm">
                         Objetivo
@@ -145,6 +148,7 @@ export default function MonthlyTarget({year, month}: Readonly<Props>) {
                     </p>
                 </div>
             </div>
+            <ParameterUpdateModal isOpen={isOpen} onClose={closeModal} refreshData={refetchData}/>
         </div>
     );
 }

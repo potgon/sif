@@ -1,14 +1,11 @@
 package dev.potgon.sif.controller;
 
-import dev.potgon.sif.dto.SubcategoryDTO;
 import dev.potgon.sif.dto.TransactionDTO;
 import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.service.TransactionsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/transactions")
@@ -49,10 +46,10 @@ public class TransactionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<TransactionDeleteDTO> deleteTransaction(
+    public ResponseEntity<DeleteDTO> deleteTransaction(
             @PathVariable Long id
     ) {
-        TransactionDeleteDTO result = transactionsService.deleteTransaction(id);
+        DeleteDTO result = transactionsService.deleteTransaction(id);
         return ResponseEntity.ok(result);
     }
 
@@ -65,10 +62,5 @@ public class TransactionController {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(transactionsService.updateTransaction(transactionUpdateDTO));
-    }
-
-    @GetMapping("/subcategories")
-    public ResponseEntity<List<SubcategoryDTO>> fetchAllSubcategories() {
-        return ResponseEntity.ok(transactionsService.fetchAllSubcategoriesByUser());
     }
 }

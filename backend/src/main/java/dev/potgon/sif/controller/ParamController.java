@@ -23,10 +23,10 @@ public class ParamController {
     }
 
     @PostMapping("/target")
-    public ResponseEntity<ParamDTO> insertParam(
-            @RequestBody Map<String, String> value
+    public ResponseEntity<ParamDTO> updateParam(
+            @RequestBody Map<String, String> paramMap
     ) {
-        return ResponseEntity.ok(paramService.updateParam(value.get("value")));
+        return ResponseEntity.ok(paramService.updateParam(paramMap));
     }
 
 }

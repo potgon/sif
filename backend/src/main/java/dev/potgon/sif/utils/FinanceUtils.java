@@ -72,9 +72,9 @@ public class FinanceUtils {
 
     public List<TransactionDTO> getTransactionsByPeriodAndSubcategory(int year, int month, String subcategory) {
         Period period = getPeriodIfExists(year, month);
-        Subcategory subcategoryEntity = subcategoryRepo.findByNameAndUser(subcategory, getUserEntity());
+        Optional<Subcategory> subcategoryEntity = subcategoryRepo.findByNameAndUser(subcategory, getUserEntity());
         User user = getUserEntity();
-        return transactionRepo.findAllByPeriodAndSubcategoryAndUser(period, subcategoryEntity, user)
+        return transactionRepo.findAllByPeriodAndSubcategoryAndUser(period, subcategoryEntity.orElse(null), user)
                 .stream().map(transactionMapper::toDTO).toList();
     }
 
@@ -232,9 +232,9 @@ public class FinanceUtils {
         return transactionMapper.toDTO(tx);
     }
 
-    public TransactionDeleteDTO deleteTransaction(Long id) {
+    public DeleteDTO deleteTransaction(Long id) {
         Optional<Transaction> transaction = transactionRepo.findById(id);
-        TransactionDeleteDTO response = TransactionDeleteDTO.builder().build();
+        DeleteDTO response = DeleteDTO.builder().build();
         if (transaction.isPresent()) {
             transactionRepo.deleteById(id);
             response.setId(id);

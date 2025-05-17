@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react"
-import { Modal } from "./index"
+import {useState, useEffect} from "react"
+import {Modal} from "./index"
 import {TransactionCreate, Subcategory} from "../../../api/finances/types"
 import Form from "../../form/Form"
 import InputField from "../../form/input/InputField"
 import TextArea from "../../form/input/TextArea"
 import Checkbox from "../../form/input/Checkbox"
 import DatePicker from "../../form/date-picker"
-import { fetchAllSubcategories } from "../../../api/finances/metrics"
+import {fetchAllSubcategories} from "../../../api/finances/metrics"
 import Select, {Option} from "../../form/Select.tsx";
 import Button from "../button/Button.tsx";
+import {EditPencil} from "../../../icons/index.ts"
 
 interface Props {
     isOpen: boolean
@@ -18,7 +19,7 @@ interface Props {
     month: number
 }
 
-export default function TransactionAddModal({ isOpen, onClose, onSubmit, year, month }: Readonly<Props>) {
+export default function TransactionAddModal({isOpen, onClose, onSubmit, year, month}: Readonly<Props>) {
     const [subcategories, setSubcategories] = useState<Subcategory[]>([])
     const [formData, setFormData] = useState<TransactionCreate>({
         year,
@@ -36,7 +37,7 @@ export default function TransactionAddModal({ isOpen, onClose, onSubmit, year, m
     }, [])
 
     const handleChange = (field: keyof TransactionCreate, value: any) => {
-        setFormData((prev) => ({ ...prev, [field]: value }))
+        setFormData((prev) => ({...prev, [field]: value}))
     }
 
     const handleSubmit = () => {
@@ -73,16 +74,28 @@ export default function TransactionAddModal({ isOpen, onClose, onSubmit, year, m
                     }
                 />
 
-                <Select
-                    label="Subcategoría"
-                    options={subcategoryOptions}
-                    onChange={(subcategoryName) => {
-                        const selected = subcategories.find((s) => s.name === subcategoryName)
-                        if (selected) {
-                            handleChange("subcategory", selected)
-                        }
-                    }}
-                />
+                <div className="flex items-end gap-2">
+                    <div className="flex-1">
+                        <Select
+                            label="Subcategoría"
+                            options={subcategoryOptions}
+                            onChange={(subcategoryName) => {
+                                const selected = subcategories.find((s) => s.name === subcategoryName)
+                                if (selected) {
+                                    handleChange("subcategory", selected)
+                                }
+                            }}
+                            className="w-full"
+                        />
+                    </div>
+                    <button
+                        type="button"
+                        className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                        title="Añadir/Editar subcategoría"
+                    >
+                        <EditPencil className="w-5 h-5 text-primary" />
+                    </button>
+                </div>
 
                 <TextArea
                     label="Descripción"

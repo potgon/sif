@@ -5,13 +5,12 @@ import dev.potgon.sif.mapper.ParamMapper;
 import dev.potgon.sif.mapper.UserMapper;
 import dev.potgon.sif.repository.ParamRepository;
 import dev.potgon.sif.service.ParamService;
-import dev.potgon.sif.utils.Constants;
 import dev.potgon.sif.utils.FinanceUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -29,18 +28,13 @@ public class ParamServiceImpl implements ParamService {
     }
 
     @Override
-    public ParamDTO updateParam(String value) {
+    public ParamDTO updateParam(Map<String, String> paramMap) {
+        ParamDTO param = paramMapper.toDTO(
+                paramRepository.findByNameAndUser(paramMap.get("key"), financeUtils.getUserEntity()));
+        param.setValue(paramMap.get("value"));
         return paramMapper.toDTO(
                 paramRepository.save(
-                        paramMapper.toEntity(
-                                ParamDTO.builder()
-                                        .name(Constants.PARAM_EXPENSE_TARGET)
-                                        .value(value)
-                                        .createdAt(LocalDateTime.now())
-                                        .user(
-                                                userMapper.toDTO(
-                                                        financeUtils.getUserEntity()))
-                                        .build())
-                ));
+                        paramMapper.toEntity(param))
+        );
     }
 }

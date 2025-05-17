@@ -10,7 +10,7 @@ import {
     TransactionUpdate,
     Transaction,
     Subcategory,
-    TransactionDelete,
+    Delete,
     Param,
     ExtraPay, IncomeUpdate
 } from "./types.ts";
@@ -85,13 +85,13 @@ export const updateTransaction = async (id: number, transaction: TransactionUpda
     return response.data
 }
 
-export const deleteTransaction = async (transactionId: number): Promise<TransactionDelete> => {
+export const deleteTransaction = async (transactionId: number): Promise<Delete> => {
     const response = await apiClient.delete(`/transactions/${transactionId}`)
     return response.data
 }
 
 export const fetchAllSubcategories = async (): Promise<Subcategory[]> => {
-    const response = await apiClient.get("/transactions/subcategories")
+    const response = await apiClient.get("/subcategory")
     return response.data
 }
 
@@ -115,7 +115,7 @@ export const updateIncome = async (income: IncomeUpdate): Promise<IncomeUpdate> 
     return response.data
 }
 
-export const updateParam = async (payload: {value: string}): Promise<Param> => {
+export const updateParam = async (payload: { key: string, value: string }): Promise<Param> => {
     const response = await apiClient.post(`/params/target`, payload)
     return response.data
 }

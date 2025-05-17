@@ -28,7 +28,7 @@ export default function ParameterUpdateModal({isOpen, onClose, refreshData}: Pro
         if (!target?.value) return;
 
         try {
-            await updateParam({ value: target.value });
+            await updateParam({key: target.name, value: target.value});
             refreshData();
             window.dispatchEvent(new CustomEvent('transactionUpdated'));
             onClose();
@@ -55,7 +55,7 @@ export default function ParameterUpdateModal({isOpen, onClose, refreshData}: Pro
                             value={target?.value ?? ""}
                             onChange={(e) =>
                                 setTarget(prev => prev ?
-                                    { ...prev, value: e.target.value }
+                                    {...prev, value: e.target.value}
                                     : null
                                 )
                             }

@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TransactionDeleteDTO {
+public class DeleteDTO {
     private long id;
     private boolean result;
     private String message;
