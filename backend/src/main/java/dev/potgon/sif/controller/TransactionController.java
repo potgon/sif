@@ -69,6 +69,6 @@ public class TransactionController {
 
     @GetMapping("/subcategories")
     public ResponseEntity<List<SubcategoryDTO>> fetchAllSubcategories() {
-        return ResponseEntity.ok(transactionsService.fetchAllSubcategories());
+        return ResponseEntity.ok(transactionsService.fetchAllSubcategoriesByUser());
     }
 }

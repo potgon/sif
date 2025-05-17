@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -286,5 +287,51 @@ public class FinanceUtils {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         return userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
+    }
+
+    public void createExpenseTarget(UserDTO user) {
+        ParamDTO expenseTarget = ParamDTO.builder()
+                .id(null)
+                .name(Constants.PARAM_EXPENSE_TARGET)
+                .value("0.0")
+                .createdAt(LocalDateTime.now())
+                .user(user)
+                .build();
+        paramRepo.save(paramMapper.toEntity(expenseTarget));
+    }
+
+    public void createSalary(UserDTO user) {
+        ParamDTO salary = ParamDTO.builder()
+                .id(null)
+                .name(Constants.PARAM_SALARY)
+                .value("0.0")
+                .createdAt(LocalDateTime.now())
+                .user(user)
+                .build();
+        paramRepo.save(paramMapper.toEntity(salary));
+    }
+
+    public void createAccumulated(UserDTO user) {
+        ParamDTO salary = ParamDTO.builder()
+                .id(null)
+                .name(Constants.PARAM_ACCUMULATED)
+                .value("0.0")
+                .createdAt(LocalDateTime.now())
+                .user(user)
+                .build();
+        paramRepo.save(paramMapper.toEntity(salary));
+    }
+
+    public void createPeriods(UserDTO user) {
+        int currentYear = Year.now().getValue();
+
+        for (int month = 1; month <= 12; month++) {
+            PeriodDTO period = new PeriodDTO();
+            period.setYear(currentYear);
+            period.setMonth(month);
+            period.setExtraPay(BigDecimal.ZERO);
+            period.setUser(user);
+            periodRepo.save(periodMapper.toEntity(period));
+        }
     }
 }

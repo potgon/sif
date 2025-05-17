@@ -4,6 +4,7 @@ import dev.potgon.sif.dto.CategoryTypeEnum;
 import dev.potgon.sif.dto.SubcategoryDTO;
 import dev.potgon.sif.dto.TransactionDTO;
 import dev.potgon.sif.dto.response.*;
+import dev.potgon.sif.entity.User;
 import dev.potgon.sif.mapper.SubcategoryMapper;
 import dev.potgon.sif.repository.SubcategoryRepository;
 import dev.potgon.sif.service.TransactionsService;
@@ -64,7 +65,8 @@ public class TransactionServiceImpl implements TransactionsService {
     }
 
     @Override
-    public List<SubcategoryDTO> fetchAllSubcategories() {
-        return subcategoryRepo.findAll().stream().map(subcategoryMapper::toDTO).collect(Collectors.toList());
+    public List<SubcategoryDTO> fetchAllSubcategoriesByUser() {
+        User user = financeUtils.getUserEntity();
+        return subcategoryRepo.findAllByUser(user).stream().map(subcategoryMapper::toDTO).collect(Collectors.toList());
     }
 }

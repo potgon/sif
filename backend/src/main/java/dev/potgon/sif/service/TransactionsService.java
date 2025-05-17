@@ -13,5 +13,5 @@ public interface TransactionsService {
     TransactionDTO createTransaction(TransactionCreateDTO transactionCreateDTO);
     TransactionDeleteDTO deleteTransaction(Long id);
     TransactionDTO updateTransaction(TransactionUpdateDTO updateDTO);
-    List<SubcategoryDTO> fetchAllSubcategories();
+    List<SubcategoryDTO> fetchAllSubcategoriesByUser();
 }
