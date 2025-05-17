@@ -9,7 +9,7 @@ import DatePicker from "../../form/date-picker"
 import {fetchAllSubcategories} from "../../../api/finances/metrics"
 import Select, {Option} from "../../form/Select.tsx";
 import Button from "../button/Button.tsx";
-import {EditPencil} from "../../../icons/index.ts"
+import {EditPencil, PlusIcon} from "../../../icons/index.ts"
 
 interface Props {
     isOpen: boolean
@@ -85,16 +85,25 @@ export default function TransactionAddModal({isOpen, onClose, onSubmit, year, mo
                                     handleChange("subcategory", selected)
                                 }
                             }}
-                            className="w-full"
+                            className="w-full h-12"
                         />
                     </div>
-                    <button
-                        type="button"
-                        className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
-                        title="Añadir/Editar subcategoría"
-                    >
-                        <EditPencil className="w-5 h-5 text-primary" />
-                    </button>
+                    <div className="flex flex-col gap-1 h-16 justify-between">
+                        <button
+                            type="button"
+                            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                            title="Botón superior"
+                        >
+                            <PlusIcon className="w-6 h-6 text-primary" />
+                        </button>
+                        <button
+                            type="button"
+                            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                            title="Añadir/Editar subcategoría"
+                        >
+                            <EditPencil className="w-6 h-6 text-primary" />
+                        </button>
+                    </div>
                 </div>
 
                 <TextArea
