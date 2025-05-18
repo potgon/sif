@@ -47,6 +47,9 @@ export default function TransactionAddModal({isOpen, onClose, onSubmit, year, mo
     }
 
     const handleSubmit = () => {
+        if (!formData.subcategory) {
+            return
+        }
         onSubmit(formData)
         onClose()
     }
@@ -151,7 +154,12 @@ export default function TransactionAddModal({isOpen, onClose, onSubmit, year, mo
                         onChange={(v) => handleChange("notes", v)}
                     />
 
-                    <Button type="submit" variant="primary" size="sm">
+                    <Button
+                        type="submit"
+                        variant={formData.subcategory ? "primary" : "outline"}
+                        size="sm"
+                        disabled={!formData.subcategory}
+                    >
                         Añadir
                     </Button>
                 </Form>
