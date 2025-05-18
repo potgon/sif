@@ -15,8 +15,11 @@ interface Props {
 export default function SubcategoryCreateModal({ isOpen, onClose, onSubmit }: Readonly<Props>) {
     const [name, setName] = useState("");
 
-    const handleSubmit = async () => {
-        const response = await createSubcategory(name)
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (name.length < 1) return;
+
+        const response = await createSubcategory(name);
         onSubmit(response);
         onClose();
     };
@@ -32,10 +35,16 @@ export default function SubcategoryCreateModal({ isOpen, onClose, onSubmit }: Re
                     label="Nombre"
                     value={name}
                     onChange={e => setName(e.target.value)}
+                    hint={name.length > 0 && name.length < 1 ? "Mínimo 1 carácter" : undefined}
+                    error={name.length > 0 && name.length < 1}
                     placeholder="Introduce el nombre de la subcategoría"
                 />
 
-                <Button type="submit" variant="primary" size="sm">
+                <Button
+                    type="submit"
+                    variant={name.length >= 1 ? "primary" : "outline"}
+                    disabled={name.length < 1}
+                    size="sm">
                     Añadir
                 </Button>
             </Form>
