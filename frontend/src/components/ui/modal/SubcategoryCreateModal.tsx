@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Modal } from "./index";
 import Form from "../../form/Form";
-import TextArea from "../../form/input/TextArea";
 import Button from "../button/Button";
 import { Subcategory } from "../../../api/finances/types"
 import {createSubcategory} from "../../../api/finances/metrics.ts";
+import InputField from "../../form/input/InputField.tsx";
 
 interface Props {
     isOpen: boolean;
@@ -28,10 +28,11 @@ export default function SubcategoryCreateModal({ isOpen, onClose, onSubmit }: Re
             </h2>
 
             <Form onSubmit={handleSubmit} className="space-y-4">
-                <TextArea
+                <InputField
                     label="Nombre"
                     value={name}
-                    onChange={setName}
+                    onChange={e => setName(e.target.value)}
+                    placeholder="Introduce el nombre de la subcategoría"
                 />
 
                 <Button type="submit" variant="primary" size="sm">

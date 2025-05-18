@@ -1,10 +1,10 @@
 import {useState, useEffect} from "react";
 import {Modal} from "./index";
 import Form from "../../form/Form";
-import TextArea from "../../form/input/TextArea";
 import Button from "../button/Button";
 import {Subcategory, Delete} from "../../../api/finances/types";
 import {deleteSubcategory, updateSubcategory} from "../../../api/finances/metrics.ts";
+import InputField from "../../form/input/InputField.tsx";
 
 interface Props {
     isOpen: boolean;
@@ -47,17 +47,19 @@ export default function SubcategoryEditModal({isOpen, onClose, subcategory, onUp
                 Editar Subcategoría
             </h2>
 
-            <Form
-                className="space-y-4"
-                onSubmit={handleUpdate}>
-                <TextArea
+            <Form className="space-y-4" onSubmit={e => {
+                e.preventDefault();
+                handleUpdate();
+            }}>
+                <InputField
                     label="Nombre"
                     value={name}
-                    onChange={setName}
+                    onChange={e => setName(e.target.value)}
+                    placeholder="Introduce el nuevo nombre de la subcategoría"
                 />
 
                 <div className="flex justify-between">
-                    <Button type="button" variant="primary" size="sm">
+                    <Button type="submit" variant="primary" size="sm">
                         Actualizar
                     </Button>
 

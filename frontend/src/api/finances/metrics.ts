@@ -121,7 +121,9 @@ export const updateParam = async (payload: { key: string, value: string }): Prom
 }
 
 export const createSubcategory = async (name: string): Promise<Subcategory> => {
-    const response = await apiClient.post("/subcategory", name)
+    const response = await apiClient.post("/subcategory", null, {
+        params: {name}
+    })
     return response.data
 }
 
