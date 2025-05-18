@@ -16,13 +16,14 @@ interface Props {
 
 export default function SubcategoryEditModal({isOpen, onClose, subcategory, onUpdate, onDelete}: Readonly<Props>) {
     const [name, setName] = useState(subcategory?.name ?? "");
+    const hasChanges = name !== subcategory?.name;
 
     useEffect(() => {
         setName(subcategory?.name ?? "");
     }, [subcategory]);
 
     const handleUpdate = async () => {
-        if (subcategory) {
+        if (subcategory && hasChanges) {
             const updated: Subcategory = {
                 ...subcategory,
                 name: name
@@ -56,10 +57,16 @@ export default function SubcategoryEditModal({isOpen, onClose, subcategory, onUp
                     value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="Introduce el nuevo nombre de la subcategoría"
+                    hint={!hasChanges ? "Modifica el nombre para poder actualizar" : undefined}
                 />
 
                 <div className="flex justify-between">
-                    <Button type="submit" variant="primary" size="sm">
+                    <Button
+                        type="submit"
+                        variant={hasChanges ? "primary" : "outline"}
+                        size="sm"
+                        disabled={!hasChanges}
+                    >
                         Actualizar
                     </Button>
 
