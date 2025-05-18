@@ -1,7 +1,7 @@
-import FinanceMetrics from "../../components/dashboard/FinanceMetrics.tsx";
-import AnnualExpensesChart from "../../components/dashboard/AnnualExpensesChart.tsx";
-import MonthlyTarget from "../../components/dashboard/MonthlyTarget";
-import RecentTransactions from "../../components/dashboard/RecentTransactions.tsx";
+import FinanceMetrics from "../../components/expenses/FinanceMetrics.tsx";
+import AnnualExpensesChart from "../../components/expenses/AnnualExpensesChart.tsx";
+import MonthlyTarget from "../../components/expenses/MonthlyTarget";
+import RecentTransactions from "../../components/expenses/RecentTransactions.tsx";
 import PageMeta from "../../components/common/PageMeta";
 import {useState} from "react";
 
