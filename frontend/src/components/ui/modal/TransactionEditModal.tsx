@@ -4,7 +4,7 @@ import Form from "../../form/Form"
 import InputField from "../../form/input/InputField"
 import TextArea from "../../form/input/TextArea"
 import Checkbox from "../../form/input/Checkbox"
-import {useEffect, useState} from "react"
+import {useEffect, useMemo, useState} from "react"
 import Select, {Option} from "../../form/Select.tsx"
 import DatePicker from "../../form/date-picker.tsx";
 import {deleteTransaction, fetchAllSubcategories} from "../../../api/finances/metrics.ts";
@@ -22,6 +22,13 @@ export default function TransactionEditModal({isOpen, onClose, transaction, onSu
     const [formData, setFormData] = useState<Transaction>(transaction)
     const [subcategories, setSubcategories] = useState<Subcategory[]>([])
 
+    const hasChanges = useMemo(() => {
+        return JSON.stringify(formData) !== JSON.stringify({
+            ...transaction,
+            date: new Date(transaction.date).toISOString().split('T')[0]
+        })
+    }, [formData, transaction])
+
     useEffect(() => {
         fetchAllSubcategories().then(setSubcategories)
     }, [])
@@ -35,6 +42,7 @@ export default function TransactionEditModal({isOpen, onClose, transaction, onSu
     }
 
     const handleSubmit = () => {
+        if (!hasChanges) return
         onSubmit(formData)
         onClose()
     }
@@ -106,7 +114,12 @@ export default function TransactionEditModal({isOpen, onClose, transaction, onSu
                 />
 
                 <div className="flex justify-between items-center">
-                    <Button type="submit" variant="primary" size="sm">
+                    <Button
+                        type="submit"
+                        variant={hasChanges ? "primary" : "outline"}
+                        size="sm"
+                        disabled={!hasChanges}
+                    >
                         Actualizar
                     </Button>
 
