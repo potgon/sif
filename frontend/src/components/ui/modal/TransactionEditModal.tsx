@@ -7,7 +7,8 @@ import Checkbox from "../../form/input/Checkbox"
 import {useEffect, useMemo, useState} from "react"
 import Select, {Option} from "../../form/Select.tsx"
 import DatePicker from "../../form/date-picker.tsx";
-import {deleteTransaction, fetchAllSubcategories} from "../../../api/finances/metrics.ts";
+import {fetchAllSubcategories} from "../../../api/finances/subcategory.ts"
+import {deleteTransaction} from "../../../api/finances/transactions.ts";
 import Button from "../button/Button.tsx"
 
 interface Props {

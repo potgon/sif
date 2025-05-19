@@ -8,5 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class RegisterResponseDTO {
-
+    boolean result;
+    String message;
 }

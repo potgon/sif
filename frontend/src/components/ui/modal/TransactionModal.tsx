@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Modal } from "../modal"
 import {MonthlyTransactions} from "../../../api/finances/types.ts";
-import {fetchMonthlyTransactions} from "../../../api/finances/metrics.ts";
+import {fetchMonthlyTransactions} from "../../../api/finances/transactions.ts";
 
 interface Props {
     year: number

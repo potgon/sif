@@ -3,7 +3,7 @@ import {Modal} from "./index";
 import Form from "../../form/Form";
 import Button from "../button/Button";
 import {Subcategory, Delete} from "../../../api/finances/types";
-import {deleteSubcategory, updateSubcategory} from "../../../api/finances/metrics.ts";
+import {deleteSubcategory, updateSubcategory} from "../../../api/finances/subcategory.ts";
 import InputField from "../../form/input/InputField.tsx";
 
 interface Props {

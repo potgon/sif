@@ -1,5 +1,6 @@
 package dev.potgon.sif.service.impl;
 
+import dev.potgon.sif.dto.response.RegisterResponseDTO;
 import dev.potgon.sif.dto.shared.UserDTO;
 import dev.potgon.sif.dto.response.JwtResponseDTO;
 import dev.potgon.sif.dto.request.LoginDTO;
@@ -34,9 +35,12 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public boolean register(RegisterDTO dto) {
+    public RegisterResponseDTO register(RegisterDTO dto) {
+        RegisterResponseDTO response = RegisterResponseDTO.builder().build();
         if (userRepository.existsByEmail(dto.getEmail())) {
-            return false;
+            response.setResult(false);
+            response.setMessage("Existe otro usuario con este email");
+            return response;
         }
 
         UserDTO user = new UserDTO();
@@ -51,7 +55,8 @@ public class AuthServiceImpl implements AuthService {
         authUtils.createSalary(userMapper.toDTO(savedUser));
         authUtils.createAccumulated(userMapper.toDTO(savedUser));
         authUtils.createPeriods(userMapper.toDTO(savedUser));
-        return true;
+        response.setResult(true);
+        return response;
     }
 
     @Override

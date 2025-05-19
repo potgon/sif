@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react"
 import {Modal} from "./index"
-import {fetchExtraPay, fetchParam, updateIncome} from "../../../api/finances/metrics"
+import {fetchExtraPay, updateIncome} from "../../../api/finances/metrics"
+import {fetchParam} from "../../../api/finances/params"
 import {ExtraPay, IncomeUpdate, Param} from "../../../api/finances/types"
 import InputField from "../../form/input/InputField"
 import Button from "../../ui/button/Button"

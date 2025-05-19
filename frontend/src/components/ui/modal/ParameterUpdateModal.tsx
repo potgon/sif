@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react"
 import {Modal} from "./index"
-import {fetchParam, updateParam} from "../../../api/finances/metrics"
+import {fetchParam, updateParam} from "../../../api/finances/params"
 import InputField from "../../form/input/InputField"
 import Button from "../../ui/button/Button"
 import {Param} from "../../../api/finances/types.ts";

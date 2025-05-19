@@ -4,7 +4,7 @@ import {
     fetchMonthlySubcategorySumExpenses,
     fetchMonthlyTransactionBySubcategory,
     updateTransaction
-} from "../../api/finances/metrics"
+} from "../../api/finances/transactions"
 import {
     MonthlySubcategoryExpense,
     MonthlyTransactionSubcategory,

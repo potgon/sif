@@ -6,7 +6,7 @@ import InputField from "../../form/input/InputField"
 import TextArea from "../../form/input/TextArea"
 import Checkbox from "../../form/input/Checkbox"
 import DatePicker from "../../form/date-picker"
-import {fetchAllSubcategories} from "../../../api/finances/metrics"
+import {fetchAllSubcategories} from "../../../api/finances/subcategory"
 import Select, {Option} from "../../form/Select.tsx";
 import Button from "../button/Button.tsx";
 import {EditPencil, PlusIcon} from "../../../icons/index.ts"
