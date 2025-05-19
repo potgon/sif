@@ -1,4 +1,4 @@
-import {MonthlyTransactionSubcategory, Transaction} from "../../../api/finances/types.ts";
+import {MonthlyTransactionSubcategory, Transaction} from "../../../api/expenses/types.ts";
 import Alert from "../alert/Alert.tsx";
 import {Modal} from "./index.tsx";
 

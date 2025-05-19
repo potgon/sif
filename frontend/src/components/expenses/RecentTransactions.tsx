@@ -4,13 +4,13 @@ import {
     fetchMonthlySubcategorySumExpenses,
     fetchMonthlyTransactionBySubcategory,
     updateTransaction
-} from "../../api/finances/transactions"
+} from "../../api/expenses/transactions"
 import {
     MonthlySubcategoryExpense,
     MonthlyTransactionSubcategory,
     Transaction,
     TransactionUpdate
-} from "../../api/finances/types"
+} from "../../api/expenses/types"
 import {useModal} from "../../hooks/useModal.ts";
 import TransactionSubcategoryModal from "../ui/modal/TransactionSubcategoryModal.tsx";
 import TransactionEditModal from "../ui/modal/TransactionEditModal.tsx";

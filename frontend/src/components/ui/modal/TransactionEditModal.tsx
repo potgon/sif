@@ -1,5 +1,5 @@
 import {Modal} from "./index"
-import {Subcategory, Transaction, Delete} from "../../../api/finances/types"
+import {Subcategory, Transaction, Delete} from "../../../api/expenses/types"
 import Form from "../../form/Form"
 import InputField from "../../form/input/InputField"
 import TextArea from "../../form/input/TextArea"
@@ -7,8 +7,8 @@ import Checkbox from "../../form/input/Checkbox"
 import {useEffect, useMemo, useState} from "react"
 import Select, {Option} from "../../form/Select.tsx"
 import DatePicker from "../../form/date-picker.tsx";
-import {fetchAllSubcategories} from "../../../api/finances/subcategory.ts"
-import {deleteTransaction} from "../../../api/finances/transactions.ts";
+import {fetchAllSubcategories} from "../../../api/expenses/subcategory.ts"
+import {deleteTransaction} from "../../../api/expenses/transactions.ts";
 import Button from "../button/Button.tsx"
 
 interface Props {

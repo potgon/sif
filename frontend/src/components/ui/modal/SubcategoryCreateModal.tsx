@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Modal } from "./index";
 import Form from "../../form/Form";
 import Button from "../button/Button";
-import { Subcategory } from "../../../api/finances/types"
-import {createSubcategory} from "../../../api/finances/subcategory.ts";
+import { Subcategory } from "../../../api/expenses/types"
+import {createSubcategory} from "../../../api/expenses/subcategory.ts";
 import InputField from "../../form/input/InputField.tsx";
 
 interface Props {

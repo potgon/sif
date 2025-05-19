@@ -5,9 +5,9 @@ import {
     GroupIcon,
 } from "../../icons";
 import Badge from "../ui/badge/Badge";
-import {fetchMonthlyMetrics} from "../../api/finances/metrics.ts";
+import {fetchMonthlyMetrics} from "../../api/expenses/metrics.ts";
 import {useCallback, useEffect, useState} from "react";
-import {MonthlyMetrics} from "../../api/finances/types.ts";
+import {MonthlyMetrics} from "../../api/expenses/types.ts";
 import {useModal} from "../../hooks/useModal.ts";
 import IncomeModal from "../ui/modal/IncomeModal.tsx";
 

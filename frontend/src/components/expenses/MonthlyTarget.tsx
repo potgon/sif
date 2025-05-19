@@ -1,8 +1,8 @@
 import Chart from "react-apexcharts";
 import {ApexOptions} from "apexcharts";
 import {useCallback, useEffect, useState} from "react";
-import {fetchMonthlyExpenseTarget} from "../../api/finances/metrics.ts";
-import {MonthlyExpenseTarget} from "../../api/finances/types.ts";
+import {fetchMonthlyExpenseTarget} from "../../api/expenses/metrics.ts";
+import {MonthlyExpenseTarget} from "../../api/expenses/types.ts";
 import {useModal} from "../../hooks/useModal.ts";
 import ParameterUpdateModal from "../ui/modal/ParameterUpdateModal.tsx";
 

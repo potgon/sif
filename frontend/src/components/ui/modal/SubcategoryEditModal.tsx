@@ -2,8 +2,8 @@ import {useState, useEffect} from "react";
 import {Modal} from "./index";
 import Form from "../../form/Form";
 import Button from "../button/Button";
-import {Subcategory, Delete} from "../../../api/finances/types";
-import {deleteSubcategory, updateSubcategory} from "../../../api/finances/subcategory.ts";
+import {Subcategory, Delete} from "../../../api/expenses/types";
+import {deleteSubcategory, updateSubcategory} from "../../../api/expenses/subcategory.ts";
 import InputField from "../../form/input/InputField.tsx";
 
 interface Props {

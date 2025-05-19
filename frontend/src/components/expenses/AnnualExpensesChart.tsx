@@ -1,9 +1,9 @@
 import Chart from "react-apexcharts";
 import {options} from "../../utils/constants.ts";
 import {useEffect, useState} from "react";
-import {fetchAnnualMetrics} from "../../api/finances/metrics.ts";
+import {fetchAnnualMetrics} from "../../api/expenses/metrics.ts";
 import TransactionModal from "../ui/modal/TransactionModal.tsx";
-import {AnnualMetrics} from "../../api/finances/types.ts";
+import {AnnualMetrics} from "../../api/expenses/types.ts";
 
 interface Props {
     year: number
