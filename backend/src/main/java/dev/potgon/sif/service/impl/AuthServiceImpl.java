@@ -8,7 +8,7 @@ import dev.potgon.sif.entity.User;
 import dev.potgon.sif.mapper.UserMapper;
 import dev.potgon.sif.repository.UserRepository;
 import dev.potgon.sif.service.AuthService;
-import dev.potgon.sif.utils.FinanceUtils;
+import dev.potgon.sif.utils.AuthUtils;
 import dev.potgon.sif.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,10 +27,11 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final AuthUtils authUtils;
+
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final FinanceUtils financeUtils;
 
     @Override
     public boolean register(RegisterDTO dto) {
@@ -46,10 +47,10 @@ public class AuthServiceImpl implements AuthService {
         user.setCreatedAt(ZonedDateTime.now());
 
         User savedUser = userRepository.save(userMapper.toEntity(user));
-        financeUtils.createExpenseTarget(userMapper.toDTO(savedUser));
-        financeUtils.createSalary(userMapper.toDTO(savedUser));
-        financeUtils.createAccumulated(userMapper.toDTO(savedUser));
-        financeUtils.createPeriods(userMapper.toDTO(savedUser));
+        authUtils.createExpenseTarget(userMapper.toDTO(savedUser));
+        authUtils.createSalary(userMapper.toDTO(savedUser));
+        authUtils.createAccumulated(userMapper.toDTO(savedUser));
+        authUtils.createPeriods(userMapper.toDTO(savedUser));
         return true;
     }
 

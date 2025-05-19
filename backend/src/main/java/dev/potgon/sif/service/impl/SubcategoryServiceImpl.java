@@ -9,7 +9,7 @@ import dev.potgon.sif.mapper.SubcategoryMapper;
 import dev.potgon.sif.mapper.UserMapper;
 import dev.potgon.sif.repository.SubcategoryRepository;
 import dev.potgon.sif.service.SubcategoryService;
-import dev.potgon.sif.utils.FinanceUtils;
+import dev.potgon.sif.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,24 +23,24 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SubcategoryServiceImpl implements SubcategoryService {
 
-    private final FinanceUtils financeUtils;
+    private final AuthUtils authUtils;
     private final SubcategoryRepository subcategoryRepo;
     private final SubcategoryMapper subcategoryMapper;
     private final UserMapper userMapper;
 
     @Override
     public List<SubcategoryDTO> fetchAllSubcategoriesByUser() {
-        User user = financeUtils.getUserEntity();
+        User user = authUtils.getUserEntity();
         return subcategoryRepo.findAllByUser(user).stream().map(subcategoryMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
     public SubcategoryDTO createSubcategory(String name) {
-        Optional<Subcategory> subcategory = subcategoryRepo.findByNameAndUser(name, financeUtils.getUserEntity());
+        Optional<Subcategory> subcategory = subcategoryRepo.findByNameAndUser(name, authUtils.getUserEntity());
         if (subcategory.isPresent()) {
             return null;
         }
-        UserDTO userDTO = userMapper.toDTO(financeUtils.getUserEntity());
+        UserDTO userDTO = userMapper.toDTO(authUtils.getUserEntity());
         return subcategoryMapper.toDTO(
                 subcategoryRepo.save(
                         subcategoryMapper.toEntity(

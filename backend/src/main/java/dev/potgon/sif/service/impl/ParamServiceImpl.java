@@ -2,10 +2,9 @@ package dev.potgon.sif.service.impl;
 
 import dev.potgon.sif.dto.ParamDTO;
 import dev.potgon.sif.mapper.ParamMapper;
-import dev.potgon.sif.mapper.UserMapper;
 import dev.potgon.sif.repository.ParamRepository;
 import dev.potgon.sif.service.ParamService;
-import dev.potgon.sif.utils.FinanceUtils;
+import dev.potgon.sif.utils.AuthUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,18 +18,17 @@ public class ParamServiceImpl implements ParamService {
 
     private final ParamRepository paramRepository;
     private final ParamMapper paramMapper;
-    private final FinanceUtils financeUtils;
-    private final UserMapper userMapper;
+    private final AuthUtils authUtils;
 
     @Override
     public ParamDTO getParam(String name) {
-        return paramMapper.toDTO(paramRepository.findByNameAndUser(name, financeUtils.getUserEntity()));
+        return paramMapper.toDTO(paramRepository.findByNameAndUser(name, authUtils.getUserEntity()));
     }
 
     @Override
     public ParamDTO updateParam(Map<String, String> paramMap) {
         ParamDTO param = paramMapper.toDTO(
-                paramRepository.findByNameAndUser(paramMap.get("key"), financeUtils.getUserEntity()));
+                paramRepository.findByNameAndUser(paramMap.get("key"), authUtils.getUserEntity()));
         param.setValue(paramMap.get("value"));
         return paramMapper.toDTO(
                 paramRepository.save(
