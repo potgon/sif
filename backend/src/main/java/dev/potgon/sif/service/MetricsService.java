@@ -1,5 +1,6 @@
 package dev.potgon.sif.service;
 
+import dev.potgon.sif.dto.request.IncomeUpdateDTO;
 import dev.potgon.sif.dto.response.*;
 
 public interface MetricsService {

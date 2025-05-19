@@ -1,4 +1,4 @@
-package dev.potgon.sif.dto.response;
+package dev.potgon.sif.dto.request;
 
 import lombok.*;
 

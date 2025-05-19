@@ -1,6 +1,6 @@
 package dev.potgon.sif.dto.response;
 
-import dev.potgon.sif.dto.PeriodDTO;
+import dev.potgon.sif.dto.shared.PeriodDTO;
 import lombok.*;
 
 import java.math.BigDecimal;

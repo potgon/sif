@@ -1,9 +1,10 @@
 package dev.potgon.sif.service.impl;
 
-import dev.potgon.sif.dto.CategoryTypeEnum;
-import dev.potgon.sif.dto.ParamDTO;
-import dev.potgon.sif.dto.PeriodDTO;
-import dev.potgon.sif.dto.TransactionDTO;
+import dev.potgon.sif.dto.enums.CategoryTypeEnum;
+import dev.potgon.sif.dto.shared.ParamDTO;
+import dev.potgon.sif.dto.shared.PeriodDTO;
+import dev.potgon.sif.dto.shared.TransactionDTO;
+import dev.potgon.sif.dto.request.IncomeUpdateDTO;
 import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.entity.Param;
 import dev.potgon.sif.entity.Period;

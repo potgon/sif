@@ -1,6 +1,8 @@
 package dev.potgon.sif.service;
 
-import dev.potgon.sif.dto.TransactionDTO;
+import dev.potgon.sif.dto.request.TransactionCreateDTO;
+import dev.potgon.sif.dto.request.TransactionUpdateDTO;
+import dev.potgon.sif.dto.shared.TransactionDTO;
 import dev.potgon.sif.dto.response.*;
 
 public interface TransactionsService {

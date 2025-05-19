@@ -1,6 +1,8 @@
 package dev.potgon.sif.controller;
 
-import dev.potgon.sif.dto.TransactionDTO;
+import dev.potgon.sif.dto.request.TransactionCreateDTO;
+import dev.potgon.sif.dto.request.TransactionUpdateDTO;
+import dev.potgon.sif.dto.shared.TransactionDTO;
 import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.service.TransactionsService;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,8 @@
 package dev.potgon.sif.controller;
 
 import dev.potgon.sif.dto.response.JwtResponseDTO;
-import dev.potgon.sif.dto.response.LoginDTO;
-import dev.potgon.sif.dto.response.RegisterDTO;
+import dev.potgon.sif.dto.request.LoginDTO;
+import dev.potgon.sif.dto.request.RegisterDTO;
 import dev.potgon.sif.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

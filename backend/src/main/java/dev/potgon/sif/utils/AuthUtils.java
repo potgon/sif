@@ -1,8 +1,8 @@
 package dev.potgon.sif.utils;
 
-import dev.potgon.sif.dto.ParamDTO;
-import dev.potgon.sif.dto.PeriodDTO;
-import dev.potgon.sif.dto.UserDTO;
+import dev.potgon.sif.dto.shared.ParamDTO;
+import dev.potgon.sif.dto.shared.PeriodDTO;
+import dev.potgon.sif.dto.shared.UserDTO;
 import dev.potgon.sif.entity.User;
 import dev.potgon.sif.mapper.ParamMapper;
 import dev.potgon.sif.mapper.PeriodMapper;

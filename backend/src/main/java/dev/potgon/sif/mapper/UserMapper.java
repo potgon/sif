@@ -1,6 +1,6 @@
 package dev.potgon.sif.mapper;
 
-import dev.potgon.sif.dto.UserDTO;
+import dev.potgon.sif.dto.shared.UserDTO;
 import dev.potgon.sif.entity.User;
 import org.mapstruct.Mapper;
 

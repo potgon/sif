@@ -1,6 +1,6 @@
 package dev.potgon.sif.service;
 
-import dev.potgon.sif.dto.ParamDTO;
+import dev.potgon.sif.dto.shared.ParamDTO;
 
 import java.util.Map;
 

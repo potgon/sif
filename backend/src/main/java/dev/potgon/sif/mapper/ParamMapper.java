@@ -1,6 +1,6 @@
 package dev.potgon.sif.mapper;
 
-import dev.potgon.sif.dto.ParamDTO;
+import dev.potgon.sif.dto.shared.ParamDTO;
 import dev.potgon.sif.entity.Param;
 import org.mapstruct.Mapper;
 

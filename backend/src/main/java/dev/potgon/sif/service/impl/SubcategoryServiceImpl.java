@@ -1,7 +1,7 @@
 package dev.potgon.sif.service.impl;
 
-import dev.potgon.sif.dto.SubcategoryDTO;
-import dev.potgon.sif.dto.UserDTO;
+import dev.potgon.sif.dto.shared.SubcategoryDTO;
+import dev.potgon.sif.dto.shared.UserDTO;
 import dev.potgon.sif.dto.response.DeleteDTO;
 import dev.potgon.sif.entity.Subcategory;
 import dev.potgon.sif.entity.User;

@@ -1,6 +1,6 @@
 package dev.potgon.sif.entity;
 
-import dev.potgon.sif.dto.CategoryTypeEnum;
+import dev.potgon.sif.dto.enums.CategoryTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,6 +1,6 @@
 package dev.potgon.sif.service;
 
-import dev.potgon.sif.dto.SubcategoryDTO;
+import dev.potgon.sif.dto.shared.SubcategoryDTO;
 import dev.potgon.sif.dto.response.DeleteDTO;
 
 import java.util.List;

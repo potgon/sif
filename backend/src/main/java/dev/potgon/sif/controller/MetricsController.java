@@ -1,5 +1,6 @@
 package dev.potgon.sif.controller;
 
+import dev.potgon.sif.dto.request.IncomeUpdateDTO;
 import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.service.MetricsService;
 import lombok.RequiredArgsConstructor;

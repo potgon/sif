@@ -1,7 +1,7 @@
 package dev.potgon.sif.utils;
 
-import dev.potgon.sif.dto.CategoryTypeEnum;
-import dev.potgon.sif.dto.TransactionDTO;
+import dev.potgon.sif.dto.enums.CategoryTypeEnum;
+import dev.potgon.sif.dto.shared.TransactionDTO;
 import dev.potgon.sif.entity.Category;
 import dev.potgon.sif.entity.Period;
 import dev.potgon.sif.exception.ResourceNotFoundException;

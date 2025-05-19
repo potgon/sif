@@ -1,6 +1,6 @@
 package dev.potgon.sif.service.impl;
 
-import dev.potgon.sif.dto.ParamDTO;
+import dev.potgon.sif.dto.shared.ParamDTO;
 import dev.potgon.sif.mapper.ParamMapper;
 import dev.potgon.sif.repository.ParamRepository;
 import dev.potgon.sif.service.ParamService;

@@ -1,6 +1,6 @@
 package dev.potgon.sif.mapper;
 
-import dev.potgon.sif.dto.TransactionDTO;
+import dev.potgon.sif.dto.shared.TransactionDTO;
 import dev.potgon.sif.entity.Transaction;
 import org.mapstruct.Mapper;
 

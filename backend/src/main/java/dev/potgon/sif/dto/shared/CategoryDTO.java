@@ -1,5 +1,6 @@
-package dev.potgon.sif.dto;
+package dev.potgon.sif.dto.shared;
 
+import dev.potgon.sif.dto.enums.CategoryTypeEnum;
 import lombok.*;
 
 @Getter

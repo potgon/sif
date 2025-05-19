@@ -1,6 +1,6 @@
 package dev.potgon.sif.controller;
 
-import dev.potgon.sif.dto.SubcategoryDTO;
+import dev.potgon.sif.dto.shared.SubcategoryDTO;
 import dev.potgon.sif.dto.response.DeleteDTO;
 import dev.potgon.sif.service.SubcategoryService;
 import lombok.RequiredArgsConstructor;

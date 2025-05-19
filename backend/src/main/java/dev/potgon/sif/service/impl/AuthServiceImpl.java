@@ -1,9 +1,9 @@
 package dev.potgon.sif.service.impl;
 
-import dev.potgon.sif.dto.UserDTO;
+import dev.potgon.sif.dto.shared.UserDTO;
 import dev.potgon.sif.dto.response.JwtResponseDTO;
-import dev.potgon.sif.dto.response.LoginDTO;
-import dev.potgon.sif.dto.response.RegisterDTO;
+import dev.potgon.sif.dto.request.LoginDTO;
+import dev.potgon.sif.dto.request.RegisterDTO;
 import dev.potgon.sif.entity.User;
 import dev.potgon.sif.mapper.UserMapper;
 import dev.potgon.sif.repository.UserRepository;

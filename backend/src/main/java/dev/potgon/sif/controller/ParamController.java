@@ -1,6 +1,6 @@
 package dev.potgon.sif.controller;
 
-import dev.potgon.sif.dto.ParamDTO;
+import dev.potgon.sif.dto.shared.ParamDTO;
 import dev.potgon.sif.service.ParamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

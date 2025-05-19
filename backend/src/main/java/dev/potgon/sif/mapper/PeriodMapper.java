@@ -1,6 +1,6 @@
 package dev.potgon.sif.mapper;
 
-import dev.potgon.sif.dto.PeriodDTO;
+import dev.potgon.sif.dto.shared.PeriodDTO;
 import dev.potgon.sif.entity.Period;
 import org.mapstruct.Mapper;
 
