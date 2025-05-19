@@ -8,6 +8,7 @@ import SignIn from "./pages/Auth/SignIn";
 import SignUp from "./pages/Auth/SignUp.tsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.tsx";
 import {ScrollToTop} from "./components/common/ScrollToTop.tsx";
+import {SpeedInsights} from "@vercel/speed-insights/react";
 
 export default function App() {
     return (
@@ -28,6 +29,7 @@ export default function App() {
                 {/* Fallback Route */}
                 <Route path="*" element={<NotFound/>}/>
             </Routes>
+            <SpeedInsights/>
         </Router>
     );
 }
