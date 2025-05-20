@@ -45,6 +45,7 @@ public class TransactionServiceImpl implements TransactionsService {
     private final PeriodMapper periodMapper;
     private final SubcategoryMapper subcategoryMapper;
     private final ParamMapper paramMapper;
+    private final UserMapper userMapper;
 
     @Override
     public MonthlyTransactionsDTO getMonthlyTransactions(int year, int month) {
@@ -81,6 +82,7 @@ public class TransactionServiceImpl implements TransactionsService {
                 .subcategory(transactionCreateDTO.getSubcategory())
                 .isRecurring(transactionCreateDTO.getIsRecurring())
                 .createdAt(ZonedDateTime.now())
+                .user(userMapper.toDTO(authUtils.getUserEntity()))
                 .build();
         Transaction savedEntity = transactionRepo.save(transactionMapper.toEntity(transactionDTO));
         updateAccumulated(transactionDTO.getAmount(), Operation.SUBTRACT);
