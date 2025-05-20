@@ -29,24 +29,27 @@ export default function SignUpForm() {
                 name: formData.fname,
                 surname: formData.lname,
             };
-            await register(requestData).then(response => {
-                if (response.status === 200) {
-                    setModalAlert({
-                        variant: "success",
-                        title: "Registro exitoso",
-                        message: "Registro exitoso",
-                    })
-                } else {
-                    setModalAlert({
-                        variant: "error",
-                        title: "No se ha podido completar el registro",
-                        message: "No se ha podido completar el registro",
-                    })
-                }
-                setTimeout(() => setModalAlert(null), 5000)
+            const response = await register(requestData);
+            setModalAlert({
+                variant: "success",
+                title: "Registro exitoso",
+                message: "Registro exitoso",
             });
-            window.location.href = "/signin"
-        } catch (error) {
+            setTimeout(() => setModalAlert(null), 5000);
+
+            if (response.result) {
+                setTimeout(() => {
+                    window.location.href = "/signin";
+                }, 1000);
+            }
+        } catch (error: any) {
+            const message = error?.response?.data?.message || "Error desconocido";
+            setModalAlert({
+                variant: "error",
+                title: "Error de registro",
+                message: message,
+            });
+            setTimeout(() => setModalAlert(null), 5000);
             console.error(error);
         }
     };
@@ -54,7 +57,7 @@ export default function SignUpForm() {
     return (
         <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
             {modalAlert && (
-                <div className="mb-4 w-full">
+                <div className="mb-4 w-full max-w-3xl mx-auto px-4">
                     <Alert
                         variant={modalAlert.variant}
                         title={modalAlert.title}

@@ -16,7 +16,12 @@ interface JwtResponse {
     token: string
 }
 
-export const register = async (data: RegisterRequest) => {
+export interface RegisterResult {
+    result: boolean
+    message: string
+}
+
+export const register = async (data: RegisterRequest): Promise<RegisterResult> => {
     return await apiClient.post("/auth/register", data)
 }
 
