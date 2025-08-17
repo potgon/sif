@@ -1,50 +1,121 @@
-# Welcome to your Expo app 👋
+# SIF Frontend Expo
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native mobile application for personal finance management, built with Expo.
 
-## Get started
+## Features
 
-1. Install dependencies
+### Visual Components
 
-   ```bash
-   npm install
-   ```
+The app now includes beautiful, interactive visual components for displaying financial data:
 
-2. Start the app
+#### 📊 **AnnualExpensesChart**
+- Bar chart showing monthly expenses throughout the year
+- Interactive with month selection
+- Displays total annual and average monthly expenses
+- Responsive design with smooth animations
 
-   ```bash
-   npx expo start
-   ```
+#### 💰 **FinanceMetrics**
+- Card-based layout showing income and expenses
+- Visual indicators with trend arrows
+- Color-coded percentage changes
+- Net balance calculation
+- Interactive income card for future modal integration
 
-In the output, you'll find options to open the app in a
+#### 🎯 **MonthlyTarget**
+- Progress bar visualization for expense targets
+- Color-coded progress indicators (green/yellow/red)
+- Surplus/deficit display
+- Motivational messages based on progress
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+#### 📈 **StatisticsChart**
+- Pie chart showing expenses by subcategory
+- Custom color palette for each category
+- Interactive legend with amounts and percentages
+- Total expenses summary
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+#### 💳 **RecentTransactions**
+- Modern transaction list with icons
+- Color-coded income/expense indicators
+- Category badges and date formatting
+- Add transaction button
+- Transaction interaction support
 
-## Get a fresh project
+### Technical Features
 
-When you're ready, run:
+- **React Native Charts**: Uses `react-native-chart-kit` for beautiful data visualization
+- **Responsive Design**: Adapts to different screen sizes
+- **Modern UI**: Clean, card-based design with shadows and rounded corners
+- **Loading States**: Proper loading indicators for all components
+- **Error Handling**: Graceful fallbacks for missing data
+- **TypeScript**: Fully typed components and interfaces
+
+## Installation
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Dependencies
 
-## Learn more
+- `react-native-chart-kit`: For charts and data visualization
+- `react-native-svg`: Required for chart rendering
+- `@expo/vector-icons`: For beautiful icons throughout the app
 
-To learn more about developing your project with Expo, look at the following resources:
+## Usage
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+The components are designed to work together on the home dashboard:
 
-## Join the community
+```tsx
+import {
+  AnnualExpensesChart,
+  FinanceMetrics,
+  MonthlyTarget,
+  RecentTransactions,
+  StatisticsChart
+} from "@/src/components/expenses";
 
-Join our community of developers creating universal apps.
+// Use in your component
+<FinanceMetrics
+  year={2024}
+  month={12}
+  data={monthlyMetrics}
+  loading={isLoading}
+  onIncomePress={handleIncomePress}
+/>
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## API Integration
+
+All components are designed to work with the existing SIF backend API:
+
+- `fetchMonthlyMetrics`: For financial metrics
+- `fetchMonthlyExpenseTarget`: For monthly targets
+- `fetchAnnualMetrics`: For annual expense data
+- `fetchMonthlyCategoryExpenses`: For category statistics
+- `fetchMonthlyTransactions`: For recent transactions
+
+## Styling
+
+Components use a consistent design system:
+- **Colors**: Modern palette with semantic meaning (green for income, red for expenses)
+- **Shadows**: Subtle elevation effects for depth
+- **Typography**: Clear hierarchy with proper font weights
+- **Spacing**: Consistent padding and margins throughout
+
+## Future Enhancements
+
+- Modal integration for income updates
+- Transaction detail views
+- Add/edit transaction functionality
+- Dark mode support
+- Customizable chart colors
+- Export functionality for charts
+
+## Contributing
+
+When adding new components:
+1. Follow the existing component structure
+2. Include proper TypeScript interfaces
+3. Add loading and error states
+4. Use consistent styling patterns
+5. Include proper documentation

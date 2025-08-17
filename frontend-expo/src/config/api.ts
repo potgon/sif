@@ -24,6 +24,7 @@ const getEnvironment = () => {
 }
 
 export const getApiBaseURL = () => {
-    const env = getEnvironment()
-    return API_CONFIG[env].baseURL
+    //const env = getEnvironment()
+    //return API_CONFIG[env].baseURL
+    return "http://localhost:8080/api"
 }
