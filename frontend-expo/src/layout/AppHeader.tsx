@@ -1,26 +1,31 @@
-import React, { useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import React from "react";
+import { View, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSidebar } from "../context/SidebarContext";
-import { router } from "expo-router";
+import { useAuth } from "../hooks/useAuth";
 import Button from "../components/ui/button/Buton";
 
 const AppHeader: React.FC = () => {
-  const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
   const { isMobileOpen, toggleMobileSidebar } = useSidebar();
+  const { logout } = useAuth();
 
   const handleToggle = () => {
     toggleMobileSidebar();
   };
 
-  const toggleApplicationMenu = () => {
-    setApplicationMenuOpen(!isApplicationMenuOpen);
-  };
-
   const handleLogout = () => {
-    // Clear tokens and navigate to sign in
-    console.log("Logout pressed");
-    router.replace("/sign-in");
+    Alert.alert(
+      "Cerrar sesión",
+      "¿Estás seguro de que quieres cerrar sesión?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Cerrar sesión",
+          style: "destructive",
+          onPress: logout
+        }
+      ]
+    );
   };
 
   return (

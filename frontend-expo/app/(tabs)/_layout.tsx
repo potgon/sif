@@ -23,20 +23,20 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
-          name="calendar"
+          name="explore"
           options={{
-            title: "Calendar",
+            title: "Transacciones",
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="calendar" size={size} color={color} />
+              <Ionicons name="list" size={size} color={color} />
             ),
           }}
         />
         <Tabs.Screen
           name="blank"
           options={{
-            title: "Blank",
+            title: "Configuración",
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="document" size={size} color={color} />
+              <Ionicons name="settings" size={size} color={color} />
             ),
           }}
         />
