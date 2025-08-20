@@ -1,121 +1,231 @@
-# SIF Frontend Expo
+# SIF Mobile App (React Native + Expo)
 
-A React Native mobile application for personal finance management, built with Expo.
+A comprehensive financial management mobile application built with React Native and Expo, featuring modern UI components, real-time data visualization, and a complete theme system.
 
-## Features
+## ✨ Features
 
-### Visual Components
+### 🎨 **Comprehensive Theme System**
+- **Light & Dark Mode**: Full theme switching with persistent preferences
+- **Theme-Aware Components**: All UI components automatically adapt to current theme
+- **Persistent Storage**: Theme preference saved using AsyncStorage
+- **Dynamic Status Bar**: Automatically adjusts based on theme (light/dark)
 
-The app now includes beautiful, interactive visual components for displaying financial data:
+### 📊 **Financial Dashboard**
+- **Real-time Metrics**: Monthly income, expenses, and balance
+- **Interactive Charts**: Annual expenses visualization with react-native-chart-kit
+- **Progress Tracking**: Monthly expense targets with visual progress bars
+- **Category Analytics**: Subcategory expense breakdown with pie charts
 
-#### 📊 **AnnualExpensesChart**
-- Bar chart showing monthly expenses throughout the year
-- Interactive with month selection
-- Displays total annual and average monthly expenses
-- Responsive design with smooth animations
+### 🔄 **Transaction Management**
+- **Full CRUD Operations**: Create, read, update, and delete transactions
+- **Smart Modals**: Income updates, transaction editing, and new transaction creation
+- **Category System**: Organized subcategory management
+- **Recurring Transactions**: Support for recurring financial activities
 
-#### 💰 **FinanceMetrics**
-- Card-based layout showing income and expenses
-- Visual indicators with trend arrows
-- Color-coded percentage changes
-- Net balance calculation
-- Interactive income card for future modal integration
+### 🔐 **Authentication & Security**
+- **JWT Integration**: Secure token-based authentication
+- **Persistent Sessions**: Automatic login state management
+- **Protected Routes**: Secure access to financial data
+- **Auto-logout**: Session expiration handling
 
-#### 🎯 **MonthlyTarget**
-- Progress bar visualization for expense targets
-- Color-coded progress indicators (green/yellow/red)
-- Surplus/deficit display
-- Motivational messages based on progress
+### 📱 **Modern Mobile UI**
+- **Responsive Design**: Optimized for all mobile screen sizes
+- **Smooth Animations**: Native performance with React Native
+- **Intuitive Navigation**: Sidebar-based navigation system
+- **Touch-Optimized**: Mobile-first interaction design
 
-#### 📈 **StatisticsChart**
-- Pie chart showing expenses by subcategory
-- Custom color palette for each category
-- Interactive legend with amounts and percentages
-- Total expenses summary
+## 🚀 **Getting Started**
 
-#### 💳 **RecentTransactions**
-- Modern transaction list with icons
-- Color-coded income/expense indicators
-- Category badges and date formatting
-- Add transaction button
-- Transaction interaction support
+### Prerequisites
+- Node.js 18+ 
+- Expo CLI
+- iOS Simulator or Android Emulator (or physical device)
 
-### Technical Features
+### Installation
+   ```bash
+# Install dependencies
+   npm install
 
-- **React Native Charts**: Uses `react-native-chart-kit` for beautiful data visualization
-- **Responsive Design**: Adapts to different screen sizes
-- **Modern UI**: Clean, card-based design with shadows and rounded corners
-- **Loading States**: Proper loading indicators for all components
-- **Error Handling**: Graceful fallbacks for missing data
-- **TypeScript**: Fully typed components and interfaces
+# Start development server
+npm start
 
-## Installation
+# Run on iOS
+npm run ios
 
-```bash
-npm install
+# Run on Android
+npm run android
 ```
 
-## Dependencies
+## 🎯 **Theme System Usage**
 
-- `react-native-chart-kit`: For charts and data visualization
-- `react-native-svg`: Required for chart rendering
-- `@expo/vector-icons`: For beautiful icons throughout the app
+### Basic Theme Hook
+```typescript
+import { useAppTheme } from '@/src/theme/useAppTheme';
 
-## Usage
-
-The components are designed to work together on the home dashboard:
-
-```tsx
-import {
-  AnnualExpensesChart,
-  FinanceMetrics,
-  MonthlyTarget,
-  RecentTransactions,
-  StatisticsChart
-} from "@/src/components/expenses";
-
-// Use in your component
-<FinanceMetrics
-  year={2024}
-  month={12}
-  data={monthlyMetrics}
-  loading={isLoading}
-  onIncomePress={handleIncomePress}
-/>
+function MyComponent() {
+  const { colors, isDark, toggleTheme } = useAppTheme();
+  
+  return (
+    <View style={{ backgroundColor: colors.background }}>
+      <Text style={{ color: colors.textPrimary }}>
+        Current theme: {isDark ? 'Dark' : 'Light'}
+      </Text>
+      <Button onPress={toggleTheme} title="Toggle Theme" />
+    </View>
+  );
+}
 ```
 
-## API Integration
+### Theme-Aware Styling
+```typescript
+const styles = StyleSheet.create({
+  container: {
+    // Remove hardcoded colors - they're applied dynamically
+    borderRadius: 12,
+    padding: 16,
+  },
+});
 
-All components are designed to work with the existing SIF backend API:
+// Apply theme colors dynamically
+<View style={[styles.container, { 
+  backgroundColor: colors.card,
+  borderColor: colors.border 
+}]}>
+```
 
-- `fetchMonthlyMetrics`: For financial metrics
-- `fetchMonthlyExpenseTarget`: For monthly targets
-- `fetchAnnualMetrics`: For annual expense data
-- `fetchMonthlyCategoryExpenses`: For category statistics
-- `fetchMonthlyTransactions`: For recent transactions
+### Available Theme Colors
+- **Background**: `colors.background`, `colors.surface`, `colors.surfaceSecondary`
+- **Text**: `colors.textPrimary`, `colors.textSecondary`, `colors.textMuted`
+- **Status**: `colors.success`, `colors.error`, `colors.warning`, `colors.info`
+- **Components**: `colors.card`, `colors.border`, `colors.inputBackground`
 
-## Styling
+## 🏗️ **Architecture**
 
-Components use a consistent design system:
-- **Colors**: Modern palette with semantic meaning (green for income, red for expenses)
-- **Shadows**: Subtle elevation effects for depth
-- **Typography**: Clear hierarchy with proper font weights
-- **Spacing**: Consistent padding and margins throughout
+### Core Structure
+```
+src/
+├── components/          # Reusable UI components
+│   ├── charts/         # Chart components (react-native-chart-kit)
+│   ├── expenses/       # Financial dashboard components
+│   └── ui/             # Base UI components (buttons, inputs, modals)
+├── context/            # React Context providers
+│   ├── SidebarContext  # Navigation state management
+│   └── ThemeContext    # Theme state management
+├── theme/              # Theme system
+│   ├── colors.ts       # Color definitions for light/dark modes
+│   └── useAppTheme.ts  # Theme hook for components
+├── api/                # API integration layer
+│   ├── client.ts       # Axios client with interceptors
+│   └── expenses/       # Financial data endpoints
+└── layout/             # App layout components
+    ├── AppLayout.tsx   # Main app layout wrapper
+    ├── AppHeader.tsx   # Header with theme toggle
+    └── AppSidebar.tsx  # Navigation sidebar
+```
 
-## Future Enhancements
+### Theme Implementation
+- **Context Provider**: `ThemeContext` manages global theme state
+- **Color Schemes**: Separate color palettes for light and dark modes
+- **Component Integration**: All components use `useAppTheme()` hook
+- **Persistent Storage**: Theme preference saved in AsyncStorage
 
-- Modal integration for income updates
-- Transaction detail views
-- Add/edit transaction functionality
-- Dark mode support
-- Customizable chart colors
-- Export functionality for charts
+## 📱 **Component Library**
 
-## Contributing
+### Charts & Visualizations
+- **AnnualExpensesChart**: Bar chart for yearly expense tracking
+- **StatisticsChart**: Pie chart for subcategory breakdown
+- **MonthlyTarget**: Progress bar for expense targets
 
-When adding new components:
-1. Follow the existing component structure
-2. Include proper TypeScript interfaces
-3. Add loading and error states
-4. Use consistent styling patterns
-5. Include proper documentation
+### Financial Components
+- **FinanceMetrics**: Key financial indicators display
+- **RecentTransactions**: Transaction list with actions
+- **MonthlyTarget**: Expense goal tracking
+
+### UI Components
+- **Button**: Theme-aware button with variants
+- **Select**: Dropdown selector with theme support
+- **Alert**: Status notifications with theme colors
+- **Modal System**: Income, transaction, and editing modals
+
+## 🔌 **API Integration**
+
+### Authentication Flow
+1. **Login/Register**: JWT token acquisition
+2. **Token Storage**: Secure AsyncStorage implementation
+3. **Request Interceptors**: Automatic token inclusion
+4. **Response Handling**: 401 error handling with auto-logout
+
+### Financial Endpoints
+- **Metrics**: Monthly and annual financial data
+- **Transactions**: CRUD operations for financial records
+- **Categories**: Subcategory management
+- **Parameters**: User preferences and settings
+
+## 🎨 **Theme Customization**
+
+### Adding New Colors
+```typescript
+// In src/theme/colors.ts
+export const lightColors = {
+  // ... existing colors
+  customColor: '#your-color',
+};
+
+export const darkColors = {
+  // ... existing colors
+  customColor: '#your-dark-color',
+};
+```
+
+### Component Theme Integration
+```typescript
+import { useAppTheme } from '@/src/theme/useAppTheme';
+
+function CustomComponent() {
+  const { colors } = useAppTheme();
+  
+  return (
+    <View style={{ backgroundColor: colors.customColor }}>
+      {/* Component content */}
+    </View>
+  );
+}
+```
+
+## 🚀 **Performance Features**
+
+- **Optimized Re-renders**: Theme changes only affect necessary components
+- **Lazy Loading**: Components load only when needed
+- **Memory Management**: Efficient state management with React Context
+- **Native Performance**: React Native optimizations for smooth animations
+
+## 🔧 **Development**
+
+### Adding New Themes
+1. Extend color definitions in `src/theme/colors.ts`
+2. Update `ThemeContext` to support new theme modes
+3. Ensure all components use theme-aware styling
+
+### Component Guidelines
+- **No Hardcoded Colors**: Always use theme colors
+- **Responsive Design**: Support both light and dark modes
+- **Accessibility**: Maintain proper contrast ratios
+- **Performance**: Minimize re-renders during theme changes
+
+## 📱 **Platform Support**
+
+- **iOS**: Full support with native performance
+- **Android**: Optimized for Material Design guidelines
+- **Web**: Responsive design for web platforms
+- **Cross-platform**: Consistent experience across devices
+
+## 🎯 **Future Enhancements**
+
+- **Custom Themes**: User-defined color schemes
+- **System Theme**: Automatic theme detection
+- **Animation Transitions**: Smooth theme switching animations
+- **Accessibility**: Enhanced contrast and font size options
+
+---
+
+**Built with ❤️ using React Native, Expo, and modern mobile development practices.**

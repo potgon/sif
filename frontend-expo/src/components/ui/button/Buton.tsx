@@ -8,6 +8,7 @@ import {
   ViewStyle,
   TextStyle,
 } from "react-native";
+import { useAppTheme } from "../../../theme/useAppTheme";
 
 interface ButtonProps {
   children: ReactNode;
@@ -30,6 +31,8 @@ const Button: React.FC<ButtonProps> = ({
   disabled = false,
   style,
 }) => {
+  const { colors } = useAppTheme();
+
   // size styles
   const sizeStyles: Record<"sm" | "md", { paddingVertical: number; paddingHorizontal: number; textStyle: TextStyle }> = {
     sm: { paddingVertical: 8, paddingHorizontal: 12, textStyle: { fontSize: 14 } },
@@ -39,16 +42,16 @@ const Button: React.FC<ButtonProps> = ({
   // variant styles
   const variantStyles: Record<"primary" | "outline", { button: ViewStyle; text: TextStyle }> = {
     primary: {
-      button: { backgroundColor: "#2563eb" }, // Tailwind brand-500 example
-      text: { color: "#ffffff" },
+      button: { backgroundColor: colors.buttonPrimary },
+      text: { color: colors.buttonPrimaryText },
     },
     outline: {
       button: {
-        backgroundColor: "#ffffff",
+        backgroundColor: colors.buttonOutline,
         borderWidth: 1,
-        borderColor: "#d1d5db", // gray-300
+        borderColor: colors.border,
       },
-      text: { color: "#374151" }, // gray-700
+      text: { color: colors.buttonOutlineText },
     },
   };
 

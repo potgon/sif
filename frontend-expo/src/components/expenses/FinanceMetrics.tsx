@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useAppTheme } from '../../theme/useAppTheme';
 
 interface FinanceMetricsProps {
   year: number;
@@ -22,6 +22,8 @@ export default function FinanceMetrics({
   loading = false, 
   onIncomePress 
 }: FinanceMetricsProps) {
+  const { colors } = useAppTheme();
+  
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
@@ -36,9 +38,9 @@ export default function FinanceMetrics({
 
   const getPercentageColor = (percentage: number, isIncome: boolean) => {
     if (isIncome) {
-      return percentage >= 0 ? '#22c55e' : '#ef4444';
+      return percentage >= 0 ? colors.success : colors.error;
     } else {
-      return percentage <= 0 ? '#22c55e' : '#ef4444';
+      return percentage <= 0 ? colors.success : colors.error;
     }
   };
 
@@ -52,211 +54,190 @@ export default function FinanceMetrics({
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.sectionTitle}>Métricas Financieras</Text>
+      <View style={[styles.container, { backgroundColor: colors.card }]}>
+        <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Métricas Financieras</Text>
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Cargando métricas...</Text>
+          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Cargando métricas...</Text>
         </View>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Métricas Financieras - {monthNames[month - 1]} {year}</Text>
+    <View style={[styles.container, { backgroundColor: colors.card }]}>
+      <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Métricas Financieras - {monthNames[month - 1]} {year}</Text>
       
       <View style={styles.metricsGrid}>
         {/* Income Metric */}
         <TouchableOpacity 
-          style={[styles.metricCard, styles.incomeCard]} 
+          style={[styles.metricCard, { 
+            backgroundColor: colors.surface,
+            borderColor: colors.border 
+          }]} 
           onPress={onIncomePress}
           disabled={!onIncomePress}
         >
-          <View style={styles.metricIconContainer}>
-            <Ionicons name="people" size={24} color="#059669" />
+          <View style={[styles.metricIconContainer, { backgroundColor: colors.successLight }]}>
+            <Ionicons name="people" size={20} color={colors.success} />
           </View>
           
           <View style={styles.metricContent}>
-            <Text style={styles.metricLabel}>Ingresos</Text>
-            <Text style={styles.metricValue}>
+            <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Ingresos</Text>
+            <Text style={[styles.metricValue, { color: colors.textPrimary }]}>
               {data?.totalIncome ? formatCurrency(data.totalIncome) : '€0.00'}
             </Text>
+            
+            {data?.prevMonthIncomeDiff !== undefined && (
+              <View style={styles.percentageContainer}>
+                <Ionicons 
+                  name={getPercentageIcon(data.prevMonthIncomeDiff)} 
+                  size={12} 
+                  color={getPercentageColor(data.prevMonthIncomeDiff, true)} 
+                />
+                <Text style={[
+                  styles.percentageText, 
+                  { color: getPercentageColor(data.prevMonthIncomeDiff, true) }
+                ]}>
+                  {data.prevMonthIncomeDiff >= 0 ? '+' : ''}{data.prevMonthIncomeDiff.toFixed(1)}%
+                </Text>
+              </View>
+            )}
           </View>
-
-          {data?.prevMonthIncomeDiff !== undefined && (
-            <View style={styles.percentageContainer}>
-              <Ionicons 
-                name={getPercentageIcon(data.prevMonthIncomeDiff)} 
-                size={16} 
-                color={getPercentageColor(data.prevMonthIncomeDiff, true)} 
-              />
-              <Text style={[
-                styles.percentageText, 
-                { color: getPercentageColor(data.prevMonthIncomeDiff, true) }
-              ]}>
-                {data.prevMonthIncomeDiff >= 0 ? '+' : ''}{data.prevMonthIncomeDiff.toFixed(1)}%
-              </Text>
-            </View>
-          )}
         </TouchableOpacity>
 
         {/* Expenses Metric */}
-        <View style={[styles.metricCard, styles.expenseCard]}>
-          <View style={styles.metricIconContainer}>
-            <Ionicons name="card" size={24} color="#dc2626" />
+        <View style={[styles.metricCard, { 
+          backgroundColor: colors.surface,
+          borderColor: colors.border 
+        }]}>
+          <View style={[styles.metricIconContainer, { backgroundColor: colors.errorLight }]}>
+            <Ionicons name="trending-down" size={20} color={colors.error} />
           </View>
           
           <View style={styles.metricContent}>
-            <Text style={styles.metricLabel}>Gastos</Text>
-            <Text style={styles.metricValue}>
+            <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Gastos</Text>
+            <Text style={[styles.metricValue, { color: colors.textPrimary }]}>
               {data?.totalExpenses ? formatCurrency(data.totalExpenses) : '€0.00'}
             </Text>
+            
+            {data?.prevMonthExpensesDiff !== undefined && (
+              <View style={styles.percentageContainer}>
+                <Ionicons 
+                  name={getPercentageIcon(data.prevMonthExpensesDiff)} 
+                  size={12} 
+                  color={getPercentageColor(data.prevMonthExpensesDiff, false)} 
+                />
+                <Text style={[
+                  styles.percentageText, 
+                  { color: getPercentageColor(data.prevMonthExpensesDiff, false) }
+                ]}>
+                  {data.prevMonthExpensesDiff >= 0 ? '+' : ''}{data.prevMonthExpensesDiff.toFixed(1)}%
+                </Text>
+              </View>
+            )}
           </View>
+        </View>
 
-          {data?.prevMonthExpensesDiff !== undefined && (
-            <View style={styles.percentageContainer}>
-              <Ionicons 
-                name={getPercentageIcon(data.prevMonthExpensesDiff)} 
-                size={16} 
-                color={getPercentageColor(data.prevMonthExpensesDiff, false)} 
-              />
-              <Text style={[
-                styles.percentageText, 
-                { color: getPercentageColor(data.prevMonthExpensesDiff, false) }
-              ]}>
-                {data.prevMonthExpensesDiff >= 0 ? '+' : ''}{data.prevMonthExpensesDiff.toFixed(1)}%
-              </Text>
-            </View>
-          )}
+        {/* Balance Metric */}
+        <View style={[styles.metricCard, { 
+          backgroundColor: colors.surface,
+          borderColor: colors.border 
+        }]}>
+          <View style={[styles.metricIconContainer, { backgroundColor: colors.infoLight }]}>
+            <Ionicons name="wallet" size={20} color={colors.info} />
+          </View>
+          
+          <View style={styles.metricContent}>
+            <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Balance</Text>
+            <Text style={[styles.metricValue, { color: colors.textPrimary }]}>
+              {data?.totalIncome && data?.totalExpenses 
+                ? formatCurrency(data.totalIncome - data.totalExpenses) 
+                : '€0.00'
+              }
+            </Text>
+          </View>
         </View>
       </View>
-
-      {/* Net Income/Expense */}
-      {data?.totalIncome !== undefined && data?.totalExpenses !== undefined && (
-        <View style={styles.netContainer}>
-          <Text style={styles.netLabel}>Balance Neto</Text>
-          <Text style={[
-            styles.netValue,
-            { color: data.totalIncome - data.totalExpenses >= 0 ? '#059669' : '#dc2626' }
-          ]}>
-            {formatCurrency(data.totalIncome - data.totalExpenses)}
-          </Text>
-        </View>
-      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1e293b', // Dark slate background
     borderRadius: 16,
     padding: 20,
-    marginVertical: 8,
+    borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 8,
-    borderWidth: 1,
-    borderColor: '#334155',
+    elevation: 4,
+    overflow: 'hidden',
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#f8fafc',
+    fontWeight: '700',
     marginBottom: 20,
     textAlign: 'center',
   },
   loadingContainer: {
-    height: 100,
-    justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 40,
   },
   loadingText: {
     fontSize: 16,
-    color: '#94a3b8',
+    fontWeight: '500',
   },
   metricsGrid: {
     flexDirection: 'row',
-    gap: 16,
-    marginBottom: 20,
+    gap: Platform.OS === 'ios' ? 8 : 12,
+    marginTop: Platform.OS === 'ios' ? 16 : 20,
   },
   metricCard: {
     flex: 1,
-    padding: 16,
+    padding: Platform.OS === 'ios' ? 12 : 16,
     borderRadius: 12,
     borderWidth: 1,
-    position: 'relative',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: Platform.OS === 'ios' ? 8 : 12,
     overflow: 'hidden',
-  },
-  incomeCard: {
-    backgroundColor: 'rgba(34, 197, 94, 0.1)',
-    borderColor: 'rgba(34, 197, 94, 0.3)',
-  },
-  expenseCard: {
-    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-    borderColor: 'rgba(239, 68, 68, 0.3)',
+    minHeight: 100,
   },
   metricIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
   },
   metricContent: {
+    alignItems: 'center',
     flex: 1,
+    justifyContent: 'center',
   },
   metricLabel: {
-    fontSize: 14,
-    color: '#cbd5e1',
-    marginBottom: 4,
+    fontSize: 12,
     fontWeight: '500',
+    marginBottom: 4,
+    textAlign: 'center',
   },
   metricValue: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
-    color: '#f8fafc',
+    textAlign: 'center',
   },
   percentageContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginTop: 8,
+    marginTop: 4,
   },
   percentageText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
-  },
-  netContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#334155',
-  },
-  netLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#cbd5e1',
-  },
-  netValue: {
-    fontSize: 18,
-    fontWeight: '700',
   },
 });

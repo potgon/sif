@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import { useAppTheme } from "../../../theme/useAppTheme";
 
 export interface Option {
   value: string;
@@ -24,6 +25,7 @@ const Select: React.FC<SelectProps> = ({
   defaultValue = "",
   value,
 }) => {
+  const { colors } = useAppTheme();
   const [selectedValue, setSelectedValue] = useState<string>(defaultValue);
 
   useEffect(() => {
@@ -39,20 +41,24 @@ const Select: React.FC<SelectProps> = ({
 
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
-      <View style={styles.pickerContainer}>
+      {label && <Text style={[styles.label, { color: colors.textSecondary }]}>{label}</Text>}
+      <View style={[styles.pickerContainer, { 
+        borderColor: colors.border,
+        backgroundColor: colors.inputBackground 
+      }]}>
         <Picker
           selectedValue={selectedValue}
           onValueChange={handleChange}
-          style={styles.picker}
+          style={[styles.picker, { color: colors.inputText }]}
+          dropdownIconColor={colors.textSecondary}
         >
-          <Picker.Item label={placeholder} value="" color="#9CA3AF" />
+          <Picker.Item label={placeholder} value="" color={colors.inputPlaceholder} />
           {options.map((option) => (
             <Picker.Item
               key={option.value}
               label={option.label}
               value={option.value}
-              color="#1F2937"
+              color={colors.inputText}
             />
           ))}
         </Picker>
@@ -64,22 +70,29 @@ const Select: React.FC<SelectProps> = ({
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
+    minWidth: 140,
   },
   label: {
     fontSize: 14,
-    fontWeight: "500",
-    color: "#374151",
-    marginBottom: 6,
+    fontWeight: "600",
+    marginBottom: 8,
   },
   pickerContainer: {
     borderWidth: 1,
-    borderColor: "#D1D5DB",
-    borderRadius: 8,
-    backgroundColor: "transparent",
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   picker: {
-    height: 44,
-    color: "#1F2937",
+    height: 48,
+    fontSize: 16,
   },
 });
 

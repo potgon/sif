@@ -6,9 +6,12 @@ import {
   StyleSheet,
   Modal,
   ScrollView,
+  Platform,
+  Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSidebar } from "../context/SidebarContext";
+import { useAppTheme } from "../theme/useAppTheme";
 import { router } from "expo-router";
 
 type NavItem = {
@@ -36,6 +39,7 @@ const navItems: NavItem[] = [
 
 const AppSidebar: React.FC = () => {
   const { isMobileOpen, toggleMobileSidebar } = useSidebar();
+  const { colors } = useAppTheme();
   const [openSubmenu, setOpenSubmenu] = useState<number | null>(null);
 
   const handleSubmenuToggle = (index: number) => {
@@ -56,18 +60,20 @@ const AppSidebar: React.FC = () => {
               onPress={() => handleSubmenuToggle(index)}
               style={[
                 styles.menuItem,
-                openSubmenu === index && styles.menuItemActive,
+                { backgroundColor: colors.sidebarBackground },
+                openSubmenu === index && { backgroundColor: colors.sidebarActive },
               ]}
             >
               <Ionicons
                 name={nav.icon as any}
                 size={24}
-                color={openSubmenu === index ? "#465FFF" : "#6B7280"}
+                color={openSubmenu === index ? colors.info : colors.sidebarText}
               />
               <Text
                 style={[
                   styles.menuText,
-                  openSubmenu === index && styles.menuTextActive,
+                  { color: colors.sidebarText },
+                  openSubmenu === index && { color: colors.sidebarActiveText },
                 ]}
               >
                 {nav.name}
@@ -75,17 +81,17 @@ const AppSidebar: React.FC = () => {
               <Ionicons
                 name={openSubmenu === index ? "chevron-up" : "chevron-down"}
                 size={20}
-                color={openSubmenu === index ? "#465FFF" : "#6B7280"}
+                color={openSubmenu === index ? colors.info : colors.sidebarText}
               />
             </TouchableOpacity>
           ) : (
             nav.path && (
               <TouchableOpacity
                 onPress={() => handleNavigation(nav.path!)}
-                style={styles.menuItem}
+                style={[styles.menuItem, { backgroundColor: colors.sidebarBackground }]}
               >
-                <Ionicons name={nav.icon as any} size={24} color="#6B7280" />
-                <Text style={styles.menuText}>{nav.name}</Text>
+                <Ionicons name={nav.icon as any} size={24} color={colors.sidebarText} />
+                <Text style={[styles.menuText, { color: colors.sidebarText }]}>{nav.name}</Text>
               </TouchableOpacity>
             )
           )}
@@ -95,9 +101,14 @@ const AppSidebar: React.FC = () => {
                 <TouchableOpacity
                   key={subItem.name}
                   onPress={() => handleNavigation(subItem.path)}
-                  style={styles.submenuItem}
+                  style={[
+                    styles.submenuItem,
+                    { backgroundColor: colors.sidebarBackground }
+                  ]}
                 >
-                  <Text style={styles.submenuText}>{subItem.name}</Text>
+                  <Text style={[styles.submenuText, { color: colors.sidebarText }]}>
+                    {subItem.name}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -107,29 +118,36 @@ const AppSidebar: React.FC = () => {
     </View>
   );
 
+  if (!isMobileOpen) return null;
+
   return (
     <Modal
       visible={isMobileOpen}
-      transparent={true}
+      transparent
       animationType="slide"
       onRequestClose={toggleMobileSidebar}
     >
       <View style={styles.overlay}>
         <TouchableOpacity
-          style={styles.backdrop}
+          style={[styles.backdrop, { backgroundColor: colors.modalOverlay }]}
           onPress={toggleMobileSidebar}
         />
-        <View style={styles.sidebar}>
-          <View style={styles.header}>
-            <Text style={styles.logo}>SIF</Text>
+        <View style={[styles.sidebar, { 
+          backgroundColor: colors.sidebarBackground,
+          borderRightColor: colors.sidebarBorder 
+        }]}>
+          <View style={[styles.header, { 
+            borderBottomColor: colors.sidebarBorder 
+          }]}>
+            <Text style={[styles.logo, { color: colors.sidebarActiveText }]}>SIF</Text>
             <TouchableOpacity onPress={toggleMobileSidebar}>
-              <Ionicons name="close" size={24} color="#6B7280" />
+              <Ionicons name="close" size={24} color={colors.sidebarText} />
             </TouchableOpacity>
           </View>
 
-          <ScrollView style={styles.content}>
+          <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>MENU</Text>
+              <Text style={[styles.sectionTitle, { color: colors.textMuted }]}>MENU</Text>
               {renderMenuItems(navItems)}
             </View>
           </ScrollView>
@@ -139,6 +157,9 @@ const AppSidebar: React.FC = () => {
   );
 };
 
+const { width: screenWidth } = Dimensions.get('window');
+const sidebarWidth = Math.min(screenWidth * 0.85, 320); // Responsive width, max 320px
+
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
@@ -146,79 +167,67 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   sidebar: {
-    width: 290,
-    backgroundColor: "#ffffff",
+    width: sidebarWidth,
     borderRightWidth: 1,
-    borderRightColor: "#E5E7EB",
+    paddingTop: Platform.OS === 'ios' ? 50 : 20, // Extra padding for iPhone notch
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 20,
+    padding: Platform.OS === 'ios' ? 24 : 20,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
   },
   logo: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
-    color: "#1F2937",
   },
   content: {
     flex: 1,
-    padding: 20,
+    padding: Platform.OS === 'ios' ? 24 : 20,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 28,
   },
   sectionTitle: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#9CA3AF",
     textTransform: "uppercase",
-    marginBottom: 16,
+    marginBottom: 20,
     letterSpacing: 0.5,
   },
   menuList: {
-    gap: 4,
+    gap: 6,
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
-    gap: 12,
-  },
-  menuItemActive: {
-    backgroundColor: "#EEF2FF",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 10,
+    gap: 16,
   },
   menuText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "500",
-    color: "#374151",
-  },
-  menuTextActive: {
-    color: "#465FFF",
   },
   submenu: {
-    marginLeft: 36,
-    marginTop: 8,
-    gap: 4,
+    marginLeft: 40,
+    marginTop: 10,
+    gap: 6,
   },
   submenuItem: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 10,
   },
   submenuText: {
     fontSize: 14,
     fontWeight: "500",
-    color: "#374151",
   },
 });
 

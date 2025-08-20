@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useAppTheme } from '../../theme/useAppTheme';
 
 interface Transaction {
   id: number;
@@ -29,6 +30,8 @@ export default function RecentTransactions({
   onTransactionPress,
   onAddPress
 }: RecentTransactionsProps) {
+  const { colors } = useAppTheme();
+  
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
@@ -59,28 +62,33 @@ export default function RecentTransactions({
   };
 
   const getTransactionColor = (amount: number) => {
-    return amount >= 0 ? '#22c55e' : '#ef4444';
+    return amount >= 0 ? colors.success : colors.error;
   };
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Transacciones Recientes</Text>
+      <View style={[styles.container, { backgroundColor: colors.card }]}>
+        <Text style={[styles.title, { color: colors.textPrimary }]}>Transacciones Recientes</Text>
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Cargando transacciones...</Text>
+          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Cargando transacciones...</Text>
         </View>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.card }]}>
       <View style={styles.header}>
-        <Text style={styles.title}>Transacciones Recientes - {monthNames[month - 1]} {year}</Text>
+        <Text style={[styles.title, { color: colors.textPrimary }]} numberOfLines={2}>
+          Transacciones Recientes - {monthNames[month - 1]} {year}
+        </Text>
         {onAddPress && (
-          <TouchableOpacity style={styles.addButton} onPress={onAddPress}>
-            <Ionicons name="add" size={20} color="#ffffff" />
-            <Text style={styles.addButtonText}>Añadir</Text>
+          <TouchableOpacity 
+            style={[styles.addButton, { backgroundColor: colors.buttonPrimary }]} 
+            onPress={onAddPress}
+          >
+            <Ionicons name="add" size={20} color={colors.buttonPrimaryText} />
+            <Text style={[styles.addButtonText, { color: colors.buttonPrimaryText }]}>Añadir</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -90,11 +98,16 @@ export default function RecentTransactions({
           {transactions.slice(0, 10).map((transaction, index) => (
             <TouchableOpacity
               key={transaction.id || index}
-              style={styles.transactionItem}
+              style={[styles.transactionItem, { 
+                backgroundColor: colors.surface,
+                borderBottomColor: colors.borderSecondary 
+              }]}
               onPress={() => onTransactionPress?.(transaction)}
               disabled={!onTransactionPress}
             >
-              <View style={styles.transactionIcon}>
+              <View style={[styles.transactionIcon, { 
+                backgroundColor: getTransactionColor(transaction.amount) + '20' 
+              }]}>
                 <Ionicons 
                   name={getTransactionIcon(transaction.amount)} 
                   size={24} 
@@ -102,20 +115,16 @@ export default function RecentTransactions({
                 />
               </View>
               
-              <View style={styles.transactionInfo}>
-                <Text style={styles.transactionDescription} numberOfLines={2}>
+              <View style={styles.transactionContent}>
+                <Text style={[styles.transactionDescription, { color: colors.textPrimary }]} numberOfLines={2}>
                   {transaction.description || 'Sin descripción'}
                 </Text>
-                <View style={styles.transactionMeta}>
-                  <Text style={styles.transactionDate}>
-                    {formatDate(transaction.date)}
-                  </Text>
-                  {transaction.subcategory?.name && (
-                    <Text style={styles.transactionCategory}>
-                      {transaction.subcategory.name}
-                    </Text>
-                  )}
-                </View>
+                <Text style={[styles.transactionSubcategory, { color: colors.textSecondary }]} numberOfLines={1}>
+                  {transaction.subcategory?.name || 'Sin subcategoría'}
+                </Text>
+                <Text style={[styles.transactionDate, { color: colors.textMuted }]}>
+                  {formatDate(transaction.date)}
+                </Text>
               </View>
               
               <View style={styles.transactionAmount}>
@@ -123,31 +132,20 @@ export default function RecentTransactions({
                   styles.amountText,
                   { color: getTransactionColor(transaction.amount) }
                 ]}>
-                  {transaction.amount >= 0 ? '+' : '-'}{formatCurrency(transaction.amount)}
-                </Text>
-                <Text style={styles.amountType}>
-                  {transaction.amount >= 0 ? 'Ingreso' : 'Gasto'}
+                  {transaction.amount >= 0 ? '+' : ''}{formatCurrency(transaction.amount)}
                 </Text>
               </View>
             </TouchableOpacity>
           ))}
         </ScrollView>
       ) : (
-        <View style={styles.noTransactionsContainer}>
-          <Ionicons name="receipt-outline" size={48} color="#9ca3af" />
-          <Text style={styles.noTransactionsText}>
-            No hay transacciones en {monthNames[month - 1]} {year}
+        <View style={styles.noDataContainer}>
+          <Ionicons name="document-text-outline" size={48} color={colors.textMuted} />
+          <Text style={[styles.noDataText, { color: colors.textSecondary }]}>
+            No hay transacciones para {monthNames[month - 1]} {year}
           </Text>
-          <Text style={styles.noTransactionsSubtext}>
-            Comienza añadiendo tu primera transacción
-          </Text>
-        </View>
-      )}
-
-      {transactions && transactions.length > 10 && (
-        <View style={styles.moreTransactions}>
-          <Text style={styles.moreTransactionsText}>
-            Y {transactions.length - 10} transacciones más...
+          <Text style={[styles.noDataSubtext, { color: colors.textMuted }]}>
+            Añade tu primera transacción para comenzar
           </Text>
         </View>
       )}
@@ -157,101 +155,87 @@ export default function RecentTransactions({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1e293b', // Dark slate background
     borderRadius: 16,
     padding: 20,
-    marginVertical: 8,
+    borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 8,
-    borderWidth: 1,
-    borderColor: '#334155',
+    elevation: 4,
+    overflow: 'hidden',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: Platform.OS === 'ios' ? 16 : 20,
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#f8fafc',
+    fontWeight: '700',
     flex: 1,
   },
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#3b82f6',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: Platform.OS === 'ios' ? 8 : 10,
+    paddingHorizontal: Platform.OS === 'ios' ? 12 : 16,
     borderRadius: 8,
-    gap: 6,
+    gap: Platform.OS === 'ios' ? 6 : 8,
   },
   addButtonText: {
-    color: '#ffffff',
     fontSize: 14,
     fontWeight: '600',
   },
   loadingContainer: {
-    height: 200,
-    justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 40,
   },
   loadingText: {
     fontSize: 16,
-    color: '#94a3b8',
+    fontWeight: '500',
   },
   transactionsContainer: {
-    maxHeight: 400,
+    maxHeight: 300,
   },
   transactionItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#334155',
+    paddingVertical: Platform.OS === 'ios' ? 12 : 16,
+    paddingHorizontal: Platform.OS === 'ios' ? 12 : 16,
+    borderRadius: 12,
+    marginBottom: Platform.OS === 'ios' ? 8 : 10,
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
   },
   transactionIcon: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#334155',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
   },
-  transactionInfo: {
+  transactionContent: {
     flex: 1,
     marginRight: 16,
   },
   transactionDescription: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#f8fafc',
     marginBottom: 4,
   },
-  transactionMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
+  transactionSubcategory: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginBottom: 4,
   },
   transactionDate: {
     fontSize: 12,
-    color: '#94a3b8',
-  },
-  transactionCategory: {
-    fontSize: 12,
-    color: '#3b82f6',
-    backgroundColor: 'rgba(59, 130, 246, 0.2)',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 12,
   },
   transactionAmount: {
     alignItems: 'flex-end',
@@ -259,39 +243,19 @@ const styles = StyleSheet.create({
   amountText: {
     fontSize: 16,
     fontWeight: '700',
-    marginBottom: 2,
   },
-  amountType: {
-    fontSize: 10,
-    color: '#94a3b8',
-    textTransform: 'uppercase',
-    fontWeight: '500',
-  },
-  noTransactionsContainer: {
+  noDataContainer: {
     alignItems: 'center',
     paddingVertical: 40,
   },
-  noTransactionsText: {
+  noDataText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#cbd5e1',
-    marginTop: 16,
     marginBottom: 8,
-  },
-  noTransactionsSubtext: {
-    fontSize: 14,
-    color: '#94a3b8',
     textAlign: 'center',
   },
-  moreTransactions: {
-    alignItems: 'center',
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#334155',
-  },
-  moreTransactionsText: {
-    fontSize: 12,
-    color: '#94a3b8',
-    fontStyle: 'italic',
+  noDataSubtext: {
+    fontSize: 14,
+    textAlign: 'center',
   },
 });

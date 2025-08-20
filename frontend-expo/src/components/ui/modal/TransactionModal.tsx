@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface Transaction {
   id: number;
@@ -29,6 +30,8 @@ export default function TransactionModal({
   onEdit, 
   onDelete 
 }: TransactionModalProps) {
+  const { colors } = useAppTheme();
+  
   if (!transaction) return null;
 
   const formatCurrency = (amount: number) => {
@@ -57,22 +60,27 @@ export default function TransactionModal({
   };
 
   const getTransactionColor = (amount: number) => {
-    return amount >= 0 ? '#22c55e' : '#ef4444';
+    return amount >= 0 ? colors.success : colors.error;
   };
 
   return (
     <Modal
       visible={isOpen}
       transparent
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
-        <View style={styles.modal}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Detalles de Transacción</Text>
+      <View style={[styles.overlay, { backgroundColor: colors.modalOverlay }]}>
+        <View style={[styles.modal, { 
+          backgroundColor: colors.modalBackground,
+          borderColor: colors.modalBorder 
+        }]}>
+          <View style={[styles.header, { borderBottomColor: colors.border }]}>
+            <Text style={[styles.title, { color: colors.textPrimary }]}>
+              Detalles de Transacción
+            </Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color="#6b7280" />
+              <Ionicons name="close" size={24} color={colors.textSecondary} />
             </TouchableOpacity>
           </View>
 
@@ -95,7 +103,7 @@ export default function TransactionModal({
               ]}>
                 {transaction.amount >= 0 ? '+' : '-'}{formatCurrency(transaction.amount)}
               </Text>
-              <Text style={styles.transactionType}>
+              <Text style={[styles.transactionType, { color: colors.textSecondary }]}>
                 {transaction.amount >= 0 ? 'Ingreso' : 'Gasto'}
               </Text>
             </View>
@@ -103,28 +111,28 @@ export default function TransactionModal({
             {/* Transaction Details */}
             <View style={styles.detailsSection}>
               <View style={styles.detailRow}>
-                <Ionicons name="document-text" size={20} color="#6b7280" />
+                <Ionicons name="document-text" size={20} color={colors.textSecondary} />
                 <View style={styles.detailContent}>
-                  <Text style={styles.detailLabel}>Descripción</Text>
-                  <Text style={styles.detailValue}>
+                  <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Descripción</Text>
+                  <Text style={[styles.detailValue, { color: colors.textPrimary }]}>
                     {transaction.description || 'Sin descripción'}
                   </Text>
                 </View>
               </View>
 
               <View style={styles.detailRow}>
-                <Ionicons name="calendar" size={20} color="#6b7280" />
+                <Ionicons name="calendar" size={20} color={colors.textSecondary} />
                 <View style={styles.detailContent}>
-                  <Text style={styles.detailLabel}>Fecha</Text>
-                  <Text style={styles.detailValue}>{formatDate(transaction.date)}</Text>
+                  <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Fecha</Text>
+                  <Text style={[styles.detailValue, { color: colors.textPrimary }]}>{formatDate(transaction.date)}</Text>
                 </View>
               </View>
 
               <View style={styles.detailRow}>
-                <Ionicons name="pricetag" size={20} color="#6b7280" />
+                <Ionicons name="pricetag" size={20} color={colors.textSecondary} />
                 <View style={styles.detailContent}>
-                  <Text style={styles.detailLabel}>Subcategoría</Text>
-                  <Text style={styles.detailValue}>
+                  <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Subcategoría</Text>
+                  <Text style={[styles.detailValue, { color: colors.textPrimary }]}>
                     {transaction.subcategory?.name || 'Sin categoría'}
                   </Text>
                 </View>
@@ -132,19 +140,19 @@ export default function TransactionModal({
 
               {transaction.notes && (
                 <View style={styles.detailRow}>
-                  <Ionicons name="chatbubble" size={20} color="#6b7280" />
+                  <Ionicons name="chatbubble" size={20} color={colors.textSecondary} />
                   <View style={styles.detailContent}>
-                    <Text style={styles.detailLabel}>Notas</Text>
-                    <Text style={styles.detailValue}>{transaction.notes}</Text>
+                    <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Notas</Text>
+                    <Text style={[styles.detailValue, { color: colors.textPrimary }]}>{transaction.notes}</Text>
                   </View>
                 </View>
               )}
 
               <View style={styles.detailRow}>
-                <Ionicons name="repeat" size={20} color="#6b7280" />
+                <Ionicons name="repeat" size={20} color={colors.textSecondary} />
                 <View style={styles.detailContent}>
-                  <Text style={styles.detailLabel}>Recurrente</Text>
-                  <Text style={styles.detailValue}>
+                  <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Recurrente</Text>
+                  <Text style={[styles.detailValue, { color: colors.textPrimary }]}>
                     {transaction.isRecurring ? 'Sí' : 'No'}
                   </Text>
                 </View>
@@ -153,24 +161,24 @@ export default function TransactionModal({
           </ScrollView>
 
           {/* Action Buttons */}
-          <View style={styles.actions}>
+          <View style={[styles.actions, { borderTopColor: colors.border }]}>
             {onDelete && (
               <TouchableOpacity
-                style={[styles.button, styles.deleteButton]}
+                style={[styles.button, styles.deleteButton, { backgroundColor: colors.error }]}
                 onPress={() => onDelete(transaction)}
               >
-                <Ionicons name="trash" size={20} color="#ffffff" />
-                <Text style={styles.deleteButtonText}>Eliminar</Text>
+                <Ionicons name="trash" size={20} color={colors.buttonPrimaryText} />
+                <Text style={[styles.deleteButtonText, { color: colors.buttonPrimaryText }]}>Eliminar</Text>
               </TouchableOpacity>
             )}
             
             {onEdit && (
               <TouchableOpacity
-                style={[styles.button, styles.editButton]}
+                style={[styles.button, styles.editButton, { backgroundColor: colors.buttonPrimary }]}
                 onPress={() => onEdit(transaction)}
               >
-                <Ionicons name="pencil" size={20} color="#ffffff" />
-                <Text style={styles.editButtonText}>Editar</Text>
+                <Ionicons name="pencil" size={20} color={colors.buttonPrimaryText} />
+                <Text style={[styles.editButtonText, { color: colors.buttonPrimaryText }]}>Editar</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -186,13 +194,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: Platform.OS === 'ios' ? 20 : 24,
   },
   modal: {
-    backgroundColor: '#1f2937',
+    backgroundColor: '#ffffff',
     borderRadius: 20,
-    width: '95%',
-    maxWidth: 450,
-    maxHeight: '80%',
+    width: '100%',
+    maxWidth: Platform.OS === 'ios' ? 380 : 420,
+    maxHeight: Platform.OS === 'ios' ? '85%' : '80%',
+    minHeight: Platform.OS === 'ios' ? 500 : 550,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -201,105 +211,100 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 20,
     elevation: 10,
+    overflow: 'hidden',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 24,
-    paddingBottom: 16,
+    padding: Platform.OS === 'ios' ? 24 : 28,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 24,
     borderBottomWidth: 1,
-    borderBottomColor: '#374151',
+    borderBottomColor: '#e5e7eb',
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
-    color: '#ffffff',
+    color: '#1f2937',
   },
   closeButton: {
-    padding: 4,
+    padding: 8,
   },
   content: {
-    padding: 24,
-    paddingTop: 16,
+    padding: Platform.OS === 'ios' ? 24 : 28,
+    paddingTop: Platform.OS === 'ios' ? 20 : 24,
+    flex: 1,
   },
   amountSection: {
     alignItems: 'center',
-    marginBottom: 32,
-    paddingVertical: 20,
+    marginBottom: 36,
+    paddingVertical: 28,
   },
   transactionIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 88,
+    height: 88,
+    borderRadius: 44,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   amount: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: '700',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   transactionType: {
-    fontSize: 16,
-    color: '#9ca3af',
-    textTransform: 'uppercase',
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '500',
   },
   detailsSection: {
-    gap: 20,
+    gap: 24,
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 16,
+    gap: 20,
   },
   detailContent: {
     flex: 1,
   },
   detailLabel: {
-    fontSize: 12,
-    color: '#9ca3af',
-    textTransform: 'uppercase',
-    fontWeight: '600',
-    marginBottom: 4,
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 6,
   },
   detailValue: {
-    fontSize: 16,
-    color: '#ffffff',
-    fontWeight: '500',
+    fontSize: 18,
+    fontWeight: '400',
   },
   actions: {
     flexDirection: 'row',
-    gap: 12,
-    padding: 24,
-    paddingTop: 16,
+    gap: 16,
+    padding: Platform.OS === 'ios' ? 24 : 28,
+    paddingTop: Platform.OS === 'ios' ? 20 : 24,
     borderTopWidth: 1,
-    borderTopColor: '#374151',
+    borderTopColor: '#e5e7eb',
   },
   button: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 14,
+    paddingVertical: Platform.OS === 'ios' ? 18 : 20,
     borderRadius: 12,
-    gap: 8,
+    gap: 10,
   },
   deleteButton: {
-    backgroundColor: '#ef4444',
+    // Background color is handled dynamically
   },
   editButton: {
-    backgroundColor: '#3b82f6',
+    // Background color is handled dynamically
   },
   deleteButtonText: {
-    color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
   },
   editButtonText: {
-    color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
   },

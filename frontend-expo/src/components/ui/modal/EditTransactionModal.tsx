@@ -1,26 +1,26 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, Alert, ScrollView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { createTransaction, fetchAllSubcategories } from '../../../api';
-import { Subcategory } from '../../../api';
+import { updateTransaction, fetchAllSubcategories } from '../../../api';
+import { Subcategory, Transaction } from '../../../api/expenses/types';
 import { useAppTheme } from '../../../theme/useAppTheme';
 
-interface AddTransactionModalProps {
+interface EditTransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  year: number;
-  month: number;
-  onSubmit: (transaction: any) => void;
+  transaction: Transaction | null;
+  onSubmit: (transaction: Transaction) => void;
+  onDelete: (transaction: Transaction) => void;
 }
 
-export default function AddTransactionModal({ 
+export default function EditTransactionModal({ 
   isOpen, 
   onClose, 
-  year, 
-  month, 
-  onSubmit 
-}: AddTransactionModalProps) {
+  transaction, 
+  onSubmit,
+  onDelete
+}: EditTransactionModalProps) {
   const { colors } = useAppTheme();
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
@@ -33,16 +33,18 @@ export default function AddTransactionModal({
   const [showSubcategoryPicker, setShowSubcategoryPicker] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const monthNames = [
-    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-  ];
-
+  // Initialize form with transaction data when modal opens
   useEffect(() => {
-    if (isOpen) {
+    if (transaction && isOpen) {
+      setDescription(transaction.description || '');
+      setAmount(Math.abs(transaction.amount).toString());
+      setDate(new Date(transaction.date));
+      setNotes(transaction.notes || '');
+      setIsRecurring(transaction.isRecurring);
+      setSelectedSubcategory(transaction.subcategory);
       fetchSubcategories();
     }
-  }, [isOpen]);
+  }, [transaction, isOpen]);
 
   const fetchSubcategories = async () => {
     try {
@@ -54,7 +56,7 @@ export default function AddTransactionModal({
   };
 
   const handleSubmit = async () => {
-    if (!description || !amount || !selectedSubcategory) {
+    if (!transaction || !description || !amount || !selectedSubcategory) {
       Alert.alert('Error', 'Por favor completa todos los campos obligatorios');
       return;
     }
@@ -67,25 +69,48 @@ export default function AddTransactionModal({
 
     setIsSubmitting(true);
     try {
-      const newTransaction = {
-        year,
-        month,
-        date: date.toISOString().split('T')[0],
-        amount: amountValue,
+      const updatedTransaction: Transaction = {
+        ...transaction,
         description,
+        amount: transaction.amount >= 0 ? amountValue : -amountValue, // Preserve sign
+        date: date.toISOString().split('T')[0], // Convert to YYYY-MM-DD format
         subcategory: selectedSubcategory,
         isRecurring,
         notes: notes || undefined,
       };
 
-      const response = await createTransaction(newTransaction);
+      const response = await updateTransaction(transaction.id, updatedTransaction);
       onSubmit(response);
       handleClose();
     } catch (error: any) {
-      Alert.alert('Error', error?.response?.data?.message || 'Error al crear la transacción');
+      Alert.alert('Error', error?.response?.data?.message || 'Error al actualizar la transacción');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleDelete = async () => {
+    if (!transaction) return;
+    
+    Alert.alert(
+      'Confirmar eliminación',
+      '¿Estás seguro de que quieres eliminar esta transacción? Esta acción no se puede deshacer.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { 
+          text: 'Eliminar', 
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await onDelete(transaction);
+              handleClose();
+            } catch (error: any) {
+              Alert.alert('Error', error?.response?.data?.message || 'Error al eliminar la transacción');
+            }
+          }
+        }
+      ]
+    );
   };
 
   const handleClose = () => {
@@ -115,7 +140,7 @@ export default function AddTransactionModal({
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !transaction) return null;
 
   return (
     <Modal
@@ -132,7 +157,7 @@ export default function AddTransactionModal({
           {/* Header */}
           <View style={[styles.header, { borderBottomColor: colors.border }]}>
             <Text style={[styles.title, { color: colors.textPrimary }]}>
-              Nueva Transacción
+              Editar Transacción
             </Text>
             <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
               <Ionicons name="close" size={24} color={colors.textSecondary} />
@@ -145,10 +170,6 @@ export default function AddTransactionModal({
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
-            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-              {monthNames[month - 1]} {year}
-            </Text>
-
             <View style={styles.form}>
               {/* Description */}
               <View style={styles.inputGroup}>
@@ -330,6 +351,20 @@ export default function AddTransactionModal({
           {/* Actions */}
           <View style={[styles.actions, { borderTopColor: colors.border }]}>
             <TouchableOpacity
+              style={[styles.button, styles.deleteButton, { 
+                backgroundColor: colors.error,
+                borderColor: colors.error 
+              }]}
+              onPress={handleDelete}
+              disabled={isSubmitting}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.deleteButtonText, { color: colors.buttonPrimaryText }]}>
+                Eliminar
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
               style={[styles.button, styles.cancelButton, { 
                 backgroundColor: colors.surface,
                 borderColor: colors.border 
@@ -352,7 +387,7 @@ export default function AddTransactionModal({
               activeOpacity={0.7}
             >
               <Text style={[styles.submitButtonText, { color: colors.buttonPrimaryText }]}>
-                {isSubmitting ? 'Creando...' : 'Crear Transacción'}
+                {isSubmitting ? 'Actualizando...' : 'Actualizar'}
               </Text>
             </TouchableOpacity>
           </View>
@@ -408,12 +443,6 @@ const styles = StyleSheet.create({
     padding: Platform.OS === 'ios' ? 24 : 28,
     paddingTop: Platform.OS === 'ios' ? 20 : 24,
     flex: 1,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#6b7280',
-    marginBottom: 28,
-    textAlign: 'center',
   },
   form: {
     gap: Platform.OS === 'ios' ? 24 : 28,
@@ -514,6 +543,7 @@ const styles = StyleSheet.create({
   subcategoryItemText: {
     color: '#1f2937',
     fontSize: 16,
+    fontWeight: '500',
   },
   checkbox: {
     flexDirection: 'row',
@@ -540,11 +570,18 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
   },
+  deleteButton: {
+    // Background color is handled dynamically
+  },
   cancelButton: {
     borderWidth: 1,
   },
   submitButton: {
     // Background color is handled dynamically
+  },
+  deleteButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
   cancelButtonText: {
     fontSize: 16,

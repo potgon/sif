@@ -1,5 +1,7 @@
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, Dimensions, Platform } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
+import { useAppTheme } from '../../theme/useAppTheme';
 
 interface SubcategoryExpense {
   subcategory?: {
@@ -16,8 +18,11 @@ interface StatisticsChartProps {
 }
 
 const screenWidth = Dimensions.get('window').width;
+const chartWidth = Math.min(screenWidth - (Platform.OS === 'ios' ? 80 : 100), 300); // Platform-specific padding
 
 export default function StatisticsChart({ year, month, data, loading = false }: StatisticsChartProps) {
+  const { colors: themeColors } = useAppTheme();
+  
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
@@ -32,10 +37,10 @@ export default function StatisticsChart({ year, month, data, loading = false }: 
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Estadísticas por Subcategoría</Text>
+      <View style={[styles.container, { backgroundColor: themeColors.card }]}>
+        <Text style={[styles.title, { color: themeColors.textPrimary }]}>Estadísticas por Subcategoría</Text>
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Cargando estadísticas...</Text>
+          <Text style={[styles.loadingText, { color: themeColors.textSecondary }]}>Cargando estadísticas...</Text>
         </View>
       </View>
     );
@@ -43,10 +48,10 @@ export default function StatisticsChart({ year, month, data, loading = false }: 
 
   if (!data || data.length === 0) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Estadísticas por Subcategoría</Text>
+      <View style={[styles.container, { backgroundColor: themeColors.card }]}>
+        <Text style={[styles.title, { color: themeColors.textPrimary }]}>Estadísticas por Subcategoría</Text>
         <View style={styles.noDataContainer}>
-          <Text style={styles.noDataText}>
+          <Text style={[styles.noDataText, { color: themeColors.textSecondary }]}>
             No hay datos disponibles para {monthNames[month - 1]} {year}
           </Text>
         </View>
@@ -56,66 +61,83 @@ export default function StatisticsChart({ year, month, data, loading = false }: 
 
   // Generate colors for categories
   const colors = [
-    '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6',
-    '#06b6d4', '#84cc16', '#f97316', '#ec4899', '#6366f1'
+    themeColors.chartPrimary, themeColors.chartError, themeColors.chartSuccess, 
+    themeColors.chartWarning, themeColors.chartSecondary, themeColors.info,
+    '#84cc16', '#f97316', '#ec4899', '#6366f1'
   ];
 
   const chartData = data.map((item, index) => ({
     name: item.subcategory?.name || 'Sin subcategoría',
     amount: item.amount,
     color: colors[index % colors.length],
-    legendFontColor: '#1f2937',
+    legendFontColor: themeColors.textPrimary,
     legendFontSize: 12,
+    legendFontFamily: 'System',
   }));
 
   const totalExpenses = data.reduce((sum, item) => sum + item.amount, 0);
 
   const chartConfig = {
     color: (opacity = 1) => `rgba(59, 130, 246, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(203, 213, 225, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(${themeColors.textSecondary === '#475569' ? '71, 85, 105' : '203, 213, 225'}, ${opacity})`,
     style: {
       borderRadius: 16,
     },
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>
+    <View style={[styles.container, { backgroundColor: themeColors.card }]}>
+      <Text style={[styles.title, { color: themeColors.textPrimary }]} numberOfLines={2}>
         Estadísticas por Subcategoría - {monthNames[month - 1]} {year}
       </Text>
       
-      <View style={styles.totalContainer}>
-        <Text style={styles.totalLabel}>Total de Gastos</Text>
-        <Text style={styles.totalValue}>{formatCurrency(totalExpenses)}</Text>
+      {/* Chart centered */}
+      <View style={styles.chartContainer}>
+        <PieChart
+          data={chartData}
+          width={chartWidth}
+          height={Platform.OS === 'ios' ? 220 : 240}
+          chartConfig={chartConfig}
+          accessor="amount"
+          backgroundColor="transparent"
+          paddingLeft="80"
+          absolute
+          hasLegend={false}
+          style={styles.chart}
+        />
       </View>
 
-      <PieChart
-        data={chartData}
-        width={screenWidth - 40}
-        height={220}
-        chartConfig={chartConfig}
-        accessor="amount"
-        backgroundColor="transparent"
-        paddingLeft="15"
-        absolute
-        hasLegend={false}
-      />
+      {/* Total expenses below chart */}
+      <View style={[styles.totalContainer, { backgroundColor: themeColors.surfaceSecondary }]}>
+        <Text style={[styles.totalLabel, { color: themeColors.textSecondary }]}>Total de Gastos</Text>
+        <Text style={[styles.totalValue, { color: themeColors.textPrimary }]}>{formatCurrency(totalExpenses)}</Text>
+      </View>
 
-      {/* Custom Legend */}
-      <View style={styles.legendContainer}>
-        {chartData.map((item, index) => (
-          <View key={index} style={styles.legendItem}>
-            <View style={[styles.legendColor, { backgroundColor: item.color }]} />
-            <View style={styles.legendText}>
-              <Text style={styles.legendName} numberOfLines={1}>
-                {item.name}
-              </Text>
-              <Text style={styles.legendAmount}>
-                {formatCurrency(item.amount)} ({((item.amount / totalExpenses) * 100).toFixed(1)}%)
+      {/* Subcategory breakdown below total */}
+      <View style={styles.breakdownContainer}>
+        <Text style={[styles.breakdownTitle, { color: themeColors.textPrimary }]}>
+          Desglose por Subcategoría
+        </Text>
+        <View style={styles.breakdownList}>
+          {chartData.map((item, index) => (
+            <View key={index} style={[styles.breakdownItem, { 
+              borderBottomColor: themeColors.borderSecondary 
+            }]}>
+              <View style={styles.breakdownItemHeader}>
+                <View style={[styles.breakdownColor, { backgroundColor: item.color }]} />
+                <Text style={[styles.breakdownName, { color: themeColors.textPrimary }]} numberOfLines={1}>
+                  {item.name}
+                </Text>
+                <Text style={[styles.breakdownAmount, { color: themeColors.textSecondary }]}>
+                  {formatCurrency(item.amount)}
+                </Text>
+              </View>
+              <Text style={[styles.breakdownPercentage, { color: themeColors.textMuted }]}>
+                {((item.amount / totalExpenses) * 100).toFixed(1)}%
               </Text>
             </View>
-          </View>
-        ))}
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -123,90 +145,115 @@ export default function StatisticsChart({ year, month, data, loading = false }: 
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1e293b', // Dark slate background
     borderRadius: 16,
     padding: 20,
-    marginVertical: 8,
+    borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 8,
-    borderWidth: 1,
-    borderColor: '#334155',
+    elevation: 4,
+    overflow: 'hidden',
+    minWidth: 300,
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#f8fafc',
-    marginBottom: 16,
+    fontWeight: '700',
+    marginBottom: 20,
     textAlign: 'center',
   },
   loadingContainer: {
-    height: 300,
-    justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 40,
   },
   loadingText: {
     fontSize: 16,
-    color: '#94a3b8',
+    fontWeight: '500',
   },
   noDataContainer: {
-    height: 300,
-    justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 40,
   },
   noDataText: {
     fontSize: 16,
-    color: '#94a3b8',
     textAlign: 'center',
   },
   totalContainer: {
     alignItems: 'center',
-    marginBottom: 20,
     paddingVertical: 16,
-    backgroundColor: '#334155',
+    paddingHorizontal: 20,
     borderRadius: 12,
+    marginBottom: 20,
   },
   totalLabel: {
     fontSize: 14,
-    color: '#94a3b8',
-    marginBottom: 4,
+    fontWeight: '500',
+    marginBottom: 8,
   },
   totalValue: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#f8fafc',
   },
-  legendContainer: {
+  chart: {
+    alignSelf: 'center',
+  },
+  chartContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 20,
+    overflow: 'hidden',
+    minWidth: 300,
+    alignSelf: 'center',
+    width: '100%',
+  },
+  breakdownContainer: {
     marginTop: 20,
-    gap: 12,
   },
-  legendItem: {
+  breakdownTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 10,
+    paddingHorizontal: 5,
+  },
+  breakdownList: {
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  breakdownItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
-  },
-  legendColor: {
-    width: 16,
-    height: 16,
+    paddingVertical: Platform.OS === 'ios' ? 8 : 10,
+    paddingHorizontal: Platform.OS === 'ios' ? 12 : 16,
     borderRadius: 8,
-    marginRight: 12,
+    marginBottom: Platform.OS === 'ios' ? 8 : 10,
+    backgroundColor: 'transparent',
   },
-  legendText: {
+  breakdownItemHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
   },
-  legendName: {
+  breakdownColor: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  breakdownName: {
+    flex: 1,
+    fontSize: 14,
+    marginRight: 10,
+  },
+  breakdownAmount: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#f8fafc',
-    marginBottom: 2,
+    marginRight: 12,
   },
-  legendAmount: {
+  breakdownPercentage: {
     fontSize: 12,
-    color: '#94a3b8',
+    fontWeight: '500',
   },
 });

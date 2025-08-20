@@ -1,6 +1,8 @@
 import React from "react";
-import { View, StyleSheet, SafeAreaView } from "react-native";
+import { View, StyleSheet, SafeAreaView, Platform } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { SidebarProvider, useSidebar } from "../context/SidebarContext";
+import { useAppTheme } from "../theme/useAppTheme";
 import AppHeader from "./AppHeader";
 import AppSidebar from "./AppSidebar";
 
@@ -10,14 +12,18 @@ interface LayoutContentProps {
 
 const LayoutContent: React.FC<LayoutContentProps> = ({ children }) => {
   const { isMobileOpen } = useSidebar();
+  const { colors, isDark } = useAppTheme();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar style={isDark ? "light" : "dark"} />
       <View style={styles.layout}>
         {isMobileOpen && <AppSidebar />}
         <View style={styles.mainContent}>
           <AppHeader />
-          <View style={styles.content}>{children}</View>
+          <View style={[styles.content, { backgroundColor: colors.background }]}>
+            {children}
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -39,7 +45,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFB",
   },
   layout: {
     flex: 1,
@@ -50,7 +55,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 16,
+    padding: Platform.OS === 'ios' ? 16 : 20, // iOS needs less padding, Android more
+    paddingTop: Platform.OS === 'ios' ? 8 : 12, // Adjust top padding for platform differences
   },
 });
 

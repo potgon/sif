@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useAppTheme } from "../../../theme/useAppTheme";
 
 interface AlertProps {
   variant: "success" | "error" | "warning" | "info";
@@ -10,22 +11,36 @@ interface AlertProps {
 }
 
 const Alert: React.FC<AlertProps> = ({ variant, title, message, onClose }) => {
+  const { colors } = useAppTheme();
+
   const variantStyles = {
     success: {
-      container: { borderColor: "#22c55e", backgroundColor: "#f0fdf4" },
-      icon: "#22c55e",
+      container: { 
+        borderColor: colors.success, 
+        backgroundColor: colors.successLight 
+      },
+      icon: colors.success,
     },
     error: {
-      container: { borderColor: "#ef4444", backgroundColor: "#fef2f2" },
-      icon: "#ef4444",
+      container: { 
+        borderColor: colors.error, 
+        backgroundColor: colors.errorLight 
+      },
+      icon: colors.error,
     },
     warning: {
-      container: { borderColor: "#f59e0b", backgroundColor: "#fffbeb" },
-      icon: "#f59e0b",
+      container: { 
+        borderColor: colors.warning, 
+        backgroundColor: colors.warningLight 
+      },
+      icon: colors.warning,
     },
     info: {
-      container: { borderColor: "#3b82f6", backgroundColor: "#eff6ff" },
-      icon: "#3b82f6",
+      container: { 
+        borderColor: colors.info, 
+        backgroundColor: colors.infoLight 
+      },
+      icon: colors.info,
     },
   };
 
@@ -45,13 +60,13 @@ const Alert: React.FC<AlertProps> = ({ variant, title, message, onClose }) => {
         <Ionicons name={currentIcon} size={24} color={currentStyle.icon} />
         
         <View style={styles.textContainer}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.message}>{message}</Text>
+          <Text style={[styles.title, { color: colors.textPrimary }]}>{title}</Text>
+          <Text style={[styles.message, { color: colors.textSecondary }]}>{message}</Text>
         </View>
 
         {onClose && (
           <Pressable onPress={onClose} style={styles.closeButton}>
-            <Ionicons name="close" size={20} color="#6b7280" />
+            <Ionicons name="close" size={20} color={colors.textMuted} />
           </Pressable>
         )}
       </View>
@@ -77,12 +92,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1f2937",
     marginBottom: 4,
   },
   message: {
     fontSize: 14,
-    color: "#6b7280",
   },
   closeButton: {
     padding: 4,

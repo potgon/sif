@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useAppTheme } from '../../theme/useAppTheme';
 
 interface MonthlyTargetProps {
   year: number;
@@ -15,6 +16,8 @@ interface MonthlyTargetProps {
 }
 
 export default function MonthlyTarget({ year, month, data, loading = false }: MonthlyTargetProps) {
+  const { colors } = useAppTheme();
+  
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
@@ -28,9 +31,9 @@ export default function MonthlyTarget({ year, month, data, loading = false }: Mo
   };
 
   const getProgressColor = (percentage: number) => {
-    if (percentage <= 80) return '#22c55e'; // Green - Good
-    if (percentage <= 100) return '#f59e0b'; // Yellow - Warning
-    return '#ef4444'; // Red - Over budget
+    if (percentage <= 80) return colors.success; // Green - Good
+    if (percentage <= 100) return colors.warning; // Yellow - Warning
+    return colors.error; // Red - Over budget
   };
 
   const getProgressIcon = (percentage: number) => {
@@ -47,10 +50,10 @@ export default function MonthlyTarget({ year, month, data, loading = false }: Mo
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Objetivo Mensual</Text>
+      <View style={[styles.container, { backgroundColor: colors.card }]}>
+        <Text style={[styles.title, { color: colors.textPrimary }]}>Objetivo Mensual</Text>
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Cargando objetivo...</Text>
+          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>Cargando objetivo...</Text>
         </View>
       </View>
     );
@@ -58,10 +61,10 @@ export default function MonthlyTarget({ year, month, data, loading = false }: Mo
 
   if (!data || data.targetExpense === undefined) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Objetivo Mensual</Text>
+      <View style={[styles.container, { backgroundColor: colors.card }]}>
+        <Text style={[styles.title, { color: colors.textPrimary }]}>Objetivo Mensual</Text>
         <View style={styles.noDataContainer}>
-          <Text style={styles.noDataText}>No hay objetivo configurado para {monthNames[month - 1]} {year}</Text>
+          <Text style={[styles.noDataText, { color: colors.textSecondary }]}>No hay objetivo configurado para {monthNames[month - 1]} {year}</Text>
         </View>
       </View>
     );
@@ -72,21 +75,23 @@ export default function MonthlyTarget({ year, month, data, loading = false }: Mo
   const surplus = data.surplus || 0;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Objetivo Mensual - {monthNames[month - 1]} {year}</Text>
+    <View style={[styles.container, { backgroundColor: colors.card }]}>
+      <Text style={[styles.title, { color: colors.textPrimary }]} numberOfLines={2}>
+        Objetivo Mensual - {monthNames[month - 1]} {year}
+      </Text>
       
       {/* Target Overview */}
       <View style={styles.targetOverview}>
         <View style={styles.targetItem}>
-          <Text style={styles.targetLabel}>Meta de Gastos</Text>
-          <Text style={styles.targetValue}>{formatCurrency(data.targetExpense)}</Text>
+          <Text style={[styles.targetLabel, { color: colors.textSecondary }]}>Meta de Gastos</Text>
+          <Text style={[styles.targetValue, { color: colors.textPrimary }]}>{formatCurrency(data.targetExpense)}</Text>
         </View>
         
         <View style={styles.targetItem}>
-          <Text style={styles.targetLabel}>Gastos Actuales</Text>
+          <Text style={[styles.targetLabel, { color: colors.textSecondary }]}>Gastos Actuales</Text>
           <Text style={[
             styles.targetValue,
-            { color: currentExpense > data.targetExpense ? '#ef4444' : '#1f2937' }
+            { color: currentExpense > data.targetExpense ? colors.error : colors.textPrimary }
           ]}>
             {formatCurrency(currentExpense)}
           </Text>
@@ -96,48 +101,54 @@ export default function MonthlyTarget({ year, month, data, loading = false }: Mo
       {/* Progress Bar */}
       <View style={styles.progressContainer}>
         <View style={styles.progressHeader}>
-          <Text style={styles.progressLabel}>Progreso</Text>
-          <Text style={styles.progressPercentage}>{percentage.toFixed(1)}%</Text>
+          <Text style={[styles.progressLabel, { color: colors.textSecondary }]}>Progreso</Text>
+          <Text style={[styles.progressPercentage, { color: colors.textPrimary }]}>{percentage.toFixed(1)}%</Text>
         </View>
         
-        <View style={styles.progressBarContainer}>
-          <View style={styles.progressBar}>
-            <View 
-              style={[
-                styles.progressFill, 
-                { 
-                  width: `${Math.min(percentage, 100)}%`,
-                  backgroundColor: getProgressColor(percentage)
-                }
-              ]} 
-            />
-          </View>
+        <View style={[styles.progressBar, { backgroundColor: colors.surfaceTertiary }]}>
+          <View 
+            style={[
+              styles.progressFill, 
+              { 
+                backgroundColor: getProgressColor(percentage),
+                width: `${Math.min(percentage, 100)}%`
+              }
+            ]} 
+          />
         </View>
         
-        <View style={styles.progressIconContainer}>
+        <View style={styles.progressFooter}>
           <Ionicons 
             name={getProgressIcon(percentage)} 
             size={20} 
             color={getProgressColor(percentage)} 
           />
-          <Text style={[styles.progressMessage, { color: getProgressColor(percentage) }]}>
+          <Text style={[styles.progressMessage, { color: colors.textSecondary }]}>
             {getProgressMessage(percentage)}
           </Text>
         </View>
       </View>
 
       {/* Surplus/Deficit */}
-      <View style={styles.surplusContainer}>
-        <Text style={styles.surplusLabel}>Balance</Text>
-        <Text style={[
-          styles.surplusValue,
-          { color: surplus >= 0 ? '#22c55e' : '#ef4444' }
-        ]}>
-          {surplus >= 0 ? '+' : ''}{formatCurrency(surplus)}
-        </Text>
-        <Text style={styles.surplusDescription}>
-          {surplus >= 0 ? 'Superávit disponible' : 'Déficit acumulado'}
-        </Text>
+      <View style={[styles.surplusContainer, { 
+        backgroundColor: surplus >= 0 ? colors.successLight : colors.errorLight,
+        borderColor: surplus >= 0 ? colors.successBorder : colors.errorBorder
+      }]}>
+        <Ionicons 
+          name={surplus >= 0 ? 'trending-up' : 'trending-down'} 
+          size={24} 
+          color={surplus >= 0 ? colors.success : colors.error} 
+        />
+        <View style={styles.surplusContent}>
+          <Text style={[styles.surplusLabel, { color: colors.textPrimary }]}>
+            {surplus >= 0 ? 'Superávit' : 'Déficit'}
+          </Text>
+          <Text style={[styles.surplusValue, { 
+            color: surplus >= 0 ? colors.success : colors.error 
+          }]}>
+            {formatCurrency(Math.abs(surplus))}
+          </Text>
+        </View>
       </View>
     </View>
   );
@@ -145,68 +156,63 @@ export default function MonthlyTarget({ year, month, data, loading = false }: Mo
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1e293b', // Dark slate background
     borderRadius: 16,
     padding: 20,
-    marginVertical: 8,
+    borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 8,
-    borderWidth: 1,
-    borderColor: '#334155',
+    elevation: 4,
+    overflow: 'hidden',
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#f8fafc',
+    fontWeight: '700',
     marginBottom: 20,
     textAlign: 'center',
   },
   loadingContainer: {
-    height: 120,
-    justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 40,
   },
   loadingText: {
     fontSize: 16,
-    color: '#94a3b8',
+    fontWeight: '500',
   },
   noDataContainer: {
-    height: 120,
-    justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 40,
   },
   noDataText: {
     fontSize: 16,
-    color: '#94a3b8',
     textAlign: 'center',
   },
   targetOverview: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-    paddingHorizontal: 10,
+    gap: Platform.OS === 'ios' ? 16 : 20,
+    marginTop: Platform.OS === 'ios' ? 16 : 20,
+    marginBottom: Platform.OS === 'ios' ? 20 : 24,
   },
   targetItem: {
-    alignItems: 'center',
     flex: 1,
+    alignItems: 'center',
+    padding: Platform.OS === 'ios' ? 12 : 16,
+    borderRadius: 12,
+    backgroundColor: 'transparent',
   },
   targetLabel: {
-    fontSize: 12,
-    color: '#94a3b8',
-    marginBottom: 4,
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 8,
     textAlign: 'center',
   },
   targetValue: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#f8fafc',
-    textAlign: 'center',
   },
   progressContainer: {
     marginBottom: 24,
@@ -218,57 +224,50 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   progressLabel: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
-    color: '#cbd5e1',
   },
   progressPercentage: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: '700',
-    color: '#f8fafc',
-  },
-  progressBarContainer: {
-    marginBottom: 12,
   },
   progressBar: {
-    height: 8,
-    backgroundColor: '#334155',
-    borderRadius: 4,
+    height: Platform.OS === 'ios' ? 8 : 10,
+    borderRadius: Platform.OS === 'ios' ? 4 : 5,
+    backgroundColor: 'transparent',
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    borderRadius: 4,
+    borderRadius: Platform.OS === 'ios' ? 4 : 5,
   },
-  progressIconContainer: {
+  progressFooter: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
   },
   progressMessage: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '500',
     flex: 1,
   },
   surplusContainer: {
     alignItems: 'center',
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#334155',
+    padding: Platform.OS === 'ios' ? 16 : 20,
+    borderRadius: 12,
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
+  },
+  surplusContent: {
+    flex: 1,
   },
   surplusLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#cbd5e1',
     marginBottom: 4,
   },
   surplusValue: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
-  },
-  surplusDescription: {
-    fontSize: 12,
-    color: '#94a3b8',
-    textAlign: 'center',
   },
 });
