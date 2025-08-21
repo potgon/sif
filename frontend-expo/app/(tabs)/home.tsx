@@ -25,6 +25,7 @@ import IncomeModal from "@/src/components/ui/modal/IncomeModal";
 import TransactionModal from "@/src/components/ui/modal/TransactionModal";
 import AddTransactionModal from "@/src/components/ui/modal/AddTransactionModal";
 import EditTransactionModal from "@/src/components/ui/modal/EditTransactionModal";
+import MonthlyTransactionsModal from "@/src/components/ui/modal/MonthlyTransactionsModal";
 
 const months = [
   { label: "Enero", value: "1" },
@@ -73,7 +74,9 @@ export default function Home() {
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const [isAddTransactionModalOpen, setIsAddTransactionModalOpen] = useState(false);
   const [isEditTransactionModalOpen, setIsEditTransactionModalOpen] = useState(false);
+  const [isMonthlyTransactionsModalOpen, setIsMonthlyTransactionsModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
+  const [selectedMonthForTransactions, setSelectedMonthForTransactions] = useState<{ month: number; monthName: string } | null>(null);
 
   // Check authentication on component mount
   useEffect(() => {
@@ -198,9 +201,17 @@ export default function Home() {
     fetchData(); // Refresh data after creation
   };
 
-  const handleTransactionUpdated = (updatedTransaction: any) => {
+  const handleTransactionUpdated = async (updatedTransaction: any) => {
     console.log('Transaction updated:', updatedTransaction);
-    fetchData(); // Refresh data after update
+    await fetchData();
+    setIsEditTransactionModalOpen(false);
+    setSelectedTransaction(null);
+  };
+
+  const handleMonthPress = (month: number, monthName: string) => {
+    console.log('Month pressed:', month, monthName);
+    setSelectedMonthForTransactions({ month, monthName });
+    setIsMonthlyTransactionsModalOpen(true);
   };
 
   const handleMonthChange = (month: string) => {
@@ -288,6 +299,7 @@ export default function Home() {
           year={parseInt(selectedYear)}
           data={annualMetrics?.totalExpenses || []}
           loading={isLoading}
+          onMonthPress={handleMonthPress}
         />
 
         {/* Statistics Chart */}
@@ -346,6 +358,17 @@ export default function Home() {
         transaction={selectedTransaction}
         onSubmit={handleTransactionUpdated}
         onDelete={handleTransactionDelete}
+      />
+
+      <MonthlyTransactionsModal
+        isOpen={isMonthlyTransactionsModalOpen}
+        onClose={() => {
+          setIsMonthlyTransactionsModalOpen(false);
+          setSelectedMonthForTransactions(null);
+        }}
+        year={parseInt(selectedYear)}
+        month={selectedMonthForTransactions?.month || 1}
+        monthName={selectedMonthForTransactions?.monthName || ''}
       />
     </ScrollView>
   );

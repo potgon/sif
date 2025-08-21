@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Dimensions, Platform } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Platform, TouchableOpacity } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useAppTheme } from '../../theme/useAppTheme';
 
@@ -6,13 +6,20 @@ interface AnnualExpensesChartProps {
   year: number;
   data: number[];
   loading?: boolean;
+  onMonthPress?: (month: number, monthName: string) => void;
 }
 
 const screenWidth = Dimensions.get('window').width;
 const chartWidth = Math.min(screenWidth - (Platform.OS === 'ios' ? 80 : 100), 320); // Platform-specific padding
 
-export default function AnnualExpensesChart({ year, data, loading = false }: AnnualExpensesChartProps) {
+export default function AnnualExpensesChart({ year, data, loading = false, onMonthPress }: AnnualExpensesChartProps) {
   const { colors } = useAppTheme();
+
+  const handleMonthPress = (monthIndex: number, monthName: string) => {
+    if (onMonthPress) {
+      onMonthPress(monthIndex + 1, monthName); // monthIndex is 0-based, but we want 1-based month numbers
+    }
+  };
 
   if (loading) {
     return (
@@ -123,6 +130,11 @@ export default function AnnualExpensesChart({ year, data, loading = false }: Ann
           withInnerLines={false}
           withVerticalLabels={true}
           withHorizontalLabels={true}
+          onDataPointClick={({ index }) => {
+            if (onMonthPress && index !== undefined) {
+              handleMonthPress(index, monthLabels[index]);
+            }
+          }}
         />
       </View>
 
@@ -156,17 +168,22 @@ export default function AnnualExpensesChart({ year, data, loading = false }: Ann
         </Text>
         <View style={styles.breakdownGrid}>
           {monthLabels.map((month, index) => (
-            <View key={index} style={[styles.monthItem, { 
-              backgroundColor: colors.surface,
-              borderColor: colors.borderSecondary 
-            }]}>
+            <TouchableOpacity
+              key={index}
+              style={[styles.monthItem, { 
+                backgroundColor: colors.surface,
+                borderColor: colors.borderSecondary 
+              }]}
+              onPress={() => handleMonthPress(index, month)}
+              activeOpacity={0.7}
+            >
               <Text style={[styles.monthLabel, { color: colors.textSecondary }]}>
                 {month}
               </Text>
               <Text style={[styles.monthAmount, { color: colors.textPrimary }]}>
                 €{data[index]?.toFixed(2) || '0.00'}
               </Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
       </View>
@@ -266,6 +283,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'transparent', // Will be overridden by borderSecondary
     alignItems: 'center',
+    // Interactive styles
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    // Make it look clickable
+    minHeight: 60,
   },
   monthLabel: {
     fontSize: 12,
