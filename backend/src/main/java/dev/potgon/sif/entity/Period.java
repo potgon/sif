@@ -23,6 +23,9 @@ public class Period {
     @Column(nullable = false)
     private Integer month;
 
+    @Column(name = "salary", precision = 12, scale = 2)
+    private BigDecimal salary;
+
     @Column(name = "extra_pay", precision = 12, scale = 2)
     private BigDecimal extraPay;
 

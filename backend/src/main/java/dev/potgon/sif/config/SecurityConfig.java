@@ -67,7 +67,12 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://sif-tau.vercel.app/"));
+        configuration.setAllowedOrigins(List.of(
+                "http://172.20.10.2:8081",   // Metro bundler on your laptop
+                "http://localhost:8081",     // if you run web from browser
+                "http://172.20.10.2:19006",  // Expo web dev (sometimes uses 19006)
+                "https://sif-tau.vercel.app" // your deployed frontend
+        ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

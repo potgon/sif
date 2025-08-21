@@ -76,11 +76,9 @@ public class MetricsServiceImpl implements MetricsService {
     @Override
     public MonthlyTargetDTO getMonthlyTarget(int year, int month) {
         return MonthlyTargetDTO.builder()
-                .currentExpensePercentage(
-                        computeCurrentMonthExpenseTargetAsPercentage(year, month)
-                )
+                .currentExpensePercentage(computeCurrentMonthExpenseTargetAsPercentage(year, month))
                 .targetExpense(computeExpenseTargetAmount(year, month))
-                .targetPercentage(getBigDecimalParam(Constants.PARAM_EXPENSE_TARGET))
+                .targetPercentage(getExpenseTargetPercentage())
                 .surplus(computeCurrentMonthSurplusAmount(year, month))
                 .accumulated(getCurrentAccumulated())
                 .build();
@@ -97,21 +95,15 @@ public class MetricsServiceImpl implements MetricsService {
 
     @Override
     public void updateIncome(IncomeUpdateDTO incomeUpdateDTO) {
-        PeriodDTO period = periodMapper.toDTO(periodRepo.findByYearAndMonthAndUser(
-                incomeUpdateDTO.getYear(),
-                incomeUpdateDTO.getMonth(),
-                authUtils.getUserEntity())
-        );
-        ParamDTO salaryParam = paramMapper.toDTO(paramRepo.findByNameAndUser(Constants.PARAM_SALARY, authUtils.getUserEntity()));
-        BigDecimal salaryDTO = new BigDecimal(incomeUpdateDTO.getSalary());
-        if (!salaryDTO.equals(BigDecimal.ZERO)) {
-            salaryParam.setValue(incomeUpdateDTO.getSalary());
-            salaryParam.setCreatedAt(LocalDateTime.now());
-            paramRepo.save(paramMapper.toEntity(salaryParam));
+        Period period = financeUtils.getPeriodIfExists(incomeUpdateDTO.getYear(), incomeUpdateDTO.getMonth());
+        
+        if (incomeUpdateDTO.getSalary() != null && !incomeUpdateDTO.getSalary().equals(BigDecimal.ZERO)) {
+            period.setSalary(incomeUpdateDTO.getSalary());
+            periodRepo.save(period);
         }
         if (incomeUpdateDTO.getExtraPay() != null && !incomeUpdateDTO.getExtraPay().equals(BigDecimal.ZERO)) {
             period.setExtraPay(incomeUpdateDTO.getExtraPay());
-            periodRepo.save(periodMapper.toEntity(period));
+            periodRepo.save(period);
         }
     }
 
@@ -126,34 +118,29 @@ public class MetricsServiceImpl implements MetricsService {
     }
 
     private BigDecimal getSummedIncomeAmount(int year, int month) {
-        BigDecimal salary = getBigDecimalParam(Constants.PARAM_SALARY);
-        Optional<BigDecimal> extraPay = getPeriodExtraPayIfExists(year, month);
-        return extraPay.map(bigDecimal -> bigDecimal.add(salary)).orElse(salary);
+        Period period = financeUtils.getPeriodIfExists(year, month);
+        BigDecimal salary = period.getSalary() != null ? period.getSalary() : BigDecimal.ZERO;
+        BigDecimal extraPay = period.getExtraPay() != null ? period.getExtraPay() : BigDecimal.ZERO;
+        return salary.add(extraPay);
     }
 
-    private BigDecimal getBigDecimalParam(String paramName) {
+    private BigDecimal getExpenseTargetPercentage() {
         BigDecimal result;
         try {
-            String paramValue = paramRepo.findByNameAndUser(paramName, authUtils.getUserEntity()).getValue();
+            String paramValue = paramRepo.findByNameAndUser(Constants.PARAM_EXPENSE_TARGET, authUtils.getUserEntity()).getValue();
             result = new BigDecimal(paramValue);
         } catch (NumberFormatException e) {
-            log.error("Error while parsing parameter: {} | Not a BigDecimal", paramName);
-            throw new BusinessException("Error parsing parameter: " + paramName);
+            log.error("Error while parsing expense target parameter: Not a BigDecimal");
+            throw new BusinessException("Error parsing expense target parameter");
         } catch (Exception ex) {
-            throw new BusinessException("Error recovering parameter: " + paramName);
+            throw new BusinessException("Error recovering expense target parameter");
         }
         return result;
     }
 
-    private Optional<BigDecimal> getPeriodExtraPayIfExists(int year, int month) {
-        Period period = financeUtils.getPeriodIfExists(year, month);
-        if (period.getExtraPay() == null) return Optional.empty();
-        return Optional.of(period.getExtraPay());
-    }
-
     private BigDecimal computeExpenseTargetAmount(int year, int month) {
         BigDecimal income = getSummedIncomeAmount(year, month);
-        BigDecimal expenseTargetPercentage = getBigDecimalParam(Constants.PARAM_EXPENSE_TARGET);
+        BigDecimal expenseTargetPercentage = getExpenseTargetPercentage();
 
         return expenseTargetPercentage
                 .divide(Constants.BIG_DECIMAL_ONE_HUNDRED, 4, RoundingMode.HALF_UP)

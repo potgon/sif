@@ -52,7 +52,6 @@ public class AuthServiceImpl implements AuthService {
 
         User savedUser = userRepository.save(userMapper.toEntity(user));
         authUtils.createExpenseTarget(userMapper.toDTO(savedUser));
-        authUtils.createSalary(userMapper.toDTO(savedUser));
         authUtils.createAccumulated(userMapper.toDTO(savedUser));
         authUtils.createPeriods(userMapper.toDTO(savedUser));
         response.setResult(true);

@@ -34,7 +34,7 @@ export default function IncomeModal({ isOpen, onClose, year, month, refreshData 
       await updateIncome({
         year,
         month,
-        salary: salary || undefined,
+        salary: salary ? parseFloat(salary) : undefined,
         extraPay: extraPay ? parseFloat(extraPay) : undefined,
       });
       

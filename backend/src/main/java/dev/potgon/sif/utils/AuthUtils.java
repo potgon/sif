@@ -46,26 +46,15 @@ public class AuthUtils {
         paramRepo.save(paramMapper.toEntity(expenseTarget));
     }
 
-    public void createSalary(UserDTO user) {
-        ParamDTO salary = ParamDTO.builder()
-                .id(null)
-                .name(Constants.PARAM_SALARY)
-                .value("0.0")
-                .createdAt(LocalDateTime.now())
-                .user(user)
-                .build();
-        paramRepo.save(paramMapper.toEntity(salary));
-    }
-
     public void createAccumulated(UserDTO user) {
-        ParamDTO salary = ParamDTO.builder()
+        ParamDTO accumulated = ParamDTO.builder()
                 .id(null)
                 .name(Constants.PARAM_ACCUMULATED)
                 .value("0.0")
                 .createdAt(LocalDateTime.now())
                 .user(user)
                 .build();
-        paramRepo.save(paramMapper.toEntity(salary));
+        paramRepo.save(paramMapper.toEntity(accumulated));
     }
 
     public void createPeriods(UserDTO user) {
@@ -75,6 +64,7 @@ public class AuthUtils {
             PeriodDTO period = new PeriodDTO();
             period.setYear(currentYear);
             period.setMonth(month);
+            period.setSalary(BigDecimal.ZERO);
             period.setExtraPay(BigDecimal.ZERO);
             period.setUser(user);
             periodRepo.save(periodMapper.toEntity(period));

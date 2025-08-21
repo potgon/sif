@@ -12,6 +12,6 @@ import java.math.BigDecimal;
 public class IncomeUpdateDTO {
     private int year;
     private int month;
+    private BigDecimal salary;
     private BigDecimal extraPay;
-    private String salary;
 }

@@ -12,6 +12,7 @@ public class PeriodDTO {
     private Long id;
     private Integer year;
     private Integer month;
+    private BigDecimal salary;
     private BigDecimal extraPay;
     private UserDTO user;
 }

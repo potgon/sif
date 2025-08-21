@@ -41,7 +41,7 @@ export interface Period {
     year: number
     month: number
     startingBalance: number
-    periodSalary: number
+    salary: number
     extraPay: number
     user: User
 }
@@ -129,6 +129,6 @@ export interface ExtraPay {
 export interface IncomeUpdate {
     year: number
     month: number
+    salary?: number
     extraPay?: number
-    salary?: string
 }
