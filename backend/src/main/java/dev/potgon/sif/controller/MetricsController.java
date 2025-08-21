@@ -51,5 +51,19 @@ public class MetricsController {
         metricsService.updateIncome(incomeUpdateDTO);
         return ResponseEntity.accepted().build();
     }
+
+    @PostMapping("/month-rollover")
+    public ResponseEntity<Void> handleMonthRollover(
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        metricsService.handleMonthRollover(year, month);
+        return ResponseEntity.accepted().build();
+    }
+
+    @GetMapping("/accumulated")
+    public ResponseEntity<AccumulatedDTO> getCurrentAccumulated() {
+        return ResponseEntity.ok(metricsService.getCurrentAccumulated());
+    }
 }
 

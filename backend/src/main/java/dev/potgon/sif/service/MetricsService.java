@@ -9,4 +9,6 @@ public interface MetricsService {
     MonthlyTargetDTO getMonthlyTarget(int year, int month);
     ExtraPayDTO getExtraPay(int year, int month);
     void updateIncome(IncomeUpdateDTO incomeUpdateDTO);
+    void handleMonthRollover(int year, int month);
+    AccumulatedDTO getCurrentAccumulated();
 }

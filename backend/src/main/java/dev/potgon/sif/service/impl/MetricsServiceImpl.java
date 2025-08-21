@@ -4,6 +4,7 @@ import dev.potgon.sif.dto.enums.CategoryTypeEnum;
 import dev.potgon.sif.dto.shared.ParamDTO;
 import dev.potgon.sif.dto.shared.PeriodDTO;
 import dev.potgon.sif.dto.shared.TransactionDTO;
+import dev.potgon.sif.dto.shared.UserDTO;
 import dev.potgon.sif.dto.request.IncomeUpdateDTO;
 import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.entity.Param;
@@ -75,12 +76,14 @@ public class MetricsServiceImpl implements MetricsService {
 
     @Override
     public MonthlyTargetDTO getMonthlyTarget(int year, int month) {
+        AccumulatedDTO accumulatedData = getCurrentAccumulated();
+        
         return MonthlyTargetDTO.builder()
                 .currentExpensePercentage(computeCurrentMonthExpenseTargetAsPercentage(year, month))
                 .targetExpense(computeExpenseTargetAmount(year, month))
                 .targetPercentage(getExpenseTargetPercentage())
                 .surplus(computeCurrentMonthSurplusAmount(year, month))
-                .accumulated(getCurrentAccumulated())
+                .accumulated(accumulatedData.getAccumulatedValue())
                 .build();
     }
 
@@ -104,6 +107,77 @@ public class MetricsServiceImpl implements MetricsService {
         if (incomeUpdateDTO.getExtraPay() != null && !incomeUpdateDTO.getExtraPay().equals(BigDecimal.ZERO)) {
             period.setExtraPay(incomeUpdateDTO.getExtraPay());
             periodRepo.save(period);
+        }
+    }
+
+    /**
+     * Handles automatic month rollover for accumulated param
+     * This method should be called when a user first logs in during a new month
+     */
+    public void handleMonthRollover(int year, int month) {
+        try {
+            // Get the current accumulated value
+            ParamDTO accumulatedParam = paramMapper.toDTO(
+                paramRepo.findByNameAndUser(Constants.PARAM_ACCUMULATED, authUtils.getUserEntity())
+            );
+            
+            if (accumulatedParam == null) {
+                // Create accumulated param if it doesn't exist
+                accumulatedParam = new ParamDTO();
+                accumulatedParam.setName(Constants.PARAM_ACCUMULATED);
+                accumulatedParam.setValue("0.00");
+                accumulatedParam.setUser(authUtils.getUserDTO());
+            }
+            
+            // Get the expense target for the current month
+            BigDecimal expenseTarget = getExpenseTargetPercentage();
+            
+            // Add the new month's target to accumulated
+            BigDecimal currentAccumulated = new BigDecimal(accumulatedParam.getValue());
+            BigDecimal newAccumulated = currentAccumulated.add(expenseTarget);
+            
+            // Update the accumulated param
+            accumulatedParam.setValue(newAccumulated.toString());
+            paramRepo.save(paramMapper.toEntity(accumulatedParam));
+            
+            log.info("Month rollover completed for {}-{}: accumulated updated from {} to {}", 
+                year, month, currentAccumulated, newAccumulated);
+                
+        } catch (Exception e) {
+            log.error("Error during month rollover for {}-{}: {}", year, month, e.getMessage(), e);
+            throw new RuntimeException("Failed to complete month rollover", e);
+        }
+    }
+
+    /**
+     * Gets the current accumulated value
+     */
+    public AccumulatedDTO getCurrentAccumulated() {
+        try {
+            ParamDTO accumulatedParam = paramMapper.toDTO(
+                paramRepo.findByNameAndUser(Constants.PARAM_ACCUMULATED, authUtils.getUserEntity())
+            );
+            
+            BigDecimal accumulatedValue = BigDecimal.ZERO;
+            if (accumulatedParam != null) {
+                accumulatedValue = new BigDecimal(accumulatedParam.getValue());
+            }
+            
+            String message = accumulatedValue.compareTo(BigDecimal.ZERO) >= 0 
+                ? "Ahorros acumulados" 
+                : "Deuda acumulada";
+            
+            return AccumulatedDTO.builder()
+                .accumulatedValue(accumulatedValue)
+                .message(message)
+                .build();
+                
+        } catch (Exception e) {
+            log.error("Error getting current accumulated value: {}", e.getMessage(), e);
+            return AccumulatedDTO.builder()
+                .accumulatedValue(BigDecimal.ZERO)
+                .message("Error al obtener valor acumulado")
+                .build();
         }
     }
 
@@ -177,12 +251,6 @@ public class MetricsServiceImpl implements MetricsService {
                 financeUtils.getTransactionsByPeriodAndCategory(year, month, CategoryTypeEnum.EXPENSE)
         );
         return targetAmount.subtract(currentMonthExpenses);
-    }
-
-    private BigDecimal getCurrentAccumulated() {
-        Param accumulated = paramRepo.findByNameAndUser(Constants.PARAM_ACCUMULATED, authUtils.getUserEntity());
-        if (accumulated == null) return BigDecimal.ZERO;
-        return new BigDecimal(accumulated.getValue());
     }
 
     private int getPreviousMonth(int month) {

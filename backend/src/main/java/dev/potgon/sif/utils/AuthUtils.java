@@ -35,6 +35,18 @@ public class AuthUtils {
         return userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
     }
 
+    public UserDTO getUserDTO() {
+        User user = getUserEntity();
+        return UserDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .password(user.getPassword())
+                .email(user.getEmail())
+                .createdAt(user.getCreatedAt())
+                .build();
+    }
+
     public void createExpenseTarget(UserDTO user) {
         ParamDTO expenseTarget = ParamDTO.builder()
                 .id(null)

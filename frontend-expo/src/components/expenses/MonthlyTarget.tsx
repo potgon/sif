@@ -152,25 +152,50 @@ export default function MonthlyTarget({ year, month, data, currentExpense = 0, l
         </View>
       </View>
 
-      {/* Surplus/Deficit */}
-      <View style={[styles.surplusContainer, { 
-        backgroundColor: surplus >= 0 ? colors.successLight : colors.errorLight,
-        borderColor: surplus >= 0 ? colors.successBorder : colors.errorBorder
-      }]}>
-        <Ionicons 
-          name={surplus >= 0 ? 'trending-up' : 'trending-down'} 
-          size={24} 
-          color={surplus >= 0 ? colors.success : colors.error} 
-        />
-        <View style={styles.surplusContent}>
-          <Text style={[styles.surplusLabel, { color: colors.textPrimary }]}>
-            {surplus >= 0 ? 'Superávit' : 'Déficit'}
-          </Text>
-          <Text style={[styles.surplusValue, { 
-            color: surplus >= 0 ? colors.success : colors.error 
-          }]}>
-            {formatCurrency(Math.abs(surplus))}
-          </Text>
+      {/* Surplus/Deficit and Accumulated - Side by Side */}
+      <View style={styles.bottomRow}>
+        {/* Surplus/Deficit */}
+        <View style={[styles.surplusContainer, { 
+          backgroundColor: surplus >= 0 ? colors.successLight : colors.errorLight,
+          borderColor: surplus >= 0 ? colors.successBorder : colors.errorBorder
+        }]}>
+          <Ionicons 
+            name={surplus >= 0 ? 'trending-up' : 'trending-down'} 
+            size={24} 
+            color={surplus >= 0 ? colors.success : colors.error} 
+          />
+          <View style={styles.surplusContent}>
+            <Text style={[styles.surplusLabel, { color: colors.textPrimary }]}>
+              {surplus >= 0 ? 'Superávit' : 'Déficit'}
+            </Text>
+            <Text style={[styles.surplusValue, { 
+              color: surplus >= 0 ? colors.success : colors.error 
+            }]}>
+              {formatCurrency(Math.abs(surplus))}
+            </Text>
+          </View>
+        </View>
+
+        {/* Accumulated */}
+        <View style={[styles.accumulatedContainer, { 
+          backgroundColor: (data.accumulated ?? 0) >= 0 ? colors.infoLight : colors.warningLight,
+          borderColor: (data.accumulated ?? 0) >= 0 ? colors.infoBorder : colors.warningBorder
+        }]}>
+          <Ionicons 
+            name={(data.accumulated ?? 0) >= 0 ? 'wallet' : 'alert-circle'} 
+            size={24} 
+            color={(data.accumulated ?? 0) >= 0 ? colors.info : colors.warning} 
+          />
+          <View style={styles.accumulatedContent}>
+            <Text style={[styles.accumulatedLabel, { color: colors.textPrimary }]}>
+              {(data.accumulated ?? 0) >= 0 ? 'Ahorros' : 'Deuda'}
+            </Text>
+            <Text style={[styles.accumulatedValue, { 
+              color: (data.accumulated ?? 0) >= 0 ? colors.info : colors.warning 
+            }]}>
+              {formatCurrency(Math.abs(data.accumulated ?? 0))}
+            </Text>
+          </View>
         </View>
       </View>
     </View>
@@ -274,23 +299,60 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     flex: 1,
   },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 16,
+    marginTop: 24,
+  },
   surplusContainer: {
+    width: '48%',
     alignItems: 'center',
     padding: Platform.OS === 'ios' ? 16 : 20,
     borderRadius: 12,
     backgroundColor: 'transparent',
     overflow: 'hidden',
+    minHeight: 80,
+    justifyContent: 'center',
   },
   surplusContent: {
-    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   surplusLabel: {
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 4,
+    textAlign: 'center',
   },
   surplusValue: {
     fontSize: 18,
     fontWeight: '700',
+    textAlign: 'center',
+  },
+  accumulatedContainer: {
+    width: '48%',
+    alignItems: 'center',
+    padding: Platform.OS === 'ios' ? 16 : 20,
+    borderRadius: 12,
+    backgroundColor: 'transparent',
+    overflow: 'hidden',
+    minHeight: 80,
+    justifyContent: 'center',
+  },
+  accumulatedContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  accumulatedLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  accumulatedValue: {
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'center',
   },
 });
