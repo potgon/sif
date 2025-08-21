@@ -26,6 +26,7 @@ import TransactionModal from "@/src/components/ui/modal/TransactionModal";
 import AddTransactionModal from "@/src/components/ui/modal/AddTransactionModal";
 import EditTransactionModal from "@/src/components/ui/modal/EditTransactionModal";
 import MonthlyTransactionsModal from "@/src/components/ui/modal/MonthlyTransactionsModal";
+import SubcategoryTransactionsModal from "@/src/components/ui/modal/SubcategoryTransactionsModal";
 
 const months = [
   { label: "Enero", value: "1" },
@@ -75,8 +76,10 @@ export default function Home() {
   const [isAddTransactionModalOpen, setIsAddTransactionModalOpen] = useState(false);
   const [isEditTransactionModalOpen, setIsEditTransactionModalOpen] = useState(false);
   const [isMonthlyTransactionsModalOpen, setIsMonthlyTransactionsModalOpen] = useState(false);
+  const [isSubcategoryTransactionsModalOpen, setIsSubcategoryTransactionsModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
   const [selectedMonthForTransactions, setSelectedMonthForTransactions] = useState<{ month: number; monthName: string } | null>(null);
+  const [selectedSubcategoryForTransactions, setSelectedSubcategoryForTransactions] = useState<string | null>(null);
 
   // Check authentication on component mount
   useEffect(() => {
@@ -214,6 +217,12 @@ export default function Home() {
     setIsMonthlyTransactionsModalOpen(true);
   };
 
+  const handleSubcategoryPress = (subcategoryName: string) => {
+    console.log('Subcategory pressed:', subcategoryName);
+    setSelectedSubcategoryForTransactions(subcategoryName);
+    setIsSubcategoryTransactionsModalOpen(true);
+  };
+
   const handleMonthChange = (month: string) => {
     console.log('Home: Month changed from', selectedMonth, 'to', month);
     setSelectedMonth(month);
@@ -308,6 +317,7 @@ export default function Home() {
           month={parseInt(selectedMonth)}
           data={categoryExpenses?.subcategoryExpenses || []}
           loading={isLoading}
+          onSubcategoryPress={handleSubcategoryPress}
         />
 
         {/* Recent Transactions */}
@@ -369,6 +379,18 @@ export default function Home() {
         year={parseInt(selectedYear)}
         month={selectedMonthForTransactions?.month || 1}
         monthName={selectedMonthForTransactions?.monthName || ''}
+      />
+
+      <SubcategoryTransactionsModal
+        isOpen={isSubcategoryTransactionsModalOpen}
+        onClose={() => {
+          setIsSubcategoryTransactionsModalOpen(false);
+          setSelectedSubcategoryForTransactions(null);
+        }}
+        year={parseInt(selectedYear)}
+        month={parseInt(selectedMonth)}
+        monthName={months[parseInt(selectedMonth) - 1]?.label || ''}
+        subcategoryName={selectedSubcategoryForTransactions || ''}
       />
     </ScrollView>
   );

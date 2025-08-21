@@ -1,5 +1,4 @@
-import React from 'react';
-import { View, Text, StyleSheet, Dimensions, Platform } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Platform, TouchableOpacity } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import { useAppTheme } from '../../theme/useAppTheme';
 
@@ -15,18 +14,25 @@ interface StatisticsChartProps {
   month: number;
   data: SubcategoryExpense[];
   loading?: boolean;
+  onSubcategoryPress?: (subcategoryName: string) => void;
 }
 
 const screenWidth = Dimensions.get('window').width;
 const chartWidth = Math.min(screenWidth - (Platform.OS === 'ios' ? 80 : 100), 300); // Platform-specific padding
 
-export default function StatisticsChart({ year, month, data, loading = false }: StatisticsChartProps) {
+export default function StatisticsChart({ year, month, data, loading = false, onSubcategoryPress }: StatisticsChartProps) {
   const { colors: themeColors } = useAppTheme();
   
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
   ];
+
+  const handleSubcategoryPress = (subcategoryName: string) => {
+    if (onSubcategoryPress) {
+      onSubcategoryPress(subcategoryName);
+    }
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-ES', {
@@ -120,22 +126,24 @@ export default function StatisticsChart({ year, month, data, loading = false }: 
         </Text>
         <View style={styles.breakdownList}>
           {chartData.map((item, index) => (
-            <View key={index} style={[styles.breakdownItem, { 
-              borderBottomColor: themeColors.borderSecondary 
-            }]}>
-              <View style={styles.breakdownItemHeader}>
-                <View style={[styles.breakdownColor, { backgroundColor: item.color }]} />
-                <Text style={[styles.breakdownName, { color: themeColors.textPrimary }]} numberOfLines={1}>
-                  {item.name}
-                </Text>
-                <Text style={[styles.breakdownAmount, { color: themeColors.textSecondary }]}>
-                  {formatCurrency(item.amount)}
+            <TouchableOpacity key={index} onPress={() => handleSubcategoryPress(item.name)}>
+              <View style={[styles.breakdownItem, { 
+                borderBottomColor: themeColors.borderSecondary 
+              }]}>
+                <View style={styles.breakdownItemHeader}>
+                  <View style={[styles.breakdownColor, { backgroundColor: item.color }]} />
+                  <Text style={[styles.breakdownName, { color: themeColors.textPrimary }]} numberOfLines={1}>
+                    {item.name}
+                  </Text>
+                  <Text style={[styles.breakdownAmount, { color: themeColors.textSecondary }]}>
+                    {formatCurrency(item.amount)}
+                  </Text>
+                </View>
+                <Text style={[styles.breakdownPercentage, { color: themeColors.textMuted }]}>
+                  {((item.amount / totalExpenses) * 100).toFixed(1)}%
                 </Text>
               </View>
-              <Text style={[styles.breakdownPercentage, { color: themeColors.textMuted }]}>
-                {((item.amount / totalExpenses) * 100).toFixed(1)}%
-              </Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
       </View>
@@ -230,6 +238,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: Platform.OS === 'ios' ? 8 : 10,
     backgroundColor: 'transparent',
+    // Interactive styles
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+    // Make it look clickable
+    minHeight: 50,
   },
   breakdownItemHeader: {
     flexDirection: 'row',
