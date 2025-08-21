@@ -133,6 +133,18 @@ export default function Home() {
       console.log('Annual:', annual);
       console.log('Categories:', categories);
       
+      // Additional debugging for MonthlyTarget
+      console.log('MonthlyTarget Debug:');
+      console.log('- Target data:', target);
+      console.log('- Current expenses from metrics:', metrics?.totalExpenses);
+      console.log('- Combined data for MonthlyTarget:', {
+        targetExpense: target?.targetExpense,
+        currentExpense: metrics?.totalExpenses,
+        currentExpensePercentage: target?.currentExpensePercentage,
+        surplus: target?.surplus,
+        accumulated: target?.accumulated
+      });
+      
       setMonthlyMetrics(metrics);
       setMonthlyTransactions(transactions);
       setExpenseTarget(target);
@@ -314,6 +326,7 @@ export default function Home() {
           year={parseInt(selectedYear)}
           month={parseInt(selectedMonth)}
           data={expenseTarget}
+          currentExpense={monthlyMetrics?.totalExpenses || 0}
           loading={isLoading}
         />
 

@@ -8,14 +8,15 @@ interface MonthlyTargetProps {
   month: number;
   data: {
     targetExpense?: number;
-    currentExpense?: number;
     currentExpensePercentage?: number;
     surplus?: number;
+    accumulated?: number;
   } | null;
+  currentExpense?: number;
   loading?: boolean;
 }
 
-export default function MonthlyTarget({ year, month, data, loading = false }: MonthlyTargetProps) {
+export default function MonthlyTarget({ year, month, data, currentExpense = 0, loading = false }: MonthlyTargetProps) {
   const { colors } = useAppTheme();
   
   const monthNames = [
@@ -48,6 +49,9 @@ export default function MonthlyTarget({ year, month, data, loading = false }: Mo
     return 'Has superado el objetivo mensual';
   };
 
+  // Debug logging
+  console.log('MonthlyTarget - Received data:', { data, currentExpense, year, month });
+
   if (loading) {
     return (
       <View style={[styles.container, { backgroundColor: colors.card }]}>
@@ -59,7 +63,7 @@ export default function MonthlyTarget({ year, month, data, loading = false }: Mo
     );
   }
 
-  if (!data || data.targetExpense === undefined) {
+  if (!data || data.targetExpense === undefined || data.targetExpense === 0) {
     return (
       <View style={[styles.container, { backgroundColor: colors.card }]}>
         <Text style={[styles.title, { color: colors.textPrimary }]}>Objetivo Mensual</Text>
@@ -70,9 +74,28 @@ export default function MonthlyTarget({ year, month, data, loading = false }: Mo
     );
   }
 
-  const currentExpense = data.currentExpense || 0;
-  const percentage = data.currentExpensePercentage || 0;
+  // Also check if we have current expense data
+  if (currentExpense === undefined || currentExpense === null) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.card }]}>
+        <Text style={[styles.title, { color: colors.textPrimary }]}>Objetivo Mensual</Text>
+        <View style={styles.noDataContainer}>
+          <Text style={[styles.noDataText, { color: colors.textSecondary }]}>Cargando datos de gastos para {monthNames[month - 1]} {year}</Text>
+        </View>
+      </View>
+    );
+  }
+
+  // Calculate percentage if not provided or recalculate for accuracy
+  const percentage = data.currentExpensePercentage || (currentExpense > 0 && data.targetExpense > 0 ? (currentExpense / data.targetExpense) * 100 : 0);
   const surplus = data.surplus || 0;
+
+  console.log('MonthlyTarget - Calculated values:', { 
+    targetExpense: data.targetExpense, 
+    currentExpense, 
+    percentage, 
+    surplus 
+  });
 
   return (
     <View style={[styles.container, { backgroundColor: colors.card }]}>
