@@ -223,6 +223,20 @@ export default function Home() {
     setIsSubcategoryTransactionsModalOpen(true);
   };
 
+  const handleTransactionFromMonthlyModal = (transaction: any) => {
+    console.log('Transaction from monthly modal:', transaction);
+    setSelectedTransaction(transaction);
+    setIsMonthlyTransactionsModalOpen(false);
+    setIsEditTransactionModalOpen(true);
+  };
+
+  const handleTransactionFromSubcategoryModal = (transaction: any) => {
+    console.log('Transaction from subcategory modal:', transaction);
+    setSelectedTransaction(transaction);
+    setIsSubcategoryTransactionsModalOpen(false);
+    setIsEditTransactionModalOpen(true);
+  };
+
   const handleMonthChange = (month: string) => {
     console.log('Home: Month changed from', selectedMonth, 'to', month);
     setSelectedMonth(month);
@@ -248,7 +262,7 @@ export default function Home() {
   }
 
   return (
-    <ScrollView
+    <ScrollView 
       style={[styles.container, { backgroundColor: colors.background }]}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -379,6 +393,7 @@ export default function Home() {
         year={parseInt(selectedYear)}
         month={selectedMonthForTransactions?.month || 1}
         monthName={selectedMonthForTransactions?.monthName || ''}
+        onTransactionPress={handleTransactionFromMonthlyModal}
       />
 
       <SubcategoryTransactionsModal
@@ -391,6 +406,7 @@ export default function Home() {
         month={parseInt(selectedMonth)}
         monthName={months[parseInt(selectedMonth) - 1]?.label || ''}
         subcategoryName={selectedSubcategoryForTransactions || ''}
+        onTransactionPress={handleTransactionFromSubcategoryModal}
       />
     </ScrollView>
   );

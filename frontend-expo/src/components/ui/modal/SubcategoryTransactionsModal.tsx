@@ -21,6 +21,7 @@ interface SubcategoryTransactionsModalProps {
   month: number;
   monthName: string;
   subcategoryName: string;
+  onTransactionPress?: (transaction: Transaction) => void;
 }
 
 export default function SubcategoryTransactionsModal({ 
@@ -29,12 +30,19 @@ export default function SubcategoryTransactionsModal({
   year, 
   month, 
   monthName,
-  subcategoryName
+  subcategoryName,
+  onTransactionPress
 }: SubcategoryTransactionsModalProps) {
   const { colors } = useAppTheme();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleTransactionPress = (transaction: Transaction) => {
+    if (onTransactionPress) {
+      onTransactionPress(transaction);
+    }
+  };
 
   useEffect(() => {
     if (isOpen && year && month && subcategoryName) {
@@ -169,47 +177,52 @@ export default function SubcategoryTransactionsModal({
                 contentContainerStyle={styles.transactionsContent}
               >
                 {transactions.map((transaction) => (
-                  <View 
-                    key={transaction.id} 
-                    style={[styles.transactionItem, { 
-                      backgroundColor: colors.surface,
-                      borderColor: colors.borderSecondary 
-                    }]}
+                  <TouchableOpacity
+                    key={transaction.id}
+                    onPress={() => handleTransactionPress(transaction)}
+                    activeOpacity={0.7}
                   >
-                    <View style={styles.transactionHeader}>
-                      <View style={styles.transactionIconContainer}>
-                        <Ionicons 
-                          name={getTransactionIcon(transaction.category) as any}
-                          size={20} 
-                          color={getTransactionColor(transaction.category)} 
-                        />
+                    <View 
+                      style={[styles.transactionItem, { 
+                        backgroundColor: colors.surface,
+                        borderColor: colors.borderSecondary 
+                      }]}
+                    >
+                      <View style={styles.transactionHeader}>
+                        <View style={styles.transactionIconContainer}>
+                          <Ionicons 
+                            name={getTransactionIcon(transaction.category) as any}
+                            size={20} 
+                            color={getTransactionColor(transaction.category)} 
+                          />
+                        </View>
+                        <View style={styles.transactionInfo}>
+                          <Text style={[styles.transactionDescription, { color: colors.textPrimary }]} numberOfLines={2}>
+                            {transaction.description || 'Sin descripción'}
+                          </Text>
+                          <Text style={[styles.transactionSubcategory, { color: colors.textSecondary }]}>
+                            {transaction.subcategory.name}
+                          </Text>
+                        </View>
+                        <View style={styles.transactionAmount}>
+                          <Text style={[
+                            styles.amountText, 
+                            { color: getTransactionColor(transaction.category) }
+                          ]}>
+                            {formatCurrency(transaction.amount)}
+                          </Text>
+                          <Text style={[styles.dateText, { color: colors.textMuted }]}>
+                            {formatDate(transaction.date)}
+                          </Text>
+                        </View>
                       </View>
-                      <View style={styles.transactionInfo}>
-                        <Text style={[styles.transactionDescription, { color: colors.textPrimary }]} numberOfLines={2}>
-                          {transaction.description || 'Sin descripción'}
+                      {transaction.notes && (
+                        <Text style={[styles.notesText, { color: colors.textMuted }]} numberOfLines={2}>
+                          {transaction.notes}
                         </Text>
-                        <Text style={[styles.transactionSubcategory, { color: colors.textSecondary }]}>
-                          {transaction.subcategory.name}
-                        </Text>
-                      </View>
-                      <View style={styles.transactionAmount}>
-                        <Text style={[
-                          styles.amountText, 
-                          { color: getTransactionColor(transaction.category) }
-                        ]}>
-                          {formatCurrency(transaction.amount)}
-                        </Text>
-                        <Text style={[styles.dateText, { color: colors.textMuted }]}>
-                          {formatDate(transaction.date)}
-                        </Text>
-                      </View>
+                      )}
                     </View>
-                    {transaction.notes && (
-                      <Text style={[styles.notesText, { color: colors.textMuted }]} numberOfLines={2}>
-                        {transaction.notes}
-                      </Text>
-                    )}
-                  </View>
+                  </TouchableOpacity>
                 ))}
               </ScrollView>
             )}
@@ -350,6 +363,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 16,
     gap: 12,
+    // Interactive styles
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    // Make it look clickable
+    minHeight: 60,
   },
   transactionHeader: {
     flexDirection: 'row',
