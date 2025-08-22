@@ -137,19 +137,41 @@ export default function MonthlyTarget({ year, month, data, currentExpense = 0, l
       
       {/* Target Overview */}
       <View style={styles.targetOverview}>
-        <View style={styles.targetItem}>
-          <Text style={[styles.targetLabel, { color: colors.textSecondary }]}>Meta de Gastos</Text>
-          <Text style={[styles.targetValue, { color: colors.textPrimary }]}>{formatCurrency(data.targetExpense)}</Text>
+        <View style={[styles.targetItem, { 
+          backgroundColor: colors.surface,
+          borderColor: colors.border 
+        }]}>
+          <View style={[styles.targetBackgroundPattern, { backgroundColor: colors.infoLight }]} />
+          <View style={[styles.targetIconContainer, { backgroundColor: colors.infoLight }]}>
+            <Ionicons name="flag" size={20} color={colors.info} />
+            <View style={[styles.targetIndicator, { backgroundColor: colors.info }]} />
+          </View>
+          <View style={styles.targetContent}>
+            <Text style={[styles.targetLabel, { color: colors.textSecondary }]}>Meta de Gastos</Text>
+            <Text style={[styles.targetValue, { color: colors.textPrimary }]}>{formatCurrency(data.targetExpense)}</Text>
+          </View>
+          <View style={[styles.targetDecoration, { backgroundColor: colors.infoLight }]} />
         </View>
-        
-        <View style={styles.targetItem}>
-          <Text style={[styles.targetLabel, { color: colors.textSecondary }]}>Gastos Actuales</Text>
-          <Text style={[
-            styles.targetValue,
-            { color: currentExpense > data.targetExpense ? colors.error : colors.textPrimary }
-          ]}>
-            {formatCurrency(currentExpense)}
-          </Text>
+
+        <View style={[styles.targetItem, { 
+          backgroundColor: colors.surface,
+          borderColor: colors.border 
+        }]}>
+          <View style={[styles.targetBackgroundPattern, { backgroundColor: colors.errorLight }]} />
+          <View style={[styles.targetIconContainer, { backgroundColor: colors.errorLight }]}>
+            <Ionicons name="trending-down" size={20} color={colors.error} />
+            <View style={[styles.targetIndicator, { backgroundColor: colors.error }]} />
+          </View>
+          <View style={styles.targetContent}>
+            <Text style={[styles.targetLabel, { color: colors.textSecondary }]}>Gastos Actuales</Text>
+            <Text style={[
+              styles.targetValue,
+              { color: currentExpense > data.targetExpense ? colors.error : colors.textPrimary }
+            ]}>
+              {formatCurrency(currentExpense)}
+            </Text>
+          </View>
+          <View style={[styles.targetDecoration, { backgroundColor: colors.errorLight }]} />
         </View>
       </View>
 
@@ -292,20 +314,69 @@ const styles = StyleSheet.create({
   },
   targetItem: {
     flex: 1,
+    padding: Platform.OS === 'ios' ? 20 : 24,
+    borderRadius: 20,
+    borderWidth: 1,
     alignItems: 'center',
-    padding: Platform.OS === 'ios' ? 12 : 16,
-    borderRadius: 12,
-    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    minHeight: 120,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  targetBackgroundPattern: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: 0.05, // Adjust as needed for subtle pattern
+    borderRadius: 20,
+  },
+  targetIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  targetIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+  },
+  targetContent: {
+    alignItems: 'center',
   },
   targetLabel: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
     marginBottom: 8,
     textAlign: 'center',
+    opacity: 0.8,
   },
   targetValue: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
+    textAlign: 'center',
+  },
+  targetDecoration: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    marginTop: 12,
+    opacity: 0.5,
   },
   progressContainer: {
     marginBottom: 24,
