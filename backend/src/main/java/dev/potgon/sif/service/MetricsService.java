@@ -5,10 +5,9 @@ import dev.potgon.sif.dto.response.*;
 
 public interface MetricsService {
     MonthlyMetricsDTO getMonthlyMetrics(int year, int month);
-    AnnualExpensesDTO getAnnualExpenses(int year);
     MonthlyTargetDTO getMonthlyTarget(int year, int month);
+    AnnualExpensesDTO getAnnualExpenses(int year);
     ExtraPayDTO getExtraPay(int year, int month);
     void updateIncome(IncomeUpdateDTO incomeUpdateDTO);
-    void handleMonthRollover(int year, int month);
     AccumulatedDTO getCurrentAccumulated();
 }

@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppTheme } from '../../theme/useAppTheme';
+import AccumulatedParamModal from '../ui/modal/AccumulatedParamModal';
+import { useState } from 'react';
+import { updateAccumulatedParam } from '../../api';
 
 interface MonthlyTargetProps {
   year: number;
@@ -12,12 +15,14 @@ interface MonthlyTargetProps {
     surplus?: number;
     accumulated?: number;
   } | null;
-  currentExpense?: number;
   loading?: boolean;
+  currentExpense?: number;
+  onUpdate?: () => void;
 }
 
-export default function MonthlyTarget({ year, month, data, currentExpense = 0, loading = false }: MonthlyTargetProps) {
+export default function MonthlyTarget({ year, month, data, currentExpense = 0, loading = false, onUpdate }: MonthlyTargetProps) {
   const { colors } = useAppTheme();
+  const [isAccumulatedModalOpen, setIsAccumulatedModalOpen] = useState(false);
   
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -29,6 +34,33 @@ export default function MonthlyTarget({ year, month, data, currentExpense = 0, l
       style: 'currency',
       currency: 'EUR'
     }).format(amount);
+  };
+
+  const handleAccumulatedUpdate = async (newValue: number) => {
+    try {
+      await updateAccumulatedParam(newValue);
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (error) {
+      console.error('Error updating accumulated param:', error);
+      throw error;
+    }
+  };
+
+  const handleAccumulatedRenew = async () => {
+    try {
+      const currentAccumulated = data?.accumulated ?? 0;
+      const monthTarget = data?.targetExpense ?? 0;
+      const newValue = currentAccumulated + monthTarget;
+      await updateAccumulatedParam(newValue);
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (error) {
+      console.error('Error renewing accumulated param:', error);
+      throw error;
+    }
   };
 
   const getProgressColor = (percentage: number) => {
@@ -177,27 +209,40 @@ export default function MonthlyTarget({ year, month, data, currentExpense = 0, l
         </View>
 
         {/* Accumulated */}
-        <View style={[styles.accumulatedContainer, { 
-          backgroundColor: (data.accumulated ?? 0) >= 0 ? colors.infoLight : colors.warningLight,
-          borderColor: (data.accumulated ?? 0) >= 0 ? colors.infoBorder : colors.warningBorder
-        }]}>
+        <TouchableOpacity 
+          style={[styles.accumulatedContainer, { 
+            backgroundColor: ((data.accumulated ?? 0) + surplus) >= 0 ? colors.infoLight : colors.warningLight,
+            borderColor: ((data.accumulated ?? 0) + surplus) >= 0 ? colors.infoBorder : colors.warningBorder
+          }]}
+          onPress={() => setIsAccumulatedModalOpen(true)}
+          activeOpacity={0.7}
+        >
           <Ionicons 
-            name={(data.accumulated ?? 0) >= 0 ? 'wallet' : 'alert-circle'} 
+            name={((data.accumulated ?? 0) + surplus) >= 0 ? 'wallet' : 'alert-circle'} 
             size={24} 
-            color={(data.accumulated ?? 0) >= 0 ? colors.info : colors.warning} 
+            color={((data.accumulated ?? 0) + surplus) >= 0 ? colors.info : colors.warning} 
           />
           <View style={styles.accumulatedContent}>
             <Text style={[styles.accumulatedLabel, { color: colors.textPrimary }]}>
-              {(data.accumulated ?? 0) >= 0 ? 'Ahorros' : 'Deuda'}
+              Real
             </Text>
             <Text style={[styles.accumulatedValue, { 
-              color: (data.accumulated ?? 0) >= 0 ? colors.info : colors.warning 
+              color: ((data.accumulated ?? 0) + surplus) >= 0 ? colors.info : colors.warning 
             }]}>
-              {formatCurrency(Math.abs(data.accumulated ?? 0))}
+              {formatCurrency(Math.abs((data.accumulated ?? 0) + surplus))}
             </Text>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
+
+      <AccumulatedParamModal
+        isOpen={isAccumulatedModalOpen}
+        onClose={() => setIsAccumulatedModalOpen(false)}
+        currentValue={data?.accumulated ?? 0}
+        monthExpenseTarget={data?.targetExpense ?? 0}
+        onUpdate={handleAccumulatedUpdate}
+        onRenew={handleAccumulatedRenew}
+      />
     </View>
   );
 }

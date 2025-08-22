@@ -111,45 +111,6 @@ public class MetricsServiceImpl implements MetricsService {
     }
 
     /**
-     * Handles automatic month rollover for accumulated param
-     * This method should be called when a user first logs in during a new month
-     */
-    public void handleMonthRollover(int year, int month) {
-        try {
-            // Get the current accumulated value
-            ParamDTO accumulatedParam = paramMapper.toDTO(
-                paramRepo.findByNameAndUser(Constants.PARAM_ACCUMULATED, authUtils.getUserEntity())
-            );
-            
-            if (accumulatedParam == null) {
-                // Create accumulated param if it doesn't exist
-                accumulatedParam = new ParamDTO();
-                accumulatedParam.setName(Constants.PARAM_ACCUMULATED);
-                accumulatedParam.setValue("0.00");
-                accumulatedParam.setUser(authUtils.getUserDTO());
-            }
-            
-            // Get the expense target for the current month
-            BigDecimal expenseTarget = getExpenseTargetPercentage();
-            
-            // Add the new month's target to accumulated
-            BigDecimal currentAccumulated = new BigDecimal(accumulatedParam.getValue());
-            BigDecimal newAccumulated = currentAccumulated.add(expenseTarget);
-            
-            // Update the accumulated param
-            accumulatedParam.setValue(newAccumulated.toString());
-            paramRepo.save(paramMapper.toEntity(accumulatedParam));
-            
-            log.info("Month rollover completed for {}-{}: accumulated updated from {} to {}", 
-                year, month, currentAccumulated, newAccumulated);
-                
-        } catch (Exception e) {
-            log.error("Error during month rollover for {}-{}: {}", year, month, e.getMessage(), e);
-            throw new RuntimeException("Failed to complete month rollover", e);
-        }
-    }
-
-    /**
      * Gets the current accumulated value
      */
     public AccumulatedDTO getCurrentAccumulated() {

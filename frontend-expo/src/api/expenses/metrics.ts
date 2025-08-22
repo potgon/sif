@@ -51,13 +51,6 @@ export const updateIncome = async (income: IncomeUpdate): Promise<IncomeUpdate> 
     return response.data
 }
 
-export const handleMonthRollover = async (year: number, month: number): Promise<void> => {
-    const response = await apiClient.post("/metrics/month-rollover", null, {
-        params: { year, month }
-    })
-    return response.data
-}
-
 export const getCurrentAccumulated = async (): Promise<{ accumulatedValue: number; message: string }> => {
     const response = await apiClient.get("/metrics/accumulated")
     return response.data

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppTheme } from '../../theme/useAppTheme';
 
@@ -67,97 +67,116 @@ export default function FinanceMetrics({
     <View style={[styles.container, { backgroundColor: colors.card }]}>
       <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Métricas Financieras - {monthNames[month - 1]} {year}</Text>
       
-      <View style={styles.metricsGrid}>
-        {/* Income Metric */}
-        <TouchableOpacity 
-          style={[styles.metricCard, { 
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={styles.metricsGrid}>
+          {/* Income Metric */}
+          <TouchableOpacity 
+            style={[styles.metricCard, { 
+              backgroundColor: colors.surface,
+              borderColor: colors.border 
+            }]} 
+            onPress={onIncomePress}
+            disabled={!onIncomePress}
+          >
+            <View style={[styles.metricIconContainer, { backgroundColor: colors.successLight }]}>
+              <Ionicons name="people" size={20} color={colors.success} />
+            </View>
+            
+            <View style={styles.metricContent}>
+              <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Ingresos</Text>
+              <Text style={[styles.metricValue, { color: colors.textPrimary }]}>
+                {data?.totalIncome ? formatCurrency(data.totalIncome) : '€0.00'}
+              </Text>
+              
+              {data?.prevMonthIncomeDiff !== undefined && (
+                <View style={styles.percentageContainer}>
+                  <Ionicons 
+                    name={getPercentageIcon(data.prevMonthIncomeDiff)} 
+                    size={12} 
+                    color={getPercentageColor(data.prevMonthIncomeDiff, true)} 
+                  />
+                  <Text style={[
+                    styles.percentageText, 
+                    { color: getPercentageColor(data.prevMonthIncomeDiff, true) }
+                  ]}>
+                    {data.prevMonthIncomeDiff >= 0 ? '+' : ''}{data.prevMonthIncomeDiff.toFixed(1)}%
+                  </Text>
+                </View>
+              )}
+            </View>
+          </TouchableOpacity>
+
+          {/* Expenses Metric */}
+          <View style={[styles.metricCard, { 
             backgroundColor: colors.surface,
             borderColor: colors.border 
-          }]} 
-          onPress={onIncomePress}
-          disabled={!onIncomePress}
-        >
-          <View style={[styles.metricIconContainer, { backgroundColor: colors.successLight }]}>
-            <Ionicons name="people" size={20} color={colors.success} />
-          </View>
-          
-          <View style={styles.metricContent}>
-            <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Ingresos</Text>
-            <Text style={[styles.metricValue, { color: colors.textPrimary }]}>
-              {data?.totalIncome ? formatCurrency(data.totalIncome) : '€0.00'}
-            </Text>
+          }]}>
+            <View style={[styles.metricIconContainer, { backgroundColor: colors.errorLight }]}>
+              <Ionicons name="trending-down" size={20} color={colors.error} />
+            </View>
             
-            {data?.prevMonthIncomeDiff !== undefined && (
-              <View style={styles.percentageContainer}>
-                <Ionicons 
-                  name={getPercentageIcon(data.prevMonthIncomeDiff)} 
-                  size={12} 
-                  color={getPercentageColor(data.prevMonthIncomeDiff, true)} 
-                />
-                <Text style={[
-                  styles.percentageText, 
-                  { color: getPercentageColor(data.prevMonthIncomeDiff, true) }
-                ]}>
-                  {data.prevMonthIncomeDiff >= 0 ? '+' : ''}{data.prevMonthIncomeDiff.toFixed(1)}%
-                </Text>
-              </View>
-            )}
+            <View style={styles.metricContent}>
+              <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Gastos</Text>
+              <Text style={[styles.metricValue, { color: colors.textPrimary }]}>
+                {data?.totalExpenses ? formatCurrency(data.totalExpenses) : '€0.00'}
+              </Text>
+              
+              {data?.prevMonthExpensesDiff !== undefined && (
+                <View style={styles.percentageContainer}>
+                  <Ionicons 
+                    name={getPercentageIcon(data.prevMonthExpensesDiff)} 
+                    size={12} 
+                    color={getPercentageColor(data.prevMonthExpensesDiff, false)} 
+                  />
+                  <Text style={[
+                    styles.percentageText, 
+                    { color: getPercentageColor(data.prevMonthExpensesDiff, false) }
+                  ]}>
+                    {data.prevMonthExpensesDiff >= 0 ? '+' : ''}{data.prevMonthExpensesDiff.toFixed(1)}%
+                  </Text>
+                </View>
+              )}
+            </View>
           </View>
-        </TouchableOpacity>
 
-        {/* Expenses Metric */}
-        <View style={[styles.metricCard, { 
-          backgroundColor: colors.surface,
-          borderColor: colors.border 
-        }]}>
-          <View style={[styles.metricIconContainer, { backgroundColor: colors.errorLight }]}>
-            <Ionicons name="trending-down" size={20} color={colors.error} />
-          </View>
-          
-          <View style={styles.metricContent}>
-            <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Gastos</Text>
-            <Text style={[styles.metricValue, { color: colors.textPrimary }]}>
-              {data?.totalExpenses ? formatCurrency(data.totalExpenses) : '€0.00'}
-            </Text>
+          {/* Balance Metric */}
+          <View style={[styles.metricCard, { 
+            backgroundColor: colors.surface,
+            borderColor: colors.border 
+          }]}>
+            <View style={[styles.metricIconContainer, { backgroundColor: colors.infoLight }]}>
+              <Ionicons name="wallet" size={20} color={colors.info} />
+            </View>
             
-            {data?.prevMonthExpensesDiff !== undefined && (
-              <View style={styles.percentageContainer}>
-                <Ionicons 
-                  name={getPercentageIcon(data.prevMonthExpensesDiff)} 
-                  size={12} 
-                  color={getPercentageColor(data.prevMonthExpensesDiff, false)} 
-                />
-                <Text style={[
-                  styles.percentageText, 
-                  { color: getPercentageColor(data.prevMonthExpensesDiff, false) }
-                ]}>
-                  {data.prevMonthExpensesDiff >= 0 ? '+' : ''}{data.prevMonthExpensesDiff.toFixed(1)}%
-                </Text>
-              </View>
-            )}
+            <View style={styles.metricContent}>
+              <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Balance</Text>
+              <Text style={[styles.metricValue, { color: colors.textPrimary }]}>
+                {data?.totalIncome && data?.totalExpenses 
+                  ? formatCurrency(data.totalIncome - data.totalExpenses - 1251.09) 
+                  : '€0.00'
+                }
+              </Text>
+            </View>
+          </View>
+
+          {/* Investments Metric */}
+          <View style={[styles.metricCard, { 
+            backgroundColor: colors.surface,
+            borderColor: colors.border 
+          }]}>
+            <View style={[styles.metricIconContainer, { backgroundColor: colors.warningLight }]}>
+              <Ionicons name="trending-up" size={20} color={colors.warning} />
+            </View>
+            
+            <View style={styles.metricContent}>
+              <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Inversiones</Text>
+              <Text style={[styles.metricValue, { color: colors.textPrimary }]}>
+                €1,251.09
+              </Text>
+            </View>
           </View>
         </View>
-
-        {/* Balance Metric */}
-        <View style={[styles.metricCard, { 
-          backgroundColor: colors.surface,
-          borderColor: colors.border 
-        }]}>
-          <View style={[styles.metricIconContainer, { backgroundColor: colors.infoLight }]}>
-            <Ionicons name="wallet" size={20} color={colors.info} />
-          </View>
-          
-          <View style={styles.metricContent}>
-            <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>Balance</Text>
-            <Text style={[styles.metricValue, { color: colors.textPrimary }]}>
-              {data?.totalIncome && data?.totalExpenses 
-                ? formatCurrency(data.totalIncome - data.totalExpenses) 
-                : '€0.00'
-              }
-            </Text>
-          </View>
-        </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -193,18 +212,18 @@ const styles = StyleSheet.create({
   },
   metricsGrid: {
     flexDirection: 'row',
-    gap: Platform.OS === 'ios' ? 8 : 12,
-    marginTop: Platform.OS === 'ios' ? 16 : 20,
+    gap: 12,
+    marginTop: 16,
   },
   metricCard: {
-    flex: 1,
-    padding: Platform.OS === 'ios' ? 12 : 16,
+    flexDirection: 'column',
+    padding: 16,
     borderRadius: 12,
     borderWidth: 1,
-    flexDirection: 'column',
     alignItems: 'center',
-    gap: Platform.OS === 'ios' ? 8 : 12,
+    gap: 8,
     overflow: 'hidden',
+    minWidth: 120,
     minHeight: 100,
   },
   metricIconContainer: {

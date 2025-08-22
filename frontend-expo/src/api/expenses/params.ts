@@ -1,12 +1,19 @@
-import apiClient from "../client"
-import {Param} from "./types"
+import apiClient from '../client';
 
-export const fetchParam = async (paramName: string): Promise<Param> => {
-    const response = await apiClient.get(`/params/income/${paramName}`)
-    return response.data
+export interface ParamUpdateRequest {
+  key: string;
+  value: string;
 }
 
-export const updateParam = async (payload: { key: string, value: string }): Promise<Param> => {
-    const response = await apiClient.post(`/params/target`, payload)
-    return response.data
-}
+export const updateParam = async (paramUpdate: ParamUpdateRequest) => {
+  const response = await apiClient.post('/params/target', paramUpdate);
+  return response.data;
+};
+
+export const updateAccumulatedParam = async (newValue: number) => {
+  const paramUpdate: ParamUpdateRequest = {
+    key: 'ACCUMULATED',
+    value: newValue.toString()
+  };
+  return await updateParam(paramUpdate);
+};

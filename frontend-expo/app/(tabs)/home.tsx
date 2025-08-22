@@ -12,8 +12,7 @@ import {
   fetchMonthlyExpenseTarget,
   fetchAnnualMetrics,
   fetchMonthlySubcategorySumExpenses,
-  deleteTransaction,
-  handleMonthRollover
+  deleteTransaction
 } from "@/src/api";
 import {
   AnnualExpensesChart,
@@ -65,9 +64,6 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   
-  // Month rollover tracking
-  const [lastProcessedMonth, setLastProcessedMonth] = useState<string | null>(null);
-  
   const [monthlyMetrics, setMonthlyMetrics] = useState<any>(null);
   const [monthlyTransactions, setMonthlyTransactions] = useState<any>(null);
   const [expenseTarget, setExpenseTarget] = useState<any>(null);
@@ -107,19 +103,6 @@ export default function Home() {
       }
       setIsAuthenticated(true);
       
-      // Handle month rollover on successful authentication
-      const currentMonthKey = `${currentYear}-${currentMonth}`;
-      if (lastProcessedMonth !== currentMonthKey) {
-        console.log('First login of month, handling rollover...');
-        try {
-          await handleMonthRollover(currentYear, currentMonth);
-          console.log('Month rollover completed successfully');
-          setLastProcessedMonth(currentMonthKey);
-        } catch (rolloverError: any) {
-          console.warn('Month rollover failed (non-critical):', rolloverError);
-          // Don't fail authentication for rollover issues
-        }
-      }
     } catch (error) {
       console.error('Error checking authentication:', error);
       setIsAuthenticated(false);
@@ -135,20 +118,6 @@ export default function Home() {
     
     try {
       console.log('Fetching data for:', selectedYear, selectedMonth);
-      
-      // Check if we need to handle month rollover
-      const currentMonthKey = `${currentYear}-${currentMonth}`;
-      if (lastProcessedMonth !== currentMonthKey) {
-        console.log('New month detected, handling rollover...');
-        try {
-          await handleMonthRollover(currentYear, currentMonth);
-          console.log('Month rollover completed successfully');
-          setLastProcessedMonth(currentMonthKey);
-        } catch (rolloverError: any) {
-          console.warn('Month rollover failed (non-critical):', rolloverError);
-          // Don't fail the entire data fetch for rollover issues
-        }
-      }
       
       const [metrics, transactions, target, annual, categories] = await Promise.all([
         fetchMonthlyMetrics(parseInt(selectedYear), parseInt(selectedMonth)),
@@ -202,20 +171,6 @@ export default function Home() {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    
-    // Check for month rollover on refresh
-    const currentMonthKey = `${currentYear}-${currentMonth}`;
-    if (lastProcessedMonth !== currentMonthKey) {
-      console.log('Month rollover detected on refresh...');
-      try {
-        await handleMonthRollover(currentYear, currentMonth);
-        console.log('Month rollover completed successfully on refresh');
-        setLastProcessedMonth(currentMonthKey);
-      } catch (rolloverError: any) {
-        console.warn('Month rollover failed on refresh (non-critical):', rolloverError);
-      }
-    }
-    
     await fetchData();
     setRefreshing(false);
   };
@@ -226,19 +181,7 @@ export default function Home() {
   };
 
   const handleIncomeUpdated = async () => {
-    console.log('Income updated, checking for month rollover...');
-    
-    // Check for month rollover after income update
-    const currentMonthKey = `${currentYear}-${currentMonth}`;
-    if (lastProcessedMonth !== currentMonthKey) {
-      try {
-        await handleMonthRollover(currentYear, currentMonth);
-        setLastProcessedMonth(currentMonthKey);
-      } catch (rolloverError: any) {
-        console.warn('Month rollover failed after income update:', rolloverError);
-      }
-    }
-    
+    console.log('Income updated, refreshing data...');
     await fetchData();
   };
 
@@ -262,18 +205,6 @@ export default function Home() {
       const response = await deleteTransaction(transaction.id);
       if (response.result) {
         console.log('Transaction deleted successfully');
-        
-        // Check for month rollover after transaction deletion
-        const currentMonthKey = `${currentYear}-${currentMonth}`;
-        if (lastProcessedMonth !== currentMonthKey) {
-          try {
-            await handleMonthRollover(currentYear, currentMonth);
-            setLastProcessedMonth(currentMonthKey);
-          } catch (rolloverError: any) {
-            console.warn('Month rollover failed after transaction deletion:', rolloverError);
-          }
-        }
-        
         fetchData(); // Refresh data after deletion
       } else {
         console.error('Failed to delete transaction:', response.message);
@@ -288,35 +219,11 @@ export default function Home() {
 
   const handleTransactionCreated = async (newTransaction: any) => {
     console.log('Transaction created:', newTransaction);
-    
-    // Check for month rollover after transaction creation
-    const currentMonthKey = `${currentYear}-${currentMonth}`;
-    if (lastProcessedMonth !== currentMonthKey) {
-      try {
-        await handleMonthRollover(currentYear, currentMonth);
-        setLastProcessedMonth(currentMonthKey);
-      } catch (rolloverError: any) {
-        console.warn('Month rollover failed after transaction creation:', rolloverError);
-      }
-    }
-    
     fetchData(); // Refresh data after creation
   };
 
   const handleTransactionUpdated = async (updatedTransaction: any) => {
     console.log('Transaction updated:', updatedTransaction);
-    
-    // Check for month rollover after transaction update
-    const currentMonthKey = `${currentYear}-${currentMonth}`;
-    if (lastProcessedMonth !== currentMonthKey) {
-      try {
-        await handleMonthRollover(currentYear, currentMonth);
-        setLastProcessedMonth(currentMonthKey);
-      } catch (rolloverError: any) {
-        console.warn('Month rollover failed after transaction update:', rolloverError);
-      }
-    }
-    
     await fetchData();
     setIsEditTransactionModalOpen(false);
     setSelectedTransaction(null);
@@ -351,33 +258,11 @@ export default function Home() {
   const handleMonthChange = async (month: string) => {
     console.log('Home: Month changed from', selectedMonth, 'to', month);
     setSelectedMonth(month);
-    
-    // Check for month rollover when changing months
-    const currentMonthKey = `${currentYear}-${currentMonth}`;
-    if (lastProcessedMonth !== currentMonthKey) {
-      try {
-        await handleMonthRollover(currentYear, currentMonth);
-        setLastProcessedMonth(currentMonthKey);
-      } catch (rolloverError: any) {
-        console.warn('Month rollover failed on month change:', rolloverError);
-      }
-    }
   };
 
   const handleYearChange = async (year: string) => {
     console.log('Home: Year changed from', selectedYear, 'to', year);
     setSelectedYear(year);
-    
-    // Check for month rollover when changing years
-    const currentMonthKey = `${currentYear}-${currentMonth}`;
-    if (lastProcessedMonth !== currentMonthKey) {
-      try {
-        await handleMonthRollover(currentYear, currentMonth);
-        setLastProcessedMonth(currentMonthKey);
-      } catch (rolloverError: any) {
-        console.warn('Month rollover failed on year change:', rolloverError);
-      }
-    }
   };
 
   // Show loading while checking authentication
@@ -448,7 +333,7 @@ export default function Home() {
           month={parseInt(selectedMonth)}
           data={expenseTarget}
           currentExpense={monthlyMetrics?.totalExpenses || 0}
-          loading={isLoading}
+          onUpdate={fetchData}
         />
 
         {/* Annual Expenses Chart */}

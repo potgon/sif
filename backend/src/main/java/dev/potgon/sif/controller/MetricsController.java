@@ -44,26 +44,16 @@ public class MetricsController {
         return ResponseEntity.ok(metricsService.getExtraPay(year, month));
     }
 
-    @PatchMapping("/income/update")
-    public ResponseEntity<Void> updateIncome(
-            @RequestBody IncomeUpdateDTO incomeUpdateDTO
-    ) {
+    @PostMapping("/income")
+    public ResponseEntity<Void> updateIncome(@RequestBody IncomeUpdateDTO incomeUpdateDTO) {
         metricsService.updateIncome(incomeUpdateDTO);
-        return ResponseEntity.accepted().build();
-    }
-
-    @PostMapping("/month-rollover")
-    public ResponseEntity<Void> handleMonthRollover(
-            @RequestParam int year,
-            @RequestParam int month
-    ) {
-        metricsService.handleMonthRollover(year, month);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/accumulated")
     public ResponseEntity<AccumulatedDTO> getCurrentAccumulated() {
-        return ResponseEntity.ok(metricsService.getCurrentAccumulated());
+        AccumulatedDTO accumulated = metricsService.getCurrentAccumulated();
+        return ResponseEntity.ok(accumulated);
     }
 }
 
