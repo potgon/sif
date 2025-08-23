@@ -1,42 +1,51 @@
 {
   "expo": {
-    "name": "frontend-expo",
-    "slug": "frontend-expo",
+    "name": "SIF - Sistema de Finanzas",
+    "slug": "sif-finances",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "frontendexpo",
+    "icon": "./assets/images/logo-v2.png",
+    "scheme": "sif-finances",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "description": "Sistema de Finanzas - Aplicación móvil para gestión financiera personal",
+    "primaryColor": "#2563eb",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sif.finances"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/logo-v2.png",
+        "backgroundColor": "#2563eb"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.sif.finances"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/logo-v2.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/logo-v2.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#2563eb"
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id-here"
+      }
     }
   }
 }
