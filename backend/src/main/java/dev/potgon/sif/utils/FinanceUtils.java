@@ -42,4 +42,11 @@ public class FinanceUtils {
                 .stream().map(transactionMapper::toDTO).toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<TransactionDTO> getAllTransactionsByPeriod(int year, int month) {
+        Period period = getPeriodIfExists(year, month);
+        
+        return transactionRepo.findAllByPeriodAndUserOrderByDateDesc(period, authUtils.getUserEntity())
+                .stream().map(transactionMapper::toDTO).toList();
+    }
 }

@@ -9,11 +9,15 @@ import dev.potgon.sif.dto.request.IncomeUpdateDTO;
 import dev.potgon.sif.dto.response.*;
 import dev.potgon.sif.entity.Param;
 import dev.potgon.sif.entity.Period;
+import dev.potgon.sif.entity.Category;
+import dev.potgon.sif.entity.User;
 import dev.potgon.sif.exception.BusinessException;
 import dev.potgon.sif.mapper.ParamMapper;
 import dev.potgon.sif.mapper.PeriodMapper;
 import dev.potgon.sif.repository.ParamRepository;
 import dev.potgon.sif.repository.PeriodRepository;
+import dev.potgon.sif.repository.TransactionRepository;
+import dev.potgon.sif.repository.CategoryRepository;
 import dev.potgon.sif.service.MetricsService;
 import dev.potgon.sif.utils.AuthUtils;
 import dev.potgon.sif.utils.Constants;
@@ -37,6 +41,8 @@ public class MetricsServiceImpl implements MetricsService {
 
     private final PeriodRepository periodRepo;
     private final ParamRepository paramRepo;
+    private final TransactionRepository transactionRepo;
+    private final CategoryRepository categoryRepo;
 
     private final PeriodMapper periodMapper;
     private final ParamMapper paramMapper;
@@ -44,13 +50,9 @@ public class MetricsServiceImpl implements MetricsService {
     @Override
     public MonthlyMetricsDTO getMonthlyMetrics(int year, int month) {
         BigDecimal incomeSum = getSummedIncomeAmount(year, month);
-        BigDecimal expenseSum = sumAllTransactions(
-                financeUtils.getTransactionsByPeriodAndCategory(year, month, CategoryTypeEnum.EXPENSE)
-        );
+        BigDecimal expenseSum = getExpenseSumForPeriod(year, month);
         BigDecimal previousMonthIncomeSum = getSummedIncomeAmount(year, getPreviousMonth(month));
-        BigDecimal previousMonthExpenseSum = sumAllTransactions(
-                financeUtils.getTransactionsByPeriodAndCategory(year, getPreviousMonth(month), CategoryTypeEnum.EXPENSE)
-        );
+        BigDecimal previousMonthExpenseSum = getExpenseSumForPeriod(year, getPreviousMonth(month));
 
         return MonthlyMetricsDTO.builder()
                 .totalIncome(incomeSum)
@@ -66,7 +68,7 @@ public class MetricsServiceImpl implements MetricsService {
     public AnnualExpensesDTO getAnnualExpenses(int year) {
         BigDecimal[] transactionSumPerMonth = new BigDecimal[12];
         for (int i = 0; i <= 11; i++) {
-            transactionSumPerMonth[i] = sumAllTransactions(financeUtils.getTransactionsByPeriodAndCategory(year, i + 1, CategoryTypeEnum.EXPENSE))
+            transactionSumPerMonth[i] = getExpenseSumForPeriod(year, i + 1)
                     .setScale(0, RoundingMode.HALF_UP);
         }
         return AnnualExpensesDTO.builder()
@@ -190,9 +192,7 @@ public class MetricsServiceImpl implements MetricsService {
             return BigDecimal.ZERO;
         }
 
-        BigDecimal actualExpense = sumAllTransactions(
-                financeUtils.getTransactionsByPeriodAndCategory(year, month, CategoryTypeEnum.EXPENSE)
-        );
+        BigDecimal actualExpense = getExpenseSumForPeriod(year, month);
 
         return actualExpense
                 .divide(expenseTargetAmount, 4, RoundingMode.HALF_UP)
@@ -200,29 +200,15 @@ public class MetricsServiceImpl implements MetricsService {
                 .setScale(2, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal sumAllTransactions(List<TransactionDTO> transactions) {
-        BigDecimal sum = transactions.stream()
-                .map(TransactionDTO::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
-        if (log.isDebugEnabled()) {
-            log.debug("Transaction amounts: {}", transactions.stream()
-                    .map(t -> t.getDescription() + ":" + t.getAmount())
-                    .toList());
-            log.debug("Total sum: {}", sum);
-        }
-        
-        return sum;
-    }
+
 
     private BigDecimal computeCurrentMonthSurplusAmount(int year, int month) {
         BigDecimal targetAmount = computeExpenseTargetAmount(year, month);
-        List<TransactionDTO> expenseTransactions = financeUtils.getTransactionsByPeriodAndCategory(year, month, CategoryTypeEnum.EXPENSE);
-        BigDecimal currentMonthExpenses = sumAllTransactions(expenseTransactions);
+        BigDecimal currentMonthExpenses = getExpenseSumForPeriod(year, month);
         BigDecimal surplus = targetAmount.subtract(currentMonthExpenses);
         
-        log.debug("Surplus calculation for {}/{}: targetAmount={}, expenseCount={}, currentMonthExpenses={}, surplus={}", 
-                  year, month, targetAmount, expenseTransactions.size(), currentMonthExpenses, surplus);
+        log.debug("Surplus calculation for {}/{}: targetAmount={}, currentMonthExpenses={}, surplus={}", 
+                  year, month, targetAmount, currentMonthExpenses, surplus);
         
         return surplus;
     }
@@ -230,6 +216,15 @@ public class MetricsServiceImpl implements MetricsService {
     private int getPreviousMonth(int month) {
         if (month == 12) return 1;
         return month - 1;
+    }
+    
+    private BigDecimal getExpenseSumForPeriod(int year, int month) {
+        Period period = periodRepo.findByYearAndMonthAndUser(year, month, authUtils.getUserEntity());
+        Category expenseCategory = categoryRepo.findByName(CategoryTypeEnum.EXPENSE);
+        User user = authUtils.getUserEntity();
+        
+        BigDecimal sum = transactionRepo.sumAmountByPeriodAndCategoryAndUser(period, expenseCategory, user);
+        return sum != null ? sum : BigDecimal.ZERO;
     }
 }
 

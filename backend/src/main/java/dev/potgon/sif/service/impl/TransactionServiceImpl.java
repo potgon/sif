@@ -164,7 +164,7 @@ public class TransactionServiceImpl implements TransactionsService {
         Period period = financeUtils.getPeriodIfExists(year, month);
         Optional<Subcategory> subcategoryEntity = subcategoryRepo.findByNameAndUser(subcategory, authUtils.getUserEntity());
         User user = authUtils.getUserEntity();
-        return transactionRepo.findAllByPeriodAndSubcategoryAndUser(period, subcategoryEntity.orElse(null), user)
+        return transactionRepo.findAllByPeriodAndSubcategoryAndUserOrderByDateDesc(period, subcategoryEntity.orElse(null), user)
                 .stream().map(transactionMapper::toDTO).toList();
     }
 
