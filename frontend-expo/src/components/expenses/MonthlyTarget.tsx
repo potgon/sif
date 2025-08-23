@@ -120,14 +120,12 @@ export default function MonthlyTarget({ year, month, data, currentExpense = 0, l
 
   // Calculate percentage if not provided or recalculate for accuracy
   const percentage = data.currentExpensePercentage || (currentExpense > 0 && data.targetExpense > 0 ? (currentExpense / data.targetExpense) * 100 : 0);
-  const surplus = data.surplus || 0;
-
-  console.log('MonthlyTarget - Calculated values:', { 
-    targetExpense: data.targetExpense, 
-    currentExpense, 
-    percentage, 
-    surplus 
-  });
+    const surplus = data.surplus || 0;
+  
+  // Real metric = accumulated + surplus
+  // accumulated = historical debt/savings (negative = debt, positive = savings)
+  // surplus = current month remaining money to spend
+  // Real represents your actual available money overall
 
   return (
     <View style={[styles.container, { backgroundColor: colors.card }]}>
@@ -251,7 +249,7 @@ export default function MonthlyTarget({ year, month, data, currentExpense = 0, l
             <Text style={[styles.accumulatedValue, { 
               color: ((data.accumulated ?? 0) + surplus) >= 0 ? colors.info : colors.warning 
             }]}>
-              {formatCurrency(Math.abs((data.accumulated ?? 0) + surplus))}
+              {formatCurrency((data.accumulated ?? 0) + surplus)}
             </Text>
           </View>
         </TouchableOpacity>

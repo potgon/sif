@@ -201,17 +201,30 @@ public class MetricsServiceImpl implements MetricsService {
     }
 
     private BigDecimal sumAllTransactions(List<TransactionDTO> transactions) {
-        return transactions.stream()
+        BigDecimal sum = transactions.stream()
                 .map(TransactionDTO::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Transaction amounts: {}", transactions.stream()
+                    .map(t -> t.getDescription() + ":" + t.getAmount())
+                    .toList());
+            log.debug("Total sum: {}", sum);
+        }
+        
+        return sum;
     }
 
     private BigDecimal computeCurrentMonthSurplusAmount(int year, int month) {
         BigDecimal targetAmount = computeExpenseTargetAmount(year, month);
-        BigDecimal currentMonthExpenses = sumAllTransactions(
-                financeUtils.getTransactionsByPeriodAndCategory(year, month, CategoryTypeEnum.EXPENSE)
-        );
-        return targetAmount.subtract(currentMonthExpenses);
+        List<TransactionDTO> expenseTransactions = financeUtils.getTransactionsByPeriodAndCategory(year, month, CategoryTypeEnum.EXPENSE);
+        BigDecimal currentMonthExpenses = sumAllTransactions(expenseTransactions);
+        BigDecimal surplus = targetAmount.subtract(currentMonthExpenses);
+        
+        log.debug("Surplus calculation for {}/{}: targetAmount={}, expenseCount={}, currentMonthExpenses={}, surplus={}", 
+                  year, month, targetAmount, expenseTransactions.size(), currentMonthExpenses, surplus);
+        
+        return surplus;
     }
 
     private int getPreviousMonth(int month) {

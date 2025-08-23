@@ -104,7 +104,7 @@ export default function TransactionModal({
                 {transaction.amount >= 0 ? '+' : '-'}{formatCurrency(transaction.amount)}
               </Text>
               <Text style={[styles.transactionType, { color: colors.textSecondary }]}>
-                {transaction.amount >= 0 ? 'Ingreso' : 'Gasto'}
+                {transaction.amount <= 0 ? 'Ingreso' : 'Gasto'}
               </Text>
             </View>
 

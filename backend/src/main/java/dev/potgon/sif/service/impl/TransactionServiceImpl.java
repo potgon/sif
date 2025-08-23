@@ -1,7 +1,6 @@
 package dev.potgon.sif.service.impl;
 
 import dev.potgon.sif.dto.enums.CategoryTypeEnum;
-import dev.potgon.sif.dto.enums.Operation;
 import dev.potgon.sif.dto.request.TransactionCreateDTO;
 import dev.potgon.sif.dto.request.TransactionUpdateDTO;
 import dev.potgon.sif.dto.response.*;
@@ -12,16 +11,16 @@ import dev.potgon.sif.entity.Transaction;
 import dev.potgon.sif.entity.User;
 import dev.potgon.sif.mapper.*;
 import dev.potgon.sif.repository.CategoryRepository;
-import dev.potgon.sif.repository.ParamRepository;
 import dev.potgon.sif.repository.SubcategoryRepository;
 import dev.potgon.sif.repository.TransactionRepository;
 import dev.potgon.sif.service.TransactionsService;
 import dev.potgon.sif.utils.AuthUtils;
-import dev.potgon.sif.utils.Constants;
 import dev.potgon.sif.utils.FinanceUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -37,14 +36,12 @@ public class TransactionServiceImpl implements TransactionsService {
 
     private final TransactionRepository transactionRepo;
     private final CategoryRepository categoryRepo;
-    private final ParamRepository paramRepo;
     private final SubcategoryRepository subcategoryRepo;
 
     private final TransactionMapper transactionMapper;
     private final CategoryMapper categoryMapper;
     private final PeriodMapper periodMapper;
     private final SubcategoryMapper subcategoryMapper;
-    private final ParamMapper paramMapper;
     private final UserMapper userMapper;
 
     @Override
@@ -70,6 +67,7 @@ public class TransactionServiceImpl implements TransactionsService {
     }
 
     @Override
+    @Transactional
     public TransactionDTO createTransaction(TransactionCreateDTO transactionCreateDTO) {
         PeriodDTO period = periodMapper.toDTO(financeUtils.getPeriodIfExists(transactionCreateDTO.getYear(), transactionCreateDTO.getMonth()));
         CategoryDTO category = categoryMapper.toDTO(categoryRepo.findByName(CategoryTypeEnum.EXPENSE));
@@ -81,15 +79,22 @@ public class TransactionServiceImpl implements TransactionsService {
                 .category(category)
                 .subcategory(transactionCreateDTO.getSubcategory())
                 .isRecurring(transactionCreateDTO.getIsRecurring())
+                .notes(transactionCreateDTO.getNotes())
                 .createdAt(ZonedDateTime.now())
                 .user(userMapper.toDTO(authUtils.getUserEntity()))
                 .build();
         Transaction savedEntity = transactionRepo.save(transactionMapper.toEntity(transactionDTO));
-        updateAccumulated(transactionDTO.getAmount(), Operation.SUBTRACT);
+        
+        // Force flush to ensure transaction is committed and visible
+        transactionRepo.flush();
+        
+        // Note: Accumulated parameter should not be modified on individual transactions
+        // Surplus calculation automatically accounts for current month expenses
         return transactionMapper.toDTO(savedEntity);
     }
 
     @Override
+    @Transactional
     public DeleteDTO deleteTransaction(Long id) {
         Optional<Transaction> transaction = transactionRepo.findById(id);
         DeleteDTO response = DeleteDTO.builder().build();
@@ -98,7 +103,8 @@ public class TransactionServiceImpl implements TransactionsService {
             response.setId(id);
             response.setResult(true);
             response.setMessage("Transacción borrada");
-            updateAccumulated(transaction.get().getAmount(), Operation.ADD);
+            // Note: Accumulated parameter should not be modified on individual transactions
+            // Surplus calculation automatically accounts for current month expenses
             return response;
         }
         response.setId(id);
@@ -108,6 +114,7 @@ public class TransactionServiceImpl implements TransactionsService {
     }
 
     @Override
+    @Transactional
     public TransactionDTO updateTransaction(TransactionUpdateDTO updateDTO) {
         Transaction tx = transactionMapper.toEntity(getTransactionByIdIfExists(updateDTO.getId()));
         if (updateDTO.getDate() != null) {
@@ -129,25 +136,20 @@ public class TransactionServiceImpl implements TransactionsService {
             tx.setNotes(updateDTO.getNotes());
         }
         transactionRepo.save(tx);
-        if (!tx.getAmount().equals(updateDTO.getAmount())) {
-            BigDecimal difference = updateDTO.getAmount().subtract(tx.getAmount());
-            updateAccumulated(difference, Operation.ADD);
-        }
+        
+        // Force flush to ensure transaction is committed and visible
+        transactionRepo.flush();
+        
+        // Note: Accumulated parameter should not be modified on individual transactions
+        // Surplus calculation automatically accounts for current month expenses
         return transactionMapper.toDTO(tx);
     }
 
     /* HELPER METHODS */
 
-    private void updateAccumulated(BigDecimal amount, Operation op) {
-        ParamDTO surplusParam = paramMapper.toDTO(paramRepo.findByNameAndUser(Constants.PARAM_ACCUMULATED, authUtils.getUserEntity()));
-        BigDecimal surplusVal = new BigDecimal(surplusParam.getValue());
-        BigDecimal newValue = (op == Operation.ADD)
-                ? surplusVal.add(amount)
-                : surplusVal.subtract(amount);
-
-        surplusParam.setValue(newValue.toString());
-        paramRepo.save(paramMapper.toEntity(surplusParam));
-    }
+    // Note: updateAccumulated method removed because accumulated parameter should not be
+    // modified on individual transactions. Surplus calculation automatically accounts
+    // for current month expenses through computeCurrentMonthSurplusAmount method.
 
     public TransactionDTO getTransactionByIdIfExists(Long id) {
         Optional<Transaction> tx = transactionRepo.findById(id);
