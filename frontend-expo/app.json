@@ -20,7 +20,12 @@
         "backgroundColor": "#2563eb"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.sif.finances"
+      "package": "com.sif.finances",
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE"
+      ],
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "bundler": "metro",
@@ -43,9 +48,11 @@
       "typedRoutes": true
     },
     "extra": {
+      "router": {},
       "eas": {
-        "projectId": "your-project-id-here"
+        "projectId": "2bf6dbe9-44d9-4a88-a5c9-392d899dec87"
       }
-    }
+    },
+    "owner": "potgon"
   }
 }

@@ -202,11 +202,13 @@ const styles = StyleSheet.create({
     marginBottom: 36,
     textAlign: 'center',
     paddingTop: 24,
+    paddingHorizontal: Platform.OS === 'ios' ? 28 : 32, // Add horizontal padding
   },
   form: {
     gap: 32,
     paddingHorizontal: Platform.OS === 'ios' ? 28 : 32,
     flex: 1,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 24, // Add bottom padding to prevent overflow
   },
   inputGroup: {
     gap: 16,

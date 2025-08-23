@@ -18,7 +18,7 @@ interface StatisticsChartProps {
 }
 
 const screenWidth = Dimensions.get('window').width;
-const chartWidth = Math.min(screenWidth - (Platform.OS === 'ios' ? 80 : 100), 300); // Platform-specific padding
+const chartWidth = Math.min(screenWidth - (Platform.OS === 'ios' ? 80 : 120), 300); // Android needs more padding
 
 export default function StatisticsChart({ year, month, data, loading = false, onSubcategoryPress }: StatisticsChartProps) {
   const { colors: themeColors } = useAppTheme();
@@ -89,6 +89,14 @@ export default function StatisticsChart({ year, month, data, loading = false, on
     style: {
       borderRadius: 16,
     },
+    // Android-specific optimizations
+    ...(Platform.OS === 'android' && {
+      useShadowColorFromDataset: false,
+      propsForLabels: {
+        fontSize: 10,
+        fontWeight: '500',
+      },
+    }),
   };
 
   return (

@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppTheme } from '../../theme/useAppTheme';
@@ -80,7 +79,7 @@ export default function RecentTransactions({
     <View style={[styles.container, { backgroundColor: colors.card }]}>
       <View style={styles.header}>
         <Text style={[styles.title, { color: colors.textPrimary }]} numberOfLines={2}>
-          Transacciones Recientes - {monthNames[month - 1]} {year}
+          Transacciones Recientes
         </Text>
         {onAddPress && (
           <TouchableOpacity 

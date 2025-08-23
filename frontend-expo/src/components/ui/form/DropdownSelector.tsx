@@ -7,7 +7,8 @@ import {
   Modal, 
   FlatList,
   Animated,
-  Dimensions
+  Dimensions,
+  Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -100,7 +101,7 @@ export default function DropdownSelector({
         ]}
         onPress={handleToggle}
         disabled={disabled}
-        activeOpacity={0.7}
+        activeOpacity={Platform.OS === 'android' ? 0.6 : 0.7}
       >
         <Text style={[
           styles.selectorText,
@@ -132,13 +133,28 @@ export default function DropdownSelector({
         transparent
         animationType="fade"
         onRequestClose={handleToggle}
+        statusBarTranslucent={Platform.OS === 'android'}
       >
         <TouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
           onPress={handleToggle}
         >
-          <View style={[styles.dropdownContainer, { backgroundColor: colors.modalBackground }]}>
+          <View style={[
+            styles.dropdownContainer, 
+            { 
+              backgroundColor: colors.modalBackground,
+              // Android-specific positioning
+              ...(Platform.OS === 'android' && {
+                marginTop: 100,
+                elevation: 8,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+              })
+            }
+          ]}>
             <FlatList
               data={options}
               keyExtractor={(item) => item.value}
@@ -152,7 +168,7 @@ export default function DropdownSelector({
                     }
                   ]}
                   onPress={() => handleSelect(item)}
-                  activeOpacity={0.7}
+                  activeOpacity={Platform.OS === 'android' ? 0.6 : 0.7}
                 >
                   <Text style={[
                     styles.optionText,
@@ -227,14 +243,20 @@ const styles = StyleSheet.create({
     maxWidth: 300,
     maxHeight: 300,
     borderRadius: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 10,
+    // iOS shadows
+    ...(Platform.OS === 'ios' && {
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 10,
+      },
+      shadowOpacity: 0.3,
+      shadowRadius: 20,
+    }),
+    // Android elevation
+    ...(Platform.OS === 'android' && {
+      elevation: 10,
+    }),
     overflow: 'hidden',
   },
   optionsList: {

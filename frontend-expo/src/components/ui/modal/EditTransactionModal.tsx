@@ -148,6 +148,8 @@ export default function EditTransactionModal({
       transparent
       animationType="fade"
       onRequestClose={handleClose}
+      statusBarTranslucent={Platform.OS === 'android'}
+      hardwareAccelerated={Platform.OS === 'android'} // Better performance on Android
     >
       <View style={[styles.overlay, { backgroundColor: colors.modalOverlay }]}>
         <View style={[styles.modal, { 
@@ -222,7 +224,7 @@ export default function EditTransactionModal({
                   }]}
                   onPress={() => setShowDatePicker(true)}
                   disabled={isSubmitting}
-                  activeOpacity={0.7}
+                  activeOpacity={Platform.OS === 'android' ? 0.6 : 0.7}
                 >
                   <Text style={[styles.dateText, { color: colors.inputText }]}>
                     {formatDate(date)}
@@ -410,8 +412,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: '100%',
     maxWidth: Platform.OS === 'ios' ? 380 : 420,
-    maxHeight: Platform.OS === 'ios' ? '85%' : '80%',
-    minHeight: Platform.OS === 'ios' ? 600 : 650,
+    maxHeight: Platform.OS === 'ios' ? '90%' : '85%', // Increase height for Android
+    minHeight: Platform.OS === 'ios' ? 600 : 700, // Increase min height for Android
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -492,7 +494,7 @@ const styles = StyleSheet.create({
   },
   subcategoryContainer: {
     position: 'relative',
-    zIndex: 1000,
+    zIndex: Platform.OS === 'android' ? 9999 : 1000, // Higher z-index for Android
   },
   subcategoryPicker: {
     backgroundColor: '#f9fafb',
@@ -519,15 +521,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#d1d5db',
     maxHeight: 250,
-    zIndex: 1001,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
+    zIndex: Platform.OS === 'android' ? 9999 : 1001, // Higher z-index for Android
+    // iOS shadows
+    ...(Platform.OS === 'ios' && {
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 4,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+    }),
+    // Android elevation
+    ...(Platform.OS === 'android' && {
+      elevation: 8,
+    }),
   },
   subcategoryScrollView: {
     maxHeight: 250,

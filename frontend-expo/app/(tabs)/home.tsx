@@ -459,9 +459,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: Platform.OS === 'ios' ? 16 : 20,
     alignItems: 'center',
+    justifyContent: 'center', // Center the selectors
+    flex: 1, // Take full width
   },
   selector: {
-    minWidth: Platform.OS === 'ios' ? 140 : 150, // Android needs slightly more width
+    flex: 1, // Each selector takes equal space
+    maxWidth: Platform.OS === 'ios' ? 160 : 180, // Android needs more width
+    alignItems: 'center', // Center content within selector
   },
   content: {
     gap: Platform.OS === 'ios' ? 16 : 20,

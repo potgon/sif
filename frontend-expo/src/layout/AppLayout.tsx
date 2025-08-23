@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, SafeAreaView, Platform } from "react-native";
+import { View, StyleSheet, SafeAreaView, Platform, StatusBar as RNStatusBar } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SidebarProvider, useSidebar } from "../context/SidebarContext";
 import { useAppTheme } from "../theme/useAppTheme";
@@ -17,6 +17,10 @@ const LayoutContent: React.FC<LayoutContentProps> = ({ children }) => {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style={isDark ? "light" : "dark"} />
+      {/* Android status bar height adjustment */}
+      {Platform.OS === 'android' && (
+        <View style={[styles.androidStatusBar, { backgroundColor: colors.headerBackground }]} />
+      )}
       <View style={styles.layout}>
         {isMobileOpen && <AppSidebar />}
         <View style={styles.mainContent}>
@@ -45,6 +49,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  androidStatusBar: {
+    height: RNStatusBar.currentHeight || 0,
+    width: '100%',
   },
   layout: {
     flex: 1,
