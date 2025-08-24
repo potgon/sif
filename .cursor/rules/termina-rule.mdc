@@ -1,5 +1,0 @@
----
-description: always use a CMD instead of PowerShell. My PowerShell won't allow you to execute commands like npm install, whereas the regular CMD will.
-globs:
-alwaysApply: true
----
