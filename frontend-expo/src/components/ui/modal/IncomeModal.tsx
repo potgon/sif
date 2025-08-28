@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, Alert, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { updateIncome } from '../../../api';
+import { updateIncome, fetchExtraPay } from '../../../api';
 import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface IncomeModalProps {
@@ -16,6 +16,8 @@ export default function IncomeModal({ isOpen, onClose, year, month, refreshData 
   const { colors } = useAppTheme();
   const [salary, setSalary] = useState('');
   const [extraPay, setExtraPay] = useState('');
+  const [originalSalary, setOriginalSalary] = useState('');
+  const [originalExtraPay, setOriginalExtraPay] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const monthNames = [
@@ -23,9 +25,45 @@ export default function IncomeModal({ isOpen, onClose, year, month, refreshData 
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
   ];
 
+  // Fetch current values when modal opens
+  const fetchCurrentValues = useCallback(async () => {
+    try {
+      const extraPayData = await fetchExtraPay(year, month);
+      const currentSalary = extraPayData.period?.salary || 0;
+      const currentExtraPay = extraPayData.period?.extraPay || 0;
+      
+      setSalary(currentSalary.toString());
+      setExtraPay(currentExtraPay.toString());
+      setOriginalSalary(currentSalary.toString());
+      setOriginalExtraPay(currentExtraPay.toString());
+    } catch (error) {
+      console.error('Error fetching current values:', error);
+      // Set defaults if fetch fails
+      setSalary('');
+      setExtraPay('');
+      setOriginalSalary('');
+      setOriginalExtraPay('');
+    }
+  }, [year, month]);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchCurrentValues();
+    }
+  }, [isOpen, fetchCurrentValues]);
+
   const handleSubmit = async () => {
     if (!salary && !extraPay) {
       Alert.alert('Error', 'Por favor ingresa al menos un valor');
+      return;
+    }
+
+    // Check if values have changed
+    const salaryChanged = salary !== originalSalary;
+    const extraPayChanged = extraPay !== originalExtraPay;
+    
+    if (!salaryChanged && !extraPayChanged) {
+      Alert.alert('Información', 'No hay cambios para guardar');
       return;
     }
 
@@ -41,8 +79,9 @@ export default function IncomeModal({ isOpen, onClose, year, month, refreshData 
       Alert.alert('Éxito', 'Ingresos actualizados correctamente');
       refreshData();
       onClose();
-      setSalary('');
-      setExtraPay('');
+      // Update original values after successful update
+      setOriginalSalary(salary);
+      setOriginalExtraPay(extraPay);
     } catch (error: any) {
       Alert.alert('Error', error?.response?.data?.message || 'Error al actualizar ingresos');
     } finally {
@@ -52,10 +91,15 @@ export default function IncomeModal({ isOpen, onClose, year, month, refreshData 
 
   const handleClose = () => {
     if (isSubmitting) return;
-    setSalary('');
-    setExtraPay('');
+    // Reset to original values when closing
+    setSalary(originalSalary);
+    setExtraPay(originalExtraPay);
     onClose();
   };
+
+  // Check if submit button should be disabled
+  const isSubmitDisabled = isSubmitting || (!salary && !extraPay) || 
+    (salary === originalSalary && extraPay === originalExtraPay);
 
   if (!isOpen) return null;
 
@@ -141,10 +185,10 @@ export default function IncomeModal({ isOpen, onClose, year, month, refreshData 
             
             <TouchableOpacity
               style={[styles.button, styles.submitButton, { 
-                backgroundColor: colors.buttonPrimary 
+                backgroundColor: isSubmitDisabled ? colors.textSecondary : colors.buttonPrimary 
               }]}
               onPress={handleSubmit}
-              disabled={isSubmitting}
+              disabled={isSubmitDisabled}
               activeOpacity={0.7}
             >
               <Text style={[styles.submitButtonText, { color: colors.buttonPrimaryText }]}>
@@ -199,16 +243,17 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 20,
-    marginBottom: 36,
+    marginBottom: 32,
     textAlign: 'center',
     paddingTop: 24,
-    paddingHorizontal: Platform.OS === 'ios' ? 28 : 32, // Add horizontal padding
+    paddingHorizontal: Platform.OS === 'ios' ? 28 : 32,
   },
   form: {
-    gap: 32,
+    gap: 28,
     paddingHorizontal: Platform.OS === 'ios' ? 28 : 32,
     flex: 1,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 24, // Add bottom padding to prevent overflow
+    justifyContent: 'center',
+    paddingBottom: Platform.OS === 'ios' ? 24 : 28,
   },
   inputGroup: {
     gap: 16,

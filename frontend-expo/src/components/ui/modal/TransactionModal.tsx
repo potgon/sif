@@ -84,7 +84,11 @@ export default function TransactionModal({
             </TouchableOpacity>
           </View>
 
-          <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <ScrollView 
+            style={styles.content} 
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
             {/* Transaction Icon and Amount */}
             <View style={styles.amountSection}>
               <View style={[
@@ -138,15 +142,15 @@ export default function TransactionModal({
                 </View>
               </View>
 
-              {transaction.notes && (
-                <View style={styles.detailRow}>
-                  <Ionicons name="chatbubble" size={20} color={colors.textSecondary} />
-                  <View style={styles.detailContent}>
-                    <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Notas</Text>
-                    <Text style={[styles.detailValue, { color: colors.textPrimary }]}>{transaction.notes}</Text>
-                  </View>
+              <View style={styles.detailRow}>
+                <Ionicons name="chatbubble" size={20} color={colors.textSecondary} />
+                <View style={styles.detailContent}>
+                  <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Notas</Text>
+                  <Text style={[styles.detailValue, { color: colors.textPrimary }]}>
+                    {transaction.notes || 'Sin notas'}
+                  </Text>
                 </View>
-              )}
+              </View>
 
               <View style={styles.detailRow}>
                 <Ionicons name="repeat" size={20} color={colors.textSecondary} />
@@ -201,8 +205,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: '100%',
     maxWidth: Platform.OS === 'ios' ? 380 : 420,
-    maxHeight: Platform.OS === 'ios' ? '85%' : '80%',
-    minHeight: Platform.OS === 'ios' ? 500 : 550,
+    maxHeight: Platform.OS === 'ios' ? '90%' : '85%', // Increased height
+    minHeight: Platform.OS === 'ios' ? 600 : 650, // Increased min height
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -235,46 +239,49 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 20 : 24,
     flex: 1,
   },
+  scrollContent: {
+    flexGrow: 1, // Allow content to grow and take available space
+  },
   amountSection: {
     alignItems: 'center',
-    marginBottom: 36,
-    paddingVertical: 28,
+    marginBottom: 32, // Reduced margin
+    paddingVertical: 24, // Reduced padding
   },
   transactionIcon: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
+    width: 80, // Reduced size
+    height: 80, // Reduced size
+    borderRadius: 40, // Reduced radius
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 16, // Reduced margin
   },
   amount: {
-    fontSize: 36,
+    fontSize: 32, // Reduced font size
     fontWeight: '700',
-    marginBottom: 12,
+    marginBottom: 10, // Reduced margin
   },
   transactionType: {
-    fontSize: 18,
+    fontSize: 16, // Reduced font size
     fontWeight: '500',
   },
   detailsSection: {
-    gap: 24,
+    gap: 20, // Reduced gap
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 20,
+    gap: 16, // Reduced gap
   },
   detailContent: {
     flex: 1,
   },
   detailLabel: {
-    fontSize: 16,
+    fontSize: 14, // Reduced font size
     fontWeight: '500',
-    marginBottom: 6,
+    marginBottom: 4, // Reduced margin
   },
   detailValue: {
-    fontSize: 18,
+    fontSize: 16, // Reduced font size
     fontWeight: '400',
   },
   actions: {

@@ -171,6 +171,7 @@ export default function EditTransactionModal({
             style={styles.content}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
+            contentContainerStyle={styles.scrollContent}
           >
             <View style={styles.form}>
               {/* Description */}
@@ -282,10 +283,11 @@ export default function EditTransactionModal({
                     }]}>
                       <ScrollView 
                         style={styles.subcategoryScrollView}
-                        showsVerticalScrollIndicator={false}
+                        showsVerticalScrollIndicator={true}
                         nestedScrollEnabled={true}
                         keyboardShouldPersistTaps="handled"
                         contentContainerStyle={styles.subcategoryScrollContent}
+                        scrollEnabled={true}
                       >
                         {subcategories.map((subcategory) => (
                           <TouchableOpacity
@@ -412,8 +414,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: '100%',
     maxWidth: Platform.OS === 'ios' ? 380 : 420,
-    maxHeight: Platform.OS === 'ios' ? '90%' : '85%', // Increase height for Android
-    minHeight: Platform.OS === 'ios' ? 600 : 700, // Increase min height for Android
+    maxHeight: Platform.OS === 'ios' ? '90%' : '85%',
+    minHeight: Platform.OS === 'ios' ? 650 : 750, // Increased min height
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -446,9 +448,13 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 20 : 24,
     flex: 1,
   },
+  scrollContent: {
+    paddingBottom: 20, // Add bottom padding to ensure scrolling works
+  },
   form: {
     gap: Platform.OS === 'ios' ? 24 : 28,
     flex: 1,
+    paddingBottom: 20, // Add bottom padding to ensure scrolling works
   },
   inputGroup: {
     gap: 12,
@@ -494,7 +500,7 @@ const styles = StyleSheet.create({
   },
   subcategoryContainer: {
     position: 'relative',
-    zIndex: Platform.OS === 'android' ? 9999 : 1000, // Higher z-index for Android
+    zIndex: Platform.OS === 'android' ? 9999 : 1000,
   },
   subcategoryPicker: {
     backgroundColor: '#f9fafb',
@@ -520,8 +526,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#d1d5db',
-    maxHeight: 250,
-    zIndex: Platform.OS === 'android' ? 9999 : 1001, // Higher z-index for Android
+    maxHeight: 200, // Reduced max height
+    zIndex: Platform.OS === 'android' ? 9999 : 1001,
     // iOS shadows
     ...(Platform.OS === 'ios' && {
       shadowColor: '#000',
@@ -538,13 +544,13 @@ const styles = StyleSheet.create({
     }),
   },
   subcategoryScrollView: {
-    maxHeight: 250,
+    maxHeight: 200, // Match the container height
   },
   subcategoryScrollContent: {
-    paddingBottom: 20,
+    paddingBottom: 16,
   },
   subcategoryItem: {
-    padding: Platform.OS === 'ios' ? 18 : 20,
+    padding: Platform.OS === 'ios' ? 16 : 18, // Reduced padding
     borderBottomWidth: 1,
     borderBottomColor: '#f3f4f6',
   },
@@ -558,6 +564,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 16,
     paddingVertical: 12,
+    marginBottom: 16, // Add bottom margin to ensure it's not cut off
   },
   checkboxLabel: {
     color: '#6b7280',
