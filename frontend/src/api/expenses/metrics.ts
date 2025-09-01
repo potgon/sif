@@ -47,6 +47,6 @@ export const fetchExtraPay = async (
 }
 
 export const updateIncome = async (income: IncomeUpdate): Promise<IncomeUpdate> => {
-    const response = await apiClient.patch("/metrics/income/update", income)
+    const response = await apiClient.post("/metrics/income", income)
     return response.data
 }
