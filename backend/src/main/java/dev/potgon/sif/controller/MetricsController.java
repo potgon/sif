@@ -44,7 +44,7 @@ public class MetricsController {
         return ResponseEntity.ok(metricsService.getExtraPay(year, month));
     }
 
-    @PostMapping("/income")
+    @PatchMapping("/income/update")
     public ResponseEntity<Void> updateIncome(@RequestBody IncomeUpdateDTO incomeUpdateDTO) {
         metricsService.updateIncome(incomeUpdateDTO);
         return ResponseEntity.ok().build();
