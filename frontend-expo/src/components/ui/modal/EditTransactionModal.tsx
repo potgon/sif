@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, Alert, ScrollView, Platform } from 'react-native';
+import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, Alert, ScrollView, FlatList, Platform, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { updateTransaction, fetchAllSubcategories } from '../../../api';
@@ -133,7 +133,7 @@ export default function EditTransactionModal({
     });
   };
 
-  const handleDateChange = (event: any, selectedDate?: Date) => {
+  const handleDateChange = (_: any, selectedDate?: Date) => {
     setShowDatePicker(false);
     if (selectedDate) {
       setDate(selectedDate);
@@ -143,6 +143,7 @@ export default function EditTransactionModal({
   if (!isOpen || !transaction) return null;
 
   return (
+    <>
     <Modal
       visible={isOpen}
       transparent
@@ -171,6 +172,7 @@ export default function EditTransactionModal({
             style={styles.content}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
+            nestedScrollEnabled={Platform.OS === 'android'}
             contentContainerStyle={styles.scrollContent}
           >
             <View style={styles.form}>
@@ -276,39 +278,7 @@ export default function EditTransactionModal({
                     />
                   </TouchableOpacity>
 
-                  {showSubcategoryPicker && (
-                    <View style={[styles.subcategoryList, { 
-                      backgroundColor: colors.surface,
-                      borderColor: colors.border 
-                    }]}>
-                      <ScrollView 
-                        style={styles.subcategoryScrollView}
-                        showsVerticalScrollIndicator={true}
-                        nestedScrollEnabled={true}
-                        keyboardShouldPersistTaps="handled"
-                        contentContainerStyle={styles.subcategoryScrollContent}
-                        scrollEnabled={true}
-                      >
-                        {subcategories.map((subcategory) => (
-                          <TouchableOpacity
-                            key={subcategory.id}
-                            style={[styles.subcategoryItem, { 
-                              borderBottomColor: colors.borderSecondary 
-                            }]}
-                            onPress={() => {
-                              setSelectedSubcategory(subcategory);
-                              setShowSubcategoryPicker(false);
-                            }}
-                            activeOpacity={0.7}
-                          >
-                            <Text style={[styles.subcategoryItemText, { color: colors.textPrimary }]}>
-                              {subcategory.name}
-                            </Text>
-                          </TouchableOpacity>
-                        ))}
-                      </ScrollView>
-                    </View>
-                  )}
+                  {/* Inline dropdown removed in favor of full-screen selector modal */}
                 </View>
               </View>
 
@@ -398,6 +368,50 @@ export default function EditTransactionModal({
         </View>
       </View>
     </Modal>
+
+    {/* Subcategory Selector Modal */}
+    {showSubcategoryPicker && (
+      <Modal
+        visible={showSubcategoryPicker}
+        transparent={false}
+        animationType="slide"
+        onRequestClose={() => setShowSubcategoryPicker(false)}
+        statusBarTranslucent={Platform.OS === 'android'}
+      >
+        <SafeAreaView style={[styles.selectorContainer, { backgroundColor: colors.modalBackground }]}> 
+          <View style={[styles.selectorHeader, { borderBottomColor: colors.border }]}> 
+            <TouchableOpacity onPress={() => setShowSubcategoryPicker(false)} style={styles.selectorCloseButton}>
+              <Ionicons name="chevron-down" size={24} color={colors.textSecondary} />
+            </TouchableOpacity>
+            <Text style={[styles.selectorTitle, { color: colors.textPrimary }]}>Seleccionar subcategoría</Text>
+            <View style={{ width: 24 }} />
+          </View>
+
+          <FlatList
+            data={subcategories}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={[styles.subcategoryItem, { borderBottomColor: colors.borderSecondary }]}
+                onPress={() => {
+                  setSelectedSubcategory(item);
+                  setShowSubcategoryPicker(false);
+                }}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.subcategoryItemText, { color: colors.textPrimary }]}>
+                  {item.name}
+                </Text>
+              </TouchableOpacity>
+            )}
+            showsVerticalScrollIndicator
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={styles.selectorListContent}
+          />
+        </SafeAreaView>
+      </Modal>
+    )}
+    </>
   );
 }
 
@@ -558,6 +572,27 @@ const styles = StyleSheet.create({
     color: '#1f2937',
     fontSize: 16,
     fontWeight: '500',
+  },
+  selectorContainer: {
+    flex: 1,
+  },
+  selectorHeader: {
+    height: 56,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+  },
+  selectorCloseButton: {
+    padding: 8,
+  },
+  selectorTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  selectorListContent: {
+    paddingBottom: 24,
   },
   checkbox: {
     flexDirection: 'row',
