@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, Alert, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -18,7 +18,7 @@ export default function AccumulatedParamModal({
   currentValue, 
   monthExpenseTarget,
   onUpdate, 
-  onRenew 
+  onRenew: _onRenew 
 }: AccumulatedParamModalProps) {
   const { colors } = useAppTheme();
   const [accumulatedValue, setAccumulatedValue] = useState(String(currentValue));

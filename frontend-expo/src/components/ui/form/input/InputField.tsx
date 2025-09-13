@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import { FC, useState } from "react";
 import {
   Text,
   TextInput,
@@ -71,7 +71,7 @@ const Input: FC<InputProps> = ({
 
   const { keyboardType, secureTextEntry } = getInputPropsFromType(type);
 
-  const handleDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+  const handleDateChange = (_event: DateTimePickerEvent, selectedDate?: Date) => {
     setShowPicker(false);
     if (selectedDate && onChange) {
       onChange(selectedDate);

@@ -32,6 +32,15 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
+          name="investments"
+          options={{
+            title: "Inversiones",
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="trending-up" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
           name="blank"
           options={{
             title: "Configuración",

@@ -27,7 +27,7 @@ const navItems: NavItem[] = [
     name: "Dashboard",
     subItems: [
       { name: "Gastos", path: "/(tabs)/home" },
-      { name: "Inversiones", path: "/(tabs)/blank" },
+      { name: "Inversiones", path: "/(tabs)/investments" },
     ],
   },
   {

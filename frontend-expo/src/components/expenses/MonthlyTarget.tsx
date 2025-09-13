@@ -1,9 +1,8 @@
-import React from 'react';
+import { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppTheme } from '../../theme/useAppTheme';
 import AccumulatedParamModal from '../ui/modal/AccumulatedParamModal';
-import { useState } from 'react';
 import { updateAccumulatedParam } from '../../api';
 
 interface MonthlyTargetProps {

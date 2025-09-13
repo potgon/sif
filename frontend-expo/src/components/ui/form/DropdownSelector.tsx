@@ -42,7 +42,7 @@ export default function DropdownSelector({
   const { colors } = useAppTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState<string>(defaultValue);
-  const [selectedLabel, setSelectedLabel] = useState<string>("");
+  const [, setSelectedLabel] = useState<string>("");
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   // Update selected value when prop changes
