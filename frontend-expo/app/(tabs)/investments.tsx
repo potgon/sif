@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { useAppTheme } from "../../src/theme/useAppTheme";
 import { Asset, InvestmentSummary, Investment, getInvestmentSummary } from "../../src/api/investments";
 import AddAssetModal from "../../src/components/ui/modal/AddAssetModal";
-import AddTransactionModal from "../../src/components/ui/modal/AddTransactionModal";
+import AddInvestmentModal from "../../src/components/ui/modal/AddInvestmentModal";
 import UpdateAssetValueModal from "../../src/components/ui/modal/UpdateAssetValueModal";
 import AssetValueHistoryModal from "../../src/components/ui/modal/AssetValueHistoryModal";
 
@@ -15,7 +14,7 @@ export default function InvestmentsScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [showAddAssetModal, setShowAddAssetModal] = useState(false);
-  const [showAddTransactionModal, setShowAddTransactionModal] = useState(false);
+  const [showAddInvestmentModal, setShowAddInvestmentModal] = useState(false);
   const [showUpdateValueModal, setShowUpdateValueModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
@@ -56,8 +55,8 @@ export default function InvestmentsScreen() {
     loadSummary(); // Reload the summary to include the new asset
   };
 
-  const handleTransactionAdded = (transaction: Investment) => {
-    loadSummary(); // Reload the summary to include the new transaction
+  const handleInvestmentAdded = (investment: Investment) => {
+    loadSummary(); // Reload the summary to include the new investment
   };
 
   const handleUpdateValue = (asset: Asset) => {
@@ -142,7 +141,7 @@ export default function InvestmentsScreen() {
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: colors.textPrimary }]}>Mis Activos</Text>
           <TouchableOpacity 
-            onPress={() => setShowAddTransactionModal(true)}
+            onPress={() => setShowAddInvestmentModal(true)}
             style={styles.addTransactionButton}
           >
             <Ionicons name="swap-horizontal" size={16} color={colors.buttonPrimary} />
@@ -231,10 +230,10 @@ export default function InvestmentsScreen() {
         onAssetAdded={handleAssetAdded}
       />
       
-      <AddTransactionModal
-        visible={showAddTransactionModal}
-        onClose={() => setShowAddTransactionModal(false)}
-        onTransactionAdded={handleTransactionAdded}
+      <AddInvestmentModal
+        visible={showAddInvestmentModal}
+        onClose={() => setShowAddInvestmentModal(false)}
+        onTransactionAdded={handleInvestmentAdded}
       />
 
       <UpdateAssetValueModal
